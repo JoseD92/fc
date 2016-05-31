@@ -4,5 +4,5 @@
 *.obj
 *.hi
 *.txt
-./Fc/Grammar.hs
-./Fc/Lexer.hs
+/Fc/Grammar.hs
+/Fc/Lexer.hs
