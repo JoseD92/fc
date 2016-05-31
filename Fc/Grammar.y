@@ -4,9 +4,11 @@ import Fc.Lexer
 import Control.Monad.Writer
 import Control.Monad.State
 import qualified Fc.Tabla as T
+import qualified Fc.MyState as MyState
+import Fc.Datas (TypeData(..))
 }
 
-%monad { State (T.Tabla String TypeData,[String],[String]) } { (>>=) } { return }
+%monad { State MyState.ParseState } { (>>=) } { return }
 %name parsefc
 %tokentype { Token }
 %error { parseError }
@@ -111,12 +113,12 @@ Funcion : Types VarVar FuncionP2 Parametros ')' Block FuncionP3   {  }
 
 VarVar : var {% modify $ modifTabla $1 FunGlob}
  
-FuncionP2 : '(' {% modify (\(t,s,s2)->(T.enterScope t,s,s2))}
-FuncionP3 : {% modify (\(t,s,s2)->(T.exitScope t,s,s2))}
+FuncionP2 : '(' {% modify $ MyState.alterSimT T.enterScope}
+FuncionP3 : {% modify $ MyState.alterSimT T.exitScope}
 
 Block : Block2 Instrucciones Block3 {}
-Block2 : '{' {% modify (\(t,s,s2)->(T.enterScope t,s,s2))}
-Block3 : '}' {% modify (\(t,s,s2)->(T.exitScope t,s,s2))}
+Block2 : '{' {% modify $ MyState.alterSimT T.enterScope}
+Block3 : '}' {% modify $ MyState.alterSimT T.exitScope}
 
 Instruccion : Block { }
     | For { }
@@ -164,7 +166,7 @@ Atom : LLamada { }
     | int { }
     | float { }
     | bool { }
-    | str {% modify $ (\ins (t,s,s2)->if(not $ elem ins s2)then (t,s,ins:s2) else (t,s,s2)) $ (\(s,_,_)->s) $1}
+    | str {% modify $ MyState.addString $ (\(s,_,_)->s) $1}
     | var {% modify $ checkExist $1 }
     | AnomFun { }
 
@@ -196,24 +198,21 @@ Exp : Exp '+' Exp            { }
 parseError :: [Token] -> a
 parseError s = error ("Parse error in " ++ (lineCol $ head s))
 
-data TypeData = FunGlob | FunLoc [TypeData] [TypeData] | TInt | TFloat| TBool | 
-  TVoid | TChar | TUnion String | TStruct String | TUnsigned TypeData | TRef TypeData deriving (Show,Eq)
-
-modifTabla (s,l,c) tipo (tabla,errores,strings) = if ((T.localLookup s tabla) == Nothing)
+modifTabla (s,l,c) tipo estado = if ((MyState.querrySimT (T.localLookup s) estado) == Nothing)
   then
-    if ((T.lookup s tabla) /= Just FunGlob)
+    if ((MyState.querrySimT (T.lookup s) estado) /= Just FunGlob)
       then
-        (T.insert s tipo tabla ,errores,strings)
+        MyState.alterSimT (T.insert s tipo) estado
       else
-        (tabla,("Existe una funcion global de nombre "++s++", no se puede declarar de nuevo. Linea: "++(show l)++" Columna: "++(show c)):errores,strings)
+        MyState.addError estado ("Existe una funcion global de nombre "++s++", no se puede declarar de nuevo. Linea: "++(show l)++" Columna: "++(show c))
   else 
-    (tabla,("Ya se encuentra declarada la variable "++s++" en este Alcance. Linea: "++(show l)++" Columna: "++(show c)):errores,strings)
+    MyState.addError estado ("Ya se encuentra declarada la variable "++s++" en este Alcance. Linea: "++(show l)++" Columna: "++(show c))
 
-checkExist (s,l,c) (tabla,errores,strings) = if ((T.lookup s tabla) == Nothing)
+checkExist (s,l,c) estado = if ((MyState.querrySimT (T.lookup s) estado) == Nothing)
   then
-    (tabla,("No existe el simbolo "++s++". Linea: "++(show l)++" Columna: "++(show c)):errores,strings)
+    MyState.addError estado ("No existe el simbolo "++s++". Linea: "++(show l)++" Columna: "++(show c))
   else 
-    (tabla,errores,strings)
+    estado
 
 {-
 { Plus $1 $3 }

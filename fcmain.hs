@@ -7,6 +7,8 @@ import Data.Char (ord)
 import Control.Monad.Writer
 import Control.Monad.State
 import qualified Fc.Tabla as T
+import qualified Fc.MyState as MyState
+import Fc.Datas (TypeData(..))
 --getopt -- buscar
 errStrPut = hPutStr stderr
 
@@ -15,9 +17,7 @@ filfun _ = True
 
 inicializaStado = (\s-> T.enterScope $ T.insert "write" FunGlob $ T.insert "read" FunGlob s)
 
-gg t = do
-  parsefc t
-  modify (\(t,s,s2)->(T.goToRoot t,s,s2))
+run t = parsefc t >> modify (MyState.alterSimT T.goToRoot)
 
 main = do
   args <- getArgs
@@ -32,7 +32,5 @@ main = do
 
   --let arbol = parsefc tokens
   if (elem "--parser" args) then do
-    putStrLn $ unlines.reverse.(\(_,s,_)->s) $ execState (gg tokens) $ (inicializaStado T.empty,[],[])
-    putStrLn $ (T.dump).(\(s,_,_)->s) $ execState (gg tokens) $ (inicializaStado T.empty,[],[])
-    putStrLn $ unlines.(\(_,_,s)->s) $ execState (gg tokens) $ (inicializaStado T.empty,[],[])
+    putStr $ show $ execState (run tokens) $ (MyState.alterSimT inicializaStado $ MyState.empty)
   else return ()
