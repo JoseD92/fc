@@ -93,16 +93,25 @@ VarDeclarations : VarDeclarations VarDeclaration  { }
 ManyTypes : ManyTypes ',' Types    { $3:$1 }
     | Types { [$1] }
 
+asteriscos : asteriscos '*' { $1 + 1 }
+    | '*' { 1 }
+
 Types : type { }
     | unsigned type { {-TUnsigned $2-} }
     | struct var {% modify $ checkExist $2 }
     | union var {% modify $ checkExist $2 }
     | functionType '(' Types ')' '(' ManyTypes ')' { }
     | functionType '(' Types ')' '(' ')' { }
-    | Types '*' { {-TRef $1-} }
+    | '(' Types asteriscos ')' { {-TRef $1-} }
 
-VarDeclaration : Types var ';'  {% modify $ modifTabla $2 TInt }
-    | Types var '[' Exp ']' ';'  {% modify $ modifTabla $2 TInt }
+variables : variables ',' var          {% modify $ modifTabla $3 TInt }
+    | variables ',' var '[' int ']'    {% modify $ modifTabla $3 TInt }
+    | variables ',' '*' var            {% modify $ modifTabla $4 TInt }
+    | var                              {% modify $ modifTabla $1 TInt }
+    | '*' var                          {% modify $ modifTabla $2 TInt }
+    | var '[' int ']'                  {% modify $ modifTabla $1 TInt }
+
+VarDeclaration : Types variables ';'  { }
 
 Struct : struct var Block2 VarDeclarations Block3 ';' {% modify $ modifTabla $2 (TStruct $ (\(s,_,_)->s) $2) }
 
