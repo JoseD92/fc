@@ -9,7 +9,7 @@ import Fc.Datas (TypeData(..))
 }
 
 %monad { State MyState.ParseState } { (>>=) } { return }
-%name parsefc
+%name parsefc All
 %tokentype { Token }
 %error { parseError }
 
@@ -106,9 +106,9 @@ Types : type { }
 
 variables : variables ',' var          {% modify $ modifTabla $3 TInt }
     | variables ',' var '[' int ']'    {% modify $ modifTabla $3 TInt }
-    | variables ',' '*' var            {% modify $ modifTabla $4 TInt }
+    | variables ',' asteriscos var     {% modify $ modifTabla $4 TInt }
     | var                              {% modify $ modifTabla $1 TInt }
-    | '*' var                          {% modify $ modifTabla $2 TInt }
+    | asteriscos var                   {% modify $ modifTabla $2 TInt }
     | var '[' int ']'                  {% modify $ modifTabla $1 TInt }
 
 VarDeclaration : Types variables ';'  { }
@@ -120,7 +120,7 @@ Union : union var Block2 VarDeclarations Block3 ';' {% modify $ modifTabla $2 (T
 Funcion : Types VarVar FuncionP2 Parametros ')' Block FuncionP3   {  }
     | Types VarVar '(' ')' Block  {  }
 
-VarVar : var {% modify $ modifTabla $1 FunGlob}
+VarVar : var {% modify $ modifTabla $1 (FunGlob [] [])}
  
 FuncionP2 : '(' {% modify $ MyState.alterSimT T.enterScope}
 FuncionP3 : {% modify $ MyState.alterSimT T.exitScope}
@@ -209,11 +209,11 @@ parseError s = error ("Parse error in " ++ (lineCol $ head s))
 
 modifTabla (s,l,c) tipo estado = if ((MyState.querrySimT (T.localLookup s) estado) == Nothing)
   then
-    if ((MyState.querrySimT (T.lookup s) estado) /= Just FunGlob)
-      then
+    --if ((MyState.querrySimT (T.lookup s) estado) /= Just FunGlob)
+      --then
         MyState.alterSimT (T.insert s tipo) estado
-      else
-        MyState.addError estado ("Existe una funcion global de nombre "++s++", no se puede declarar de nuevo. Linea: "++(show l)++" Columna: "++(show c))
+      --else
+        --MyState.addError estado ("Existe una funcion global de nombre "++s++", no se puede declarar de nuevo. Linea: "++(show l)++" Columna: "++(show c))
   else 
     MyState.addError estado ("Ya se encuentra declarada la variable "++s++" en este Alcance. Linea: "++(show l)++" Columna: "++(show c))
 

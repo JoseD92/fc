@@ -3,5 +3,5 @@ where
 
 import qualified Fc.Tabla as T
 
-data TypeData = FunGlob | FunLoc [TypeData] [TypeData] | TInt | TFloat| TBool | 
+data TypeData = FunGlob [TypeData] [TypeData] | FunLoc [TypeData] [TypeData] | TInt | TFloat| TBool | TAny |
   TVoid | TChar | TUnion String | TStruct String | TUnsigned TypeData | TRef TypeData deriving (Show,Eq)

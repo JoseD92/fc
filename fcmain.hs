@@ -15,7 +15,7 @@ errStrPut = hPutStr stderr
 filfun (Error _ _) = False
 filfun _ = True
 
-inicializaStado = (\s-> T.enterScope $ T.insert "write" FunGlob $ T.insert "read" FunGlob s)
+inicializaStado = (\s-> T.enterScope $ T.insert "write" (FunGlob [TAny] [TVoid]) $ T.insert "read" (FunGlob [TAny] [TVoid]) s)
 
 run t = parsefc t >> modify (MyState.alterSimT T.goToRoot)
 

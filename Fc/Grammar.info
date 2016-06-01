@@ -30,9 +30,9 @@ Grammar
 	Types -> '(' Types asteriscos ')'                  (21)
 	variables -> variables ',' var                     (22)
 	variables -> variables ',' var '[' int ']'         (23)
-	variables -> variables ',' '*' var                 (24)
+	variables -> variables ',' asteriscos var          (24)
 	variables -> var                                   (25)
-	variables -> '*' var                               (26)
+	variables -> asteriscos var                        (26)
 	variables -> var '[' int ']'                       (27)
 	VarDeclaration -> Types variables ';'              (28)
 	Struct -> struct var Block2 VarDeclarations Block3 ';'   (29)
@@ -256,11 +256,12 @@ State 3
 	Funcion -> Types . VarVar FuncionP2 Parametros ')' Block FuncionP3    (rule 31)
 	Funcion -> Types . VarVar '(' ')' Block             (rule 32)
 
-	var            shift, and enter state 28
-	'*'            shift, and enter state 29
+	var            shift, and enter state 29
+	'*'            shift, and enter state 30
 
-	variables      goto state 26
-	VarVar         goto state 27
+	asteriscos     goto state 26
+	variables      goto state 27
+	VarVar         goto state 28
 
 State 4
 
@@ -446,22 +447,22 @@ State 19
 
 	Types -> '(' Types . asteriscos ')'                 (rule 21)
 
-	'*'            shift, and enter state 43
+	'*'            shift, and enter state 30
 
-	asteriscos     goto state 42
+	asteriscos     goto state 44
 
 State 20
 
 	Types -> union . var                                (rule 18)
 
-	var            shift, and enter state 41
+	var            shift, and enter state 43
 
 
 State 21
 
 	Types -> struct . var                               (rule 17)
 
-	var            shift, and enter state 40
+	var            shift, and enter state 42
 
 
 State 22
@@ -481,9 +482,9 @@ State 23
 
 	var            reduce using rule 17
 	'*'            reduce using rule 17
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 
-	Block2         goto state 39
+	Block2         goto state 41
 
 State 24
 
@@ -492,9 +493,9 @@ State 24
 
 	var            reduce using rule 18
 	'*'            reduce using rule 18
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 
-	Block2         goto state 37
+	Block2         goto state 39
 
 State 25
 
@@ -508,20 +509,29 @@ State 25
 	unsigned       shift, and enter state 12
 	'('            shift, and enter state 13
 
-	Types          goto state 36
+	Types          goto state 38
 
 State 26
 
+	asteriscos -> asteriscos . '*'                      (rule 13)
+	variables -> asteriscos . var                       (rule 26)
+
+	var            shift, and enter state 36
+	'*'            shift, and enter state 37
+
+
+State 27
+
 	variables -> variables . ',' var                    (rule 22)
 	variables -> variables . ',' var '[' int ']'        (rule 23)
-	variables -> variables . ',' '*' var                (rule 24)
+	variables -> variables . ',' asteriscos var         (rule 24)
 	VarDeclaration -> Types variables . ';'             (rule 28)
 
 	';'            shift, and enter state 34
 	','            shift, and enter state 35
 
 
-State 27
+State 28
 
 	Funcion -> Types VarVar . FuncionP2 Parametros ')' Block FuncionP3    (rule 31)
 	Funcion -> Types VarVar . '(' ')' Block             (rule 32)
@@ -530,7 +540,7 @@ State 27
 
 	FuncionP2      goto state 32
 
-State 28
+State 29
 
 	variables -> var .                                  (rule 25)
 	variables -> var . '[' int ']'                      (rule 27)
@@ -542,19 +552,13 @@ State 28
 	','            reduce using rule 25
 
 
-State 29
-
-	variables -> '*' . var                              (rule 26)
-
-	var            shift, and enter state 30
-
-
 State 30
 
-	variables -> '*' var .                              (rule 26)
+	asteriscos -> '*' .                                 (rule 14)
 
-	';'            reduce using rule 26
-	','            reduce using rule 26
+	var            reduce using rule 14
+	'*'            reduce using rule 14
+	')'            reduce using rule 14
 
 
 State 31
@@ -630,13 +634,31 @@ State 35
 
 	variables -> variables ',' . var                    (rule 22)
 	variables -> variables ',' . var '[' int ']'        (rule 23)
-	variables -> variables ',' . '*' var                (rule 24)
+	variables -> variables ',' . asteriscos var         (rule 24)
 
-	var            shift, and enter state 51
-	'*'            shift, and enter state 52
+	var            shift, and enter state 52
+	'*'            shift, and enter state 30
 
+	asteriscos     goto state 51
 
 State 36
+
+	variables -> asteriscos var .                       (rule 26)
+
+	';'            reduce using rule 26
+	','            reduce using rule 26
+
+
+State 37
+
+	asteriscos -> asteriscos '*' .                      (rule 13)
+
+	var            reduce using rule 13
+	'*'            reduce using rule 13
+	')'            reduce using rule 13
+
+
+State 38
 
 	Types -> functionType '(' Types . ')' '(' ManyTypes ')'    (rule 19)
 	Types -> functionType '(' Types . ')' '(' ')'       (rule 20)
@@ -644,7 +666,7 @@ State 36
 	')'            shift, and enter state 50
 
 
-State 37
+State 39
 
 	Union -> union var Block2 . VarDeclarations Block3 ';'    (rule 30)
 
@@ -659,7 +681,7 @@ State 37
 	Types          goto state 47
 	VarDeclaration goto state 48
 
-State 38
+State 40
 
 	Block2 -> '{' .                                     (rule 37)
 
@@ -688,7 +710,7 @@ State 38
 	';'            reduce using rule 37
 
 
-State 39
+State 41
 
 	Struct -> struct var Block2 . VarDeclarations Block3 ';'    (rule 29)
 
@@ -703,7 +725,7 @@ State 39
 	Types          goto state 47
 	VarDeclaration goto state 48
 
-State 40
+State 42
 
 	Types -> struct var .                               (rule 17)
 
@@ -713,7 +735,7 @@ State 40
 	','            reduce using rule 17
 
 
-State 41
+State 43
 
 	Types -> union var .                                (rule 18)
 
@@ -723,29 +745,13 @@ State 41
 	','            reduce using rule 18
 
 
-State 42
+State 44
 
 	asteriscos -> asteriscos . '*'                      (rule 13)
 	Types -> '(' Types asteriscos . ')'                 (rule 21)
 
-	'*'            shift, and enter state 44
+	'*'            shift, and enter state 37
 	')'            shift, and enter state 45
-
-
-State 43
-
-	asteriscos -> '*' .                                 (rule 14)
-
-	'*'            reduce using rule 14
-	')'            reduce using rule 14
-
-
-State 44
-
-	asteriscos -> asteriscos '*' .                      (rule 13)
-
-	'*'            reduce using rule 13
-	')'            reduce using rule 13
 
 
 State 45
@@ -780,9 +786,10 @@ State 47
 	VarDeclaration -> Types . variables ';'             (rule 28)
 
 	var            shift, and enter state 72
-	'*'            shift, and enter state 29
+	'*'            shift, and enter state 30
 
-	variables      goto state 26
+	asteriscos     goto state 26
+	variables      goto state 27
 
 State 48
 
@@ -824,26 +831,28 @@ State 50
 
 State 51
 
-	variables -> variables ',' var .                    (rule 22)
-	variables -> variables ',' var . '[' int ']'        (rule 23)
+	asteriscos -> asteriscos . '*'                      (rule 13)
+	variables -> variables ',' asteriscos . var         (rule 24)
 
-	';'            reduce using rule 22
-	'['            shift, and enter state 67
-	','            reduce using rule 22
+	var            shift, and enter state 67
+	'*'            shift, and enter state 37
 
 
 State 52
 
-	variables -> variables ',' '*' . var                (rule 24)
+	variables -> variables ',' var .                    (rule 22)
+	variables -> variables ',' var . '[' int ']'        (rule 23)
 
-	var            shift, and enter state 66
+	';'            reduce using rule 22
+	'['            shift, and enter state 66
+	','            reduce using rule 22
 
 
 State 53
 
 	Funcion -> Types VarVar '(' ')' . Block             (rule 32)
 
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 
 	Block          goto state 64
 	Block2         goto state 65
@@ -911,7 +920,7 @@ State 61
 
 	Funcion -> Types VarVar FuncionP2 Parametros ')' . Block FuncionP3    (rule 31)
 
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 
 	Block          goto state 110
 	Block2         goto state 65
@@ -977,7 +986,7 @@ State 65
 	'-'            shift, and enter state 105
 	'*'            shift, and enter state 106
 	'('            shift, and enter state 107
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 	';'            shift, and enter state 108
 
 	Types          goto state 47
@@ -997,17 +1006,17 @@ State 65
 
 State 66
 
-	variables -> variables ',' '*' var .                (rule 24)
+	variables -> variables ',' var '[' . int ']'        (rule 23)
 
-	';'            reduce using rule 24
-	','            reduce using rule 24
+	int            shift, and enter state 79
 
 
 State 67
 
-	variables -> variables ',' var '[' . int ']'        (rule 23)
+	variables -> variables ',' asteriscos var .         (rule 24)
 
-	int            shift, and enter state 79
+	';'            reduce using rule 24
+	','            reduce using rule 24
 
 
 State 68
@@ -1402,7 +1411,7 @@ State 88
 	'-'            shift, and enter state 105
 	'*'            shift, and enter state 106
 	'('            shift, and enter state 107
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 	'}'            shift, and enter state 71
 	';'            shift, and enter state 108
 
@@ -1888,10 +1897,10 @@ State 113
 	AnomFun -> '(' Types . ')' '(' Parametros ')' '{' Instrucciones '}'    (rule 70)
 	AnomFun -> '(' Types . ')' '(' ')' '{' Instrucciones '}'    (rule 71)
 
-	'*'            shift, and enter state 43
+	'*'            shift, and enter state 30
 	')'            shift, and enter state 189
 
-	asteriscos     goto state 42
+	asteriscos     goto state 44
 
 State 114
 
@@ -2291,7 +2300,7 @@ State 125
 	'-'            shift, and enter state 105
 	'*'            shift, and enter state 106
 	'('            shift, and enter state 117
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 	';'            shift, and enter state 108
 
 	Block          goto state 81
@@ -4171,7 +4180,7 @@ State 192
 	'-'            shift, and enter state 105
 	'*'            shift, and enter state 106
 	'('            shift, and enter state 117
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 	';'            shift, and enter state 108
 
 	Block          goto state 81
@@ -4191,7 +4200,7 @@ State 193
 	If -> if '(' Exp ')' . Block                        (rule 54)
 	If -> if '(' Exp ')' . Block else Instruccion       (rule 55)
 
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 
 	Block          goto state 199
 	Block2         goto state 65
@@ -4459,7 +4468,7 @@ State 204
 	'-'            shift, and enter state 105
 	'*'            shift, and enter state 106
 	'('            shift, and enter state 107
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 	';'            shift, and enter state 108
 
 	Types          goto state 47
@@ -4504,7 +4513,7 @@ State 206
 	'-'            shift, and enter state 105
 	'*'            shift, and enter state 106
 	'('            shift, and enter state 117
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 	';'            shift, and enter state 108
 
 	Block          goto state 81
@@ -4539,7 +4548,7 @@ State 207
 	'-'            shift, and enter state 105
 	'*'            shift, and enter state 106
 	'('            shift, and enter state 117
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 	';'            shift, and enter state 108
 
 	Block          goto state 81
@@ -4660,7 +4669,7 @@ State 211
 	'-'            shift, and enter state 105
 	'*'            shift, and enter state 106
 	'('            shift, and enter state 107
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 	';'            shift, and enter state 108
 
 	Types          goto state 47
@@ -4705,7 +4714,7 @@ State 212
 	'-'            shift, and enter state 105
 	'*'            shift, and enter state 106
 	'('            shift, and enter state 107
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 	'}'            shift, and enter state 213
 	';'            shift, and enter state 108
 
@@ -4778,7 +4787,7 @@ State 214
 	'-'            shift, and enter state 105
 	'*'            shift, and enter state 106
 	'('            shift, and enter state 107
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 	'}'            shift, and enter state 217
 	';'            shift, and enter state 108
 
@@ -4816,7 +4825,7 @@ State 215
 	'-'            shift, and enter state 105
 	'*'            shift, and enter state 106
 	'('            shift, and enter state 117
-	'{'            shift, and enter state 38
+	'{'            shift, and enter state 40
 	';'            shift, and enter state 108
 
 	Block          goto state 81
