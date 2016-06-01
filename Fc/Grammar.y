@@ -137,10 +137,18 @@ Struct : struct StructVar Block2 VarDeclarations Block3 ';' {}
 UnionVar : var {% modify $ modifTabla $1 (TUnion $ (\(s,_,_)->s) $1) }
 Union : union UnionVar Block2 VarDeclarations Block3 ';' {}
 
-Funcion : Types VarVar FuncionP2 Parametros ')' Block FuncionP3   {  }
-    | Types VarVar '(' ')' Block  {  }
+Funcion : Types VarVar FuncionP2 Parametros ')' registra2 Block FuncionP3   {  }
+    | Types VarVar registra Block  {  }
 
-VarVar : var {% modify $ modifTabla $1 (FunGlob TAny [])}
+registra : '(' ')' {% modify $ (\s -> modifTabla (MyState.auxS s) (FunGlob (last $ MyState.pilaAT s) (init $ MyState.pilaAT s)) s) }
+
+registra2 : {% do
+  modify $ MyState.alterSimT T.exitScope
+  modify $ (\s -> modifTabla (MyState.auxS s) (FunGlob (last $ MyState.pilaAT s) (init $ MyState.pilaAT s)) s) 
+  modify $ MyState.alterSimT $ T.enterN 0
+  }
+
+VarVar : var {% do modify $ MyState.ponAT; modify $ MyState.newAusS $1}
  
 FuncionP2 : '(' {% modify $ MyState.alterSimT T.enterScope}
 FuncionP3 : {% modify $ MyState.alterSimT T.exitScope}
@@ -183,8 +191,13 @@ Instrucciones : Instrucciones Instruccion { }
     | Instrucciones VarDeclaration { }
     | VarDeclaration { }
 
-Parametro : ref Types var      {% modify $ modifTabla $3 TInt }
-    | Types var                {% modify $ modifTabla $2 TInt }
+Parametro : ref Types var      {% do
+  modify $ (\s -> modifTabla $3 (TRef $ MyState.getAType s) s)
+  modify $ MyState.modifAType TRef
+  modify $ MyState.empilaAT }
+    | Types var                {% do
+  modify $ (\s -> modifTabla $2 (MyState.getAType s) s)
+  modify $ MyState.empilaAT }
 Parametros : Parametros ',' Parametro { }
     | Parametro              { }
 

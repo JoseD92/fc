@@ -70,7 +70,7 @@ toTree x = Node (dumpLocal x) ((map toTree).(foldl (flip (:)) []).hijos $ x)
 
 dump t = drawTree $ toTree t   
 
-enterN t i = Seq.index (hijos t) i
+enterN i t = Seq.index (hijos t) i
 
 goToRoot t@(Tabla _ Null _) = t
 goToRoot t@(Tabla _ p _) = goToRoot $ exitScope t

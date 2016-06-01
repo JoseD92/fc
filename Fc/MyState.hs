@@ -1,5 +1,5 @@
 module Fc.MyState (
-  ParseState(pilaAT),
+  ParseState(pilaAT,auxS),
   empty,
   alterSimT,
   addError,
@@ -24,7 +24,7 @@ data ParseState = ParseState {
     stringT :: Map.Map String Bool,
     activeType :: TypeData,
     pilaAT :: [TypeData],
-    auxS :: String
+    auxS :: (String,Int,Int)
   }
 
 newAusS s parS = parS {auxS=s}
@@ -33,7 +33,7 @@ empilaAT parS = parS {pilaAT=(activeType parS):(pilaAT parS)}
 
 ponAT parS = parS {pilaAT=(activeType parS):[]}
 
-empty = ParseState T.empty Seq.empty Map.empty TVoid [] ""
+empty = ParseState T.empty Seq.empty Map.empty TVoid [] ("",0,0)
 
 modifAType f parS = parS {activeType=f (activeType parS)}
 
