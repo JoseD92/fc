@@ -86,35 +86,38 @@ Grammar
 	Parametros -> Parametro                            (77)
 	AnomFun -> '(' Types ')' '(' Parametros ')' '{' Instrucciones '}'   (78)
 	AnomFun -> '(' Types ')' '(' ')' '{' Instrucciones '}'   (79)
-	Atom -> LLamada                                    (80)
-	Atom -> int                                        (81)
-	Atom -> float                                      (82)
-	Atom -> bool                                       (83)
-	Atom -> str                                        (84)
-	Atom -> var                                        (85)
-	Atom -> AnomFun                                    (86)
-	Exp -> Exp '+' Exp                                 (87)
-	Exp -> Exp '-' Exp                                 (88)
-	Exp -> Exp '*' Exp                                 (89)
-	Exp -> Exp '/' Exp                                 (90)
-	Exp -> Exp '<<' Exp                                (91)
-	Exp -> Exp '>>' Exp                                (92)
-	Exp -> Exp '<' Exp                                 (93)
-	Exp -> Exp '<=' Exp                                (94)
-	Exp -> Exp '>' Exp                                 (95)
-	Exp -> Exp '>=' Exp                                (96)
-	Exp -> Exp '==' Exp                                (97)
-	Exp -> Exp '!=' Exp                                (98)
-	Exp -> Exp '&' Exp                                 (99)
-	Exp -> Exp '%' Exp                                 (100)
-	Exp -> Exp '|' Exp                                 (101)
-	Exp -> Exp '&&' Exp                                (102)
-	Exp -> Exp '||' Exp                                (103)
-	Exp -> Exp '.' var                                 (104)
-	Exp -> '(' Exp ')'                                 (105)
-	Exp -> '-' Exp                                     (106)
-	Exp -> '*' Exp                                     (107)
-	Exp -> Atom                                        (108)
+	arr -> arr '[' Exp ']'                             (80)
+	arr -> '[' Exp ']'                                 (81)
+	Atom -> LLamada                                    (82)
+	Atom -> int                                        (83)
+	Atom -> float                                      (84)
+	Atom -> bool                                       (85)
+	Atom -> str                                        (86)
+	Atom -> var                                        (87)
+	Atom -> var arr                                    (88)
+	Atom -> AnomFun                                    (89)
+	Exp -> Exp '+' Exp                                 (90)
+	Exp -> Exp '-' Exp                                 (91)
+	Exp -> Exp '*' Exp                                 (92)
+	Exp -> Exp '/' Exp                                 (93)
+	Exp -> Exp '<<' Exp                                (94)
+	Exp -> Exp '>>' Exp                                (95)
+	Exp -> Exp '<' Exp                                 (96)
+	Exp -> Exp '<=' Exp                                (97)
+	Exp -> Exp '>' Exp                                 (98)
+	Exp -> Exp '>=' Exp                                (99)
+	Exp -> Exp '==' Exp                                (100)
+	Exp -> Exp '!=' Exp                                (101)
+	Exp -> Exp '&' Exp                                 (102)
+	Exp -> Exp '%' Exp                                 (103)
+	Exp -> Exp '|' Exp                                 (104)
+	Exp -> Exp '&&' Exp                                (105)
+	Exp -> Exp '||' Exp                                (106)
+	Exp -> Exp '.' var                                 (107)
+	Exp -> '(' Exp ')'                                 (108)
+	Exp -> '-' Exp                                     (109)
+	Exp -> '*' Exp                                     (110)
+	Exp -> Atom                                        (111)
 
 -----------------------------------------------------------------------------
 Terminals
@@ -205,8 +208,9 @@ Non-terminals
 	Parametro       rules 74, 75
 	Parametros      rules 76, 77
 	AnomFun         rules 78, 79
-	Atom            rules 80, 81, 82, 83, 84, 85, 86
-	Exp             rules 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108
+	arr             rules 80, 81
+	Atom            rules 82, 83, 84, 85, 86, 87, 88, 89
+	Exp             rules 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111
 
 -----------------------------------------------------------------------------
 States
@@ -1043,7 +1047,7 @@ State 67
 
 	arrays -> arrays '[' int . ']'                      (rule 24)
 
-	']'            shift, and enter state 159
+	']'            shift, and enter state 160
 
 
 State 68
@@ -1243,35 +1247,35 @@ State 75
 
 	Instruccion -> Asignacion . ';'                     (rule 51)
 
-	';'            shift, and enter state 158
+	';'            shift, and enter state 159
 
 
 State 76
 
-	Atom -> LLamada .                                   (rule 80)
+	Atom -> LLamada .                                   (rule 82)
 
-	'<<'           reduce using rule 80
-	'>>'           reduce using rule 80
-	'.'            reduce using rule 80
-	'=='           reduce using rule 80
-	'>='           reduce using rule 80
-	'<='           reduce using rule 80
-	'!='           reduce using rule 80
-	'||'           reduce using rule 80
-	'&&'           reduce using rule 80
-	'+'            reduce using rule 80
-	'-'            reduce using rule 80
-	'*'            reduce using rule 80
-	'/'            reduce using rule 80
-	')'            reduce using rule 80
-	';'            reduce using rule 80
-	'%'            reduce using rule 80
-	'<'            reduce using rule 80
-	'>'            reduce using rule 80
-	'&'            reduce using rule 80
-	'|'            reduce using rule 80
-	']'            reduce using rule 80
-	','            reduce using rule 80
+	'<<'           reduce using rule 82
+	'>>'           reduce using rule 82
+	'.'            reduce using rule 82
+	'=='           reduce using rule 82
+	'>='           reduce using rule 82
+	'<='           reduce using rule 82
+	'!='           reduce using rule 82
+	'||'           reduce using rule 82
+	'&&'           reduce using rule 82
+	'+'            reduce using rule 82
+	'-'            reduce using rule 82
+	'*'            reduce using rule 82
+	'/'            reduce using rule 82
+	')'            reduce using rule 82
+	';'            reduce using rule 82
+	'%'            reduce using rule 82
+	'<'            reduce using rule 82
+	'>'            reduce using rule 82
+	'&'            reduce using rule 82
+	'|'            reduce using rule 82
+	']'            reduce using rule 82
+	','            reduce using rule 82
 
 
 State 77
@@ -1307,11 +1311,11 @@ State 77
 
 	basicType      goto state 3
 	Types          goto state 52
-	VarDeclaration goto state 155
+	VarDeclaration goto state 156
 	Block          goto state 70
 	Block2         goto state 64
-	Block3         goto state 156
-	Instruccion    goto state 157
+	Block3         goto state 157
+	Instruccion    goto state 158
 	For            goto state 72
 	While          goto state 73
 	If             goto state 74
@@ -1323,101 +1327,101 @@ State 77
 
 State 78
 
-	Atom -> AnomFun .                                   (rule 86)
+	Atom -> AnomFun .                                   (rule 89)
 
-	'<<'           reduce using rule 86
-	'>>'           reduce using rule 86
-	'.'            reduce using rule 86
-	'=='           reduce using rule 86
-	'>='           reduce using rule 86
-	'<='           reduce using rule 86
-	'!='           reduce using rule 86
-	'||'           reduce using rule 86
-	'&&'           reduce using rule 86
-	'+'            reduce using rule 86
-	'-'            reduce using rule 86
-	'*'            reduce using rule 86
-	'/'            reduce using rule 86
-	')'            reduce using rule 86
-	';'            reduce using rule 86
-	'%'            reduce using rule 86
-	'<'            reduce using rule 86
-	'>'            reduce using rule 86
-	'&'            reduce using rule 86
-	'|'            reduce using rule 86
-	']'            reduce using rule 86
-	','            reduce using rule 86
+	'<<'           reduce using rule 89
+	'>>'           reduce using rule 89
+	'.'            reduce using rule 89
+	'=='           reduce using rule 89
+	'>='           reduce using rule 89
+	'<='           reduce using rule 89
+	'!='           reduce using rule 89
+	'||'           reduce using rule 89
+	'&&'           reduce using rule 89
+	'+'            reduce using rule 89
+	'-'            reduce using rule 89
+	'*'            reduce using rule 89
+	'/'            reduce using rule 89
+	')'            reduce using rule 89
+	';'            reduce using rule 89
+	'%'            reduce using rule 89
+	'<'            reduce using rule 89
+	'>'            reduce using rule 89
+	'&'            reduce using rule 89
+	'|'            reduce using rule 89
+	']'            reduce using rule 89
+	','            reduce using rule 89
 
 
 State 79
 
-	Exp -> Atom .                                       (rule 108)
+	Exp -> Atom .                                       (rule 111)
 
-	'<<'           reduce using rule 108
-	'>>'           reduce using rule 108
-	'.'            reduce using rule 108
-	'=='           reduce using rule 108
-	'>='           reduce using rule 108
-	'<='           reduce using rule 108
-	'!='           reduce using rule 108
-	'||'           reduce using rule 108
-	'&&'           reduce using rule 108
-	'+'            reduce using rule 108
-	'-'            reduce using rule 108
-	'*'            reduce using rule 108
-	'/'            reduce using rule 108
-	')'            reduce using rule 108
-	';'            reduce using rule 108
-	'%'            reduce using rule 108
-	'<'            reduce using rule 108
-	'>'            reduce using rule 108
-	'&'            reduce using rule 108
-	'|'            reduce using rule 108
-	']'            reduce using rule 108
-	','            reduce using rule 108
+	'<<'           reduce using rule 111
+	'>>'           reduce using rule 111
+	'.'            reduce using rule 111
+	'=='           reduce using rule 111
+	'>='           reduce using rule 111
+	'<='           reduce using rule 111
+	'!='           reduce using rule 111
+	'||'           reduce using rule 111
+	'&&'           reduce using rule 111
+	'+'            reduce using rule 111
+	'-'            reduce using rule 111
+	'*'            reduce using rule 111
+	'/'            reduce using rule 111
+	')'            reduce using rule 111
+	';'            reduce using rule 111
+	'%'            reduce using rule 111
+	'<'            reduce using rule 111
+	'>'            reduce using rule 111
+	'&'            reduce using rule 111
+	'|'            reduce using rule 111
+	']'            reduce using rule 111
+	','            reduce using rule 111
 
 
 State 80
 
 	Instruccion -> Exp . ';'                            (rule 52)
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           shift, and enter state 143
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	';'            shift, and enter state 149
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	';'            shift, and enter state 150
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
 
 
 State 81
@@ -1426,91 +1430,37 @@ State 81
 	Asignacion -> var . '[' Exp ']' '=' Exp             (rule 65)
 	LLamada -> var . '(' ParametrosIn ')'               (rule 66)
 	LLamada -> var . '(' ')'                            (rule 67)
-	Atom -> var .                                       (rule 85)
+	Atom -> var .                                       (rule 87)
+	Atom -> var . arr                                   (rule 88)
 
-	'<<'           reduce using rule 85
-	'>>'           reduce using rule 85
-	'.'            reduce using rule 85
-	'=='           reduce using rule 85
-	'>='           reduce using rule 85
-	'<='           reduce using rule 85
-	'!='           reduce using rule 85
-	'||'           reduce using rule 85
-	'&&'           reduce using rule 85
-	'='            shift, and enter state 133
-	'+'            reduce using rule 85
-	'-'            reduce using rule 85
-	'*'            reduce using rule 85
-	'/'            reduce using rule 85
-	'('            shift, and enter state 134
-	';'            reduce using rule 85
-	'%'            reduce using rule 85
-	'<'            reduce using rule 85
-	'>'            reduce using rule 85
-	'&'            reduce using rule 85
-	'|'            reduce using rule 85
-	'['            shift, and enter state 135
+	'<<'           reduce using rule 87
+	'>>'           reduce using rule 87
+	'.'            reduce using rule 87
+	'=='           reduce using rule 87
+	'>='           reduce using rule 87
+	'<='           reduce using rule 87
+	'!='           reduce using rule 87
+	'||'           reduce using rule 87
+	'&&'           reduce using rule 87
+	'='            shift, and enter state 134
+	'+'            reduce using rule 87
+	'-'            reduce using rule 87
+	'*'            reduce using rule 87
+	'/'            reduce using rule 87
+	'('            shift, and enter state 135
+	';'            reduce using rule 87
+	'%'            reduce using rule 87
+	'<'            reduce using rule 87
+	'>'            reduce using rule 87
+	'&'            reduce using rule 87
+	'|'            reduce using rule 87
+	'['            shift, and enter state 136
 
+	arr            goto state 133
 
 State 82
 
-	Atom -> int .                                       (rule 81)
-
-	'<<'           reduce using rule 81
-	'>>'           reduce using rule 81
-	'.'            reduce using rule 81
-	'=='           reduce using rule 81
-	'>='           reduce using rule 81
-	'<='           reduce using rule 81
-	'!='           reduce using rule 81
-	'||'           reduce using rule 81
-	'&&'           reduce using rule 81
-	'+'            reduce using rule 81
-	'-'            reduce using rule 81
-	'*'            reduce using rule 81
-	'/'            reduce using rule 81
-	')'            reduce using rule 81
-	';'            reduce using rule 81
-	'%'            reduce using rule 81
-	'<'            reduce using rule 81
-	'>'            reduce using rule 81
-	'&'            reduce using rule 81
-	'|'            reduce using rule 81
-	']'            reduce using rule 81
-	','            reduce using rule 81
-
-
-State 83
-
-	Atom -> float .                                     (rule 82)
-
-	'<<'           reduce using rule 82
-	'>>'           reduce using rule 82
-	'.'            reduce using rule 82
-	'=='           reduce using rule 82
-	'>='           reduce using rule 82
-	'<='           reduce using rule 82
-	'!='           reduce using rule 82
-	'||'           reduce using rule 82
-	'&&'           reduce using rule 82
-	'+'            reduce using rule 82
-	'-'            reduce using rule 82
-	'*'            reduce using rule 82
-	'/'            reduce using rule 82
-	')'            reduce using rule 82
-	';'            reduce using rule 82
-	'%'            reduce using rule 82
-	'<'            reduce using rule 82
-	'>'            reduce using rule 82
-	'&'            reduce using rule 82
-	'|'            reduce using rule 82
-	']'            reduce using rule 82
-	','            reduce using rule 82
-
-
-State 84
-
-	Atom -> bool .                                      (rule 83)
+	Atom -> int .                                       (rule 83)
 
 	'<<'           reduce using rule 83
 	'>>'           reduce using rule 83
@@ -1534,6 +1484,62 @@ State 84
 	'|'            reduce using rule 83
 	']'            reduce using rule 83
 	','            reduce using rule 83
+
+
+State 83
+
+	Atom -> float .                                     (rule 84)
+
+	'<<'           reduce using rule 84
+	'>>'           reduce using rule 84
+	'.'            reduce using rule 84
+	'=='           reduce using rule 84
+	'>='           reduce using rule 84
+	'<='           reduce using rule 84
+	'!='           reduce using rule 84
+	'||'           reduce using rule 84
+	'&&'           reduce using rule 84
+	'+'            reduce using rule 84
+	'-'            reduce using rule 84
+	'*'            reduce using rule 84
+	'/'            reduce using rule 84
+	')'            reduce using rule 84
+	';'            reduce using rule 84
+	'%'            reduce using rule 84
+	'<'            reduce using rule 84
+	'>'            reduce using rule 84
+	'&'            reduce using rule 84
+	'|'            reduce using rule 84
+	']'            reduce using rule 84
+	','            reduce using rule 84
+
+
+State 84
+
+	Atom -> bool .                                      (rule 85)
+
+	'<<'           reduce using rule 85
+	'>>'           reduce using rule 85
+	'.'            reduce using rule 85
+	'=='           reduce using rule 85
+	'>='           reduce using rule 85
+	'<='           reduce using rule 85
+	'!='           reduce using rule 85
+	'||'           reduce using rule 85
+	'&&'           reduce using rule 85
+	'+'            reduce using rule 85
+	'-'            reduce using rule 85
+	'*'            reduce using rule 85
+	'/'            reduce using rule 85
+	')'            reduce using rule 85
+	';'            reduce using rule 85
+	'%'            reduce using rule 85
+	'<'            reduce using rule 85
+	'>'            reduce using rule 85
+	'&'            reduce using rule 85
+	'|'            reduce using rule 85
+	']'            reduce using rule 85
+	','            reduce using rule 85
 
 
 State 85
@@ -1619,35 +1625,35 @@ State 92
 
 State 93
 
-	Atom -> str .                                       (rule 84)
+	Atom -> str .                                       (rule 86)
 
-	'<<'           reduce using rule 84
-	'>>'           reduce using rule 84
-	'.'            reduce using rule 84
-	'=='           reduce using rule 84
-	'>='           reduce using rule 84
-	'<='           reduce using rule 84
-	'!='           reduce using rule 84
-	'||'           reduce using rule 84
-	'&&'           reduce using rule 84
-	'+'            reduce using rule 84
-	'-'            reduce using rule 84
-	'*'            reduce using rule 84
-	'/'            reduce using rule 84
-	')'            reduce using rule 84
-	';'            reduce using rule 84
-	'%'            reduce using rule 84
-	'<'            reduce using rule 84
-	'>'            reduce using rule 84
-	'&'            reduce using rule 84
-	'|'            reduce using rule 84
-	']'            reduce using rule 84
-	','            reduce using rule 84
+	'<<'           reduce using rule 86
+	'>>'           reduce using rule 86
+	'.'            reduce using rule 86
+	'=='           reduce using rule 86
+	'>='           reduce using rule 86
+	'<='           reduce using rule 86
+	'!='           reduce using rule 86
+	'||'           reduce using rule 86
+	'&&'           reduce using rule 86
+	'+'            reduce using rule 86
+	'-'            reduce using rule 86
+	'*'            reduce using rule 86
+	'/'            reduce using rule 86
+	')'            reduce using rule 86
+	';'            reduce using rule 86
+	'%'            reduce using rule 86
+	'<'            reduce using rule 86
+	'>'            reduce using rule 86
+	'&'            reduce using rule 86
+	'|'            reduce using rule 86
+	']'            reduce using rule 86
+	','            reduce using rule 86
 
 
 State 94
 
-	Exp -> '-' . Exp                                    (rule 106)
+	Exp -> '-' . Exp                                    (rule 109)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -1665,7 +1671,7 @@ State 94
 
 State 95
 
-	Exp -> '*' . Exp                                    (rule 107)
+	Exp -> '*' . Exp                                    (rule 110)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -1686,7 +1692,7 @@ State 96
 	Types -> '(' . Types asteriscos ')'                 (rule 23)
 	AnomFun -> '(' . Types ')' '(' Parametros ')' '{' Instrucciones '}'    (rule 78)
 	AnomFun -> '(' . Types ')' '(' ')' '{' Instrucciones '}'    (rule 79)
-	Exp -> '(' . Exp ')'                                (rule 105)
+	Exp -> '(' . Exp ')'                                (rule 108)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -1915,8 +1921,8 @@ State 112
 	ManyTypes -> ManyTypes . ',' Types                  (rule 11)
 	Types -> functionType '(' Types ')' '(' ManyTypes . ')'    (rule 21)
 
-	')'            shift, and enter state 194
-	','            shift, and enter state 195
+	')'            shift, and enter state 197
+	','            shift, and enter state 198
 
 
 State 113
@@ -1931,7 +1937,7 @@ State 113
 	'('            shift, and enter state 14
 
 	basicType      goto state 3
-	Types          goto state 193
+	Types          goto state 196
 
 State 114
 
@@ -1957,7 +1963,7 @@ State 116
 
 	'{'            shift, and enter state 45
 
-	Block          goto state 192
+	Block          goto state 195
 	Block2         goto state 64
 
 State 117
@@ -1975,135 +1981,138 @@ State 118
 	AnomFun -> '(' Types . ')' '(' ')' '{' Instrucciones '}'    (rule 79)
 
 	'*'            shift, and enter state 33
-	')'            shift, and enter state 191
+	')'            shift, and enter state 194
 
 	asteriscos     goto state 49
 
 State 119
 
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-	Exp -> '(' Exp . ')'                                (rule 105)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+	Exp -> '(' Exp . ')'                                (rule 108)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           shift, and enter state 143
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            shift, and enter state 190
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            shift, and enter state 193
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
 
 
 State 120
 
 	LLamada -> var . '(' ParametrosIn ')'               (rule 66)
 	LLamada -> var . '(' ')'                            (rule 67)
-	Atom -> var .                                       (rule 85)
+	Atom -> var .                                       (rule 87)
+	Atom -> var . arr                                   (rule 88)
 
-	'<<'           reduce using rule 85
-	'>>'           reduce using rule 85
-	'.'            reduce using rule 85
-	'=='           reduce using rule 85
-	'>='           reduce using rule 85
-	'<='           reduce using rule 85
-	'!='           reduce using rule 85
-	'||'           reduce using rule 85
-	'&&'           reduce using rule 85
-	'+'            reduce using rule 85
-	'-'            reduce using rule 85
-	'*'            reduce using rule 85
-	'/'            reduce using rule 85
-	'('            shift, and enter state 134
-	')'            reduce using rule 85
-	';'            reduce using rule 85
-	'%'            reduce using rule 85
-	'<'            reduce using rule 85
-	'>'            reduce using rule 85
-	'&'            reduce using rule 85
-	'|'            reduce using rule 85
-	']'            reduce using rule 85
-	','            reduce using rule 85
+	'<<'           reduce using rule 87
+	'>>'           reduce using rule 87
+	'.'            reduce using rule 87
+	'=='           reduce using rule 87
+	'>='           reduce using rule 87
+	'<='           reduce using rule 87
+	'!='           reduce using rule 87
+	'||'           reduce using rule 87
+	'&&'           reduce using rule 87
+	'+'            reduce using rule 87
+	'-'            reduce using rule 87
+	'*'            reduce using rule 87
+	'/'            reduce using rule 87
+	'('            shift, and enter state 135
+	')'            reduce using rule 87
+	';'            reduce using rule 87
+	'%'            reduce using rule 87
+	'<'            reduce using rule 87
+	'>'            reduce using rule 87
+	'&'            reduce using rule 87
+	'|'            reduce using rule 87
+	'['            shift, and enter state 192
+	']'            reduce using rule 87
+	','            reduce using rule 87
 
+	arr            goto state 133
 
 State 121
 
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-	Exp -> '*' Exp .                                    (rule 107)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+	Exp -> '*' Exp .                                    (rule 110)
 
-	'<<'           reduce using rule 107
-	'>>'           reduce using rule 107
-	'.'            shift, and enter state 138
-	'=='           reduce using rule 107
-	'>='           reduce using rule 107
-	'<='           reduce using rule 107
-	'!='           reduce using rule 107
-	'||'           reduce using rule 107
-	'&&'           reduce using rule 107
-	'+'            reduce using rule 107
-	'-'            reduce using rule 107
-	'*'            reduce using rule 107
-	'/'            reduce using rule 107
-	')'            reduce using rule 107
-	';'            reduce using rule 107
-	'%'            reduce using rule 107
-	'<'            reduce using rule 107
-	'>'            reduce using rule 107
-	'&'            reduce using rule 107
-	'|'            reduce using rule 107
-	']'            reduce using rule 107
-	','            reduce using rule 107
+	'<<'           reduce using rule 110
+	'>>'           reduce using rule 110
+	'.'            shift, and enter state 139
+	'=='           reduce using rule 110
+	'>='           reduce using rule 110
+	'<='           reduce using rule 110
+	'!='           reduce using rule 110
+	'||'           reduce using rule 110
+	'&&'           reduce using rule 110
+	'+'            reduce using rule 110
+	'-'            reduce using rule 110
+	'*'            reduce using rule 110
+	'/'            reduce using rule 110
+	')'            reduce using rule 110
+	';'            reduce using rule 110
+	'%'            reduce using rule 110
+	'<'            reduce using rule 110
+	'>'            reduce using rule 110
+	'&'            reduce using rule 110
+	'|'            reduce using rule 110
+	']'            reduce using rule 110
+	','            reduce using rule 110
 
 
 State 122
 
 	AnomFun -> '(' . Types ')' '(' Parametros ')' '{' Instrucciones '}'    (rule 78)
 	AnomFun -> '(' . Types ')' '(' ')' '{' Instrucciones '}'    (rule 79)
-	Exp -> '(' . Exp ')'                                (rule 105)
+	Exp -> '(' . Exp ')'                                (rule 108)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2120,7 +2129,7 @@ State 122
 	'('            shift, and enter state 96
 
 	basicType      goto state 3
-	Types          goto state 189
+	Types          goto state 191
 	LLamada        goto state 76
 	AnomFun        goto state 78
 	Atom           goto state 79
@@ -2128,141 +2137,141 @@ State 122
 
 State 123
 
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-	Exp -> '-' Exp .                                    (rule 106)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+	Exp -> '-' Exp .                                    (rule 109)
 
-	'<<'           reduce using rule 106
-	'>>'           reduce using rule 106
-	'.'            shift, and enter state 138
-	'=='           reduce using rule 106
-	'>='           reduce using rule 106
-	'<='           reduce using rule 106
-	'!='           reduce using rule 106
-	'||'           reduce using rule 106
-	'&&'           reduce using rule 106
-	'+'            reduce using rule 106
-	'-'            reduce using rule 106
-	'*'            reduce using rule 106
-	'/'            reduce using rule 106
-	')'            reduce using rule 106
-	';'            reduce using rule 106
-	'%'            reduce using rule 106
-	'<'            reduce using rule 106
-	'>'            reduce using rule 106
-	'&'            reduce using rule 106
-	'|'            reduce using rule 106
-	']'            reduce using rule 106
-	','            reduce using rule 106
+	'<<'           reduce using rule 109
+	'>>'           reduce using rule 109
+	'.'            shift, and enter state 139
+	'=='           reduce using rule 109
+	'>='           reduce using rule 109
+	'<='           reduce using rule 109
+	'!='           reduce using rule 109
+	'||'           reduce using rule 109
+	'&&'           reduce using rule 109
+	'+'            reduce using rule 109
+	'-'            reduce using rule 109
+	'*'            reduce using rule 109
+	'/'            reduce using rule 109
+	')'            reduce using rule 109
+	';'            reduce using rule 109
+	'%'            reduce using rule 109
+	'<'            reduce using rule 109
+	'>'            reduce using rule 109
+	'&'            reduce using rule 109
+	'|'            reduce using rule 109
+	']'            reduce using rule 109
+	','            reduce using rule 109
 
 
 State 124
 
 	Instruccion -> write Exp . ';'                      (rule 58)
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           shift, and enter state 143
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	';'            shift, and enter state 188
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	';'            shift, and enter state 190
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
 
 
 State 125
 
 	Instruccion -> read var . ';'                       (rule 57)
 
-	';'            shift, and enter state 187
+	';'            shift, and enter state 189
 
 
 State 126
 
 	Instruccion -> return Exp . ';'                     (rule 56)
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           shift, and enter state 143
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	';'            shift, and enter state 186
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	';'            shift, and enter state 188
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
 
 
 State 127
@@ -2383,7 +2392,7 @@ State 130
 
 	Block          goto state 70
 	Block2         goto state 64
-	Instruccion    goto state 185
+	Instruccion    goto state 187
 	For            goto state 72
 	While          goto state 73
 	If             goto state 74
@@ -2409,7 +2418,7 @@ State 131
 	LLamada        goto state 76
 	AnomFun        goto state 78
 	Atom           goto state 79
-	Exp            goto state 184
+	Exp            goto state 186
 
 State 132
 
@@ -2428,9 +2437,39 @@ State 132
 	LLamada        goto state 76
 	AnomFun        goto state 78
 	Atom           goto state 79
-	Exp            goto state 183
+	Exp            goto state 185
 
 State 133
+
+	arr -> arr . '[' Exp ']'                            (rule 80)
+	Atom -> var arr .                                   (rule 88)
+
+	'<<'           reduce using rule 88
+	'>>'           reduce using rule 88
+	'.'            reduce using rule 88
+	'=='           reduce using rule 88
+	'>='           reduce using rule 88
+	'<='           reduce using rule 88
+	'!='           reduce using rule 88
+	'||'           reduce using rule 88
+	'&&'           reduce using rule 88
+	'+'            reduce using rule 88
+	'-'            reduce using rule 88
+	'*'            reduce using rule 88
+	'/'            reduce using rule 88
+	')'            reduce using rule 88
+	';'            reduce using rule 88
+	'%'            reduce using rule 88
+	'<'            reduce using rule 88
+	'>'            reduce using rule 88
+	'&'            reduce using rule 88
+	'|'            reduce using rule 88
+	'['            shift, and enter state 184
+	']'            reduce using rule 88
+	','            reduce using rule 88
+
+
+State 134
 
 	Asignacion -> var '=' . Exp                         (rule 64)
 
@@ -2446,9 +2485,9 @@ State 133
 	LLamada        goto state 76
 	AnomFun        goto state 78
 	Atom           goto state 79
-	Exp            goto state 182
+	Exp            goto state 183
 
-State 134
+State 135
 
 	LLamada -> var '(' . ParametrosIn ')'               (rule 66)
 	LLamada -> var '(' . ')'                            (rule 67)
@@ -2461,17 +2500,36 @@ State 134
 	'-'            shift, and enter state 94
 	'*'            shift, and enter state 95
 	'('            shift, and enter state 122
-	')'            shift, and enter state 181
+	')'            shift, and enter state 182
 
 	LLamada        goto state 76
-	ParametrosIn   goto state 179
+	ParametrosIn   goto state 180
 	AnomFun        goto state 78
 	Atom           goto state 79
-	Exp            goto state 180
+	Exp            goto state 181
 
-State 135
+State 136
 
 	Asignacion -> var '[' . Exp ']' '=' Exp             (rule 65)
+	arr -> '[' . Exp ']'                                (rule 81)
+
+	var            shift, and enter state 120
+	int            shift, and enter state 82
+	float          shift, and enter state 83
+	bool           shift, and enter state 84
+	str            shift, and enter state 93
+	'-'            shift, and enter state 94
+	'*'            shift, and enter state 95
+	'('            shift, and enter state 122
+
+	LLamada        goto state 76
+	AnomFun        goto state 78
+	Atom           goto state 79
+	Exp            goto state 179
+
+State 137
+
+	Exp -> Exp '<<' . Exp                               (rule 94)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2487,9 +2545,9 @@ State 135
 	Atom           goto state 79
 	Exp            goto state 178
 
-State 136
+State 138
 
-	Exp -> Exp '<<' . Exp                               (rule 91)
+	Exp -> Exp '>>' . Exp                               (rule 95)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2505,9 +2563,16 @@ State 136
 	Atom           goto state 79
 	Exp            goto state 177
 
-State 137
+State 139
 
-	Exp -> Exp '>>' . Exp                               (rule 92)
+	Exp -> Exp '.' . var                                (rule 107)
+
+	var            shift, and enter state 176
+
+
+State 140
+
+	Exp -> Exp '==' . Exp                               (rule 100)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2521,18 +2586,11 @@ State 137
 	LLamada        goto state 76
 	AnomFun        goto state 78
 	Atom           goto state 79
-	Exp            goto state 176
+	Exp            goto state 175
 
-State 138
+State 141
 
-	Exp -> Exp '.' . var                                (rule 104)
-
-	var            shift, and enter state 175
-
-
-State 139
-
-	Exp -> Exp '==' . Exp                               (rule 97)
+	Exp -> Exp '>=' . Exp                               (rule 99)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2548,9 +2606,9 @@ State 139
 	Atom           goto state 79
 	Exp            goto state 174
 
-State 140
+State 142
 
-	Exp -> Exp '>=' . Exp                               (rule 96)
+	Exp -> Exp '<=' . Exp                               (rule 97)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2566,9 +2624,9 @@ State 140
 	Atom           goto state 79
 	Exp            goto state 173
 
-State 141
+State 143
 
-	Exp -> Exp '<=' . Exp                               (rule 94)
+	Exp -> Exp '!=' . Exp                               (rule 101)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2584,9 +2642,9 @@ State 141
 	Atom           goto state 79
 	Exp            goto state 172
 
-State 142
+State 144
 
-	Exp -> Exp '!=' . Exp                               (rule 98)
+	Exp -> Exp '||' . Exp                               (rule 106)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2602,9 +2660,9 @@ State 142
 	Atom           goto state 79
 	Exp            goto state 171
 
-State 143
+State 145
 
-	Exp -> Exp '||' . Exp                               (rule 103)
+	Exp -> Exp '&&' . Exp                               (rule 105)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2620,9 +2678,9 @@ State 143
 	Atom           goto state 79
 	Exp            goto state 170
 
-State 144
+State 146
 
-	Exp -> Exp '&&' . Exp                               (rule 102)
+	Exp -> Exp '+' . Exp                                (rule 90)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2638,9 +2696,9 @@ State 144
 	Atom           goto state 79
 	Exp            goto state 169
 
-State 145
+State 147
 
-	Exp -> Exp '+' . Exp                                (rule 87)
+	Exp -> Exp '-' . Exp                                (rule 91)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2656,9 +2714,9 @@ State 145
 	Atom           goto state 79
 	Exp            goto state 168
 
-State 146
+State 148
 
-	Exp -> Exp '-' . Exp                                (rule 88)
+	Exp -> Exp '*' . Exp                                (rule 92)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2674,9 +2732,9 @@ State 146
 	Atom           goto state 79
 	Exp            goto state 167
 
-State 147
+State 149
 
-	Exp -> Exp '*' . Exp                                (rule 89)
+	Exp -> Exp '/' . Exp                                (rule 93)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2692,25 +2750,7 @@ State 147
 	Atom           goto state 79
 	Exp            goto state 166
 
-State 148
-
-	Exp -> Exp '/' . Exp                                (rule 90)
-
-	var            shift, and enter state 120
-	int            shift, and enter state 82
-	float          shift, and enter state 83
-	bool           shift, and enter state 84
-	str            shift, and enter state 93
-	'-'            shift, and enter state 94
-	'*'            shift, and enter state 95
-	'('            shift, and enter state 122
-
-	LLamada        goto state 76
-	AnomFun        goto state 78
-	Atom           goto state 79
-	Exp            goto state 165
-
-State 149
+State 150
 
 	Instruccion -> Exp ';' .                            (rule 52)
 
@@ -2741,9 +2781,27 @@ State 149
 	';'            reduce using rule 52
 
 
-State 150
+State 151
 
-	Exp -> Exp '%' . Exp                                (rule 100)
+	Exp -> Exp '%' . Exp                                (rule 103)
+
+	var            shift, and enter state 120
+	int            shift, and enter state 82
+	float          shift, and enter state 83
+	bool           shift, and enter state 84
+	str            shift, and enter state 93
+	'-'            shift, and enter state 94
+	'*'            shift, and enter state 95
+	'('            shift, and enter state 122
+
+	LLamada        goto state 76
+	AnomFun        goto state 78
+	Atom           goto state 79
+	Exp            goto state 165
+
+State 152
+
+	Exp -> Exp '<' . Exp                                (rule 96)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2759,9 +2817,9 @@ State 150
 	Atom           goto state 79
 	Exp            goto state 164
 
-State 151
+State 153
 
-	Exp -> Exp '<' . Exp                                (rule 93)
+	Exp -> Exp '>' . Exp                                (rule 98)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2777,9 +2835,9 @@ State 151
 	Atom           goto state 79
 	Exp            goto state 163
 
-State 152
+State 154
 
-	Exp -> Exp '>' . Exp                                (rule 95)
+	Exp -> Exp '&' . Exp                                (rule 102)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2795,9 +2853,9 @@ State 152
 	Atom           goto state 79
 	Exp            goto state 162
 
-State 153
+State 155
 
-	Exp -> Exp '&' . Exp                                (rule 99)
+	Exp -> Exp '|' . Exp                                (rule 104)
 
 	var            shift, and enter state 120
 	int            shift, and enter state 82
@@ -2813,25 +2871,7 @@ State 153
 	Atom           goto state 79
 	Exp            goto state 161
 
-State 154
-
-	Exp -> Exp '|' . Exp                                (rule 101)
-
-	var            shift, and enter state 120
-	int            shift, and enter state 82
-	float          shift, and enter state 83
-	bool           shift, and enter state 84
-	str            shift, and enter state 93
-	'-'            shift, and enter state 94
-	'*'            shift, and enter state 95
-	'('            shift, and enter state 122
-
-	LLamada        goto state 76
-	AnomFun        goto state 78
-	Atom           goto state 79
-	Exp            goto state 160
-
-State 155
+State 156
 
 	Instrucciones -> Instrucciones VarDeclaration .     (rule 72)
 
@@ -2861,7 +2901,7 @@ State 155
 	';'            reduce using rule 72
 
 
-State 156
+State 157
 
 	Block -> Block2 Instrucciones Block3 .              (rule 44)
 
@@ -2894,7 +2934,7 @@ State 156
 	%eof           reduce using rule 44
 
 
-State 157
+State 158
 
 	Instrucciones -> Instrucciones Instruccion .        (rule 70)
 
@@ -2924,7 +2964,7 @@ State 157
 	';'            reduce using rule 70
 
 
-State 158
+State 159
 
 	Instruccion -> Asignacion ';' .                     (rule 51)
 
@@ -2955,7 +2995,7 @@ State 158
 	';'            reduce using rule 51
 
 
-State 159
+State 160
 
 	arrays -> arrays '[' int ']' .                      (rule 24)
 
@@ -2964,642 +3004,182 @@ State 159
 	','            reduce using rule 24
 
 
-State 160
-
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp '|' Exp .                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           reduce using rule 101
-	'&&'           reduce using rule 101
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            reduce using rule 101
-	';'            reduce using rule 101
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            reduce using rule 101
-	']'            reduce using rule 101
-	','            reduce using rule 101
-
-
 State 161
 
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp '&' Exp .                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp '|' Exp .                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           reduce using rule 99
-	'&&'           reduce using rule 99
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            reduce using rule 99
-	';'            reduce using rule 99
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            reduce using rule 99
-	'|'            reduce using rule 99
-	']'            reduce using rule 99
-	','            reduce using rule 99
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           reduce using rule 104
+	'&&'           reduce using rule 104
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            reduce using rule 104
+	';'            reduce using rule 104
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            reduce using rule 104
+	']'            reduce using rule 104
+	','            reduce using rule 104
 
 
 State 162
 
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp '>' Exp .                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp '&' Exp .                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           reduce using rule 95
-	'>='           fail
-	'<='           fail
-	'!='           reduce using rule 95
-	'||'           reduce using rule 95
-	'&&'           reduce using rule 95
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            reduce using rule 95
-	';'            reduce using rule 95
-	'%'            shift, and enter state 150
-	'<'            fail
-	'>'            fail
-	'&'            reduce using rule 95
-	'|'            reduce using rule 95
-	']'            reduce using rule 95
-	','            reduce using rule 95
-
-
-State 163
-
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp '<' Exp .                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           reduce using rule 93
-	'>='           fail
-	'<='           fail
-	'!='           reduce using rule 93
-	'||'           reduce using rule 93
-	'&&'           reduce using rule 93
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            reduce using rule 93
-	';'            reduce using rule 93
-	'%'            shift, and enter state 150
-	'<'            fail
-	'>'            fail
-	'&'            reduce using rule 93
-	'|'            reduce using rule 93
-	']'            reduce using rule 93
-	','            reduce using rule 93
-
-
-State 164
-
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp '%' Exp .                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-
-	'<<'           reduce using rule 100
-	'>>'           reduce using rule 100
-	'.'            shift, and enter state 138
-	'=='           reduce using rule 100
-	'>='           reduce using rule 100
-	'<='           reduce using rule 100
-	'!='           reduce using rule 100
-	'||'           reduce using rule 100
-	'&&'           reduce using rule 100
-	'+'            reduce using rule 100
-	'-'            reduce using rule 100
-	'*'            reduce using rule 100
-	'/'            reduce using rule 100
-	')'            reduce using rule 100
-	';'            reduce using rule 100
-	'%'            reduce using rule 100
-	'<'            reduce using rule 100
-	'>'            reduce using rule 100
-	'&'            reduce using rule 100
-	'|'            reduce using rule 100
-	']'            reduce using rule 100
-	','            reduce using rule 100
-
-
-State 165
-
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp '/' Exp .                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-
-	'<<'           reduce using rule 90
-	'>>'           reduce using rule 90
-	'.'            shift, and enter state 138
-	'=='           reduce using rule 90
-	'>='           reduce using rule 90
-	'<='           reduce using rule 90
-	'!='           reduce using rule 90
-	'||'           reduce using rule 90
-	'&&'           reduce using rule 90
-	'+'            reduce using rule 90
-	'-'            reduce using rule 90
-	'*'            reduce using rule 90
-	'/'            reduce using rule 90
-	')'            reduce using rule 90
-	';'            reduce using rule 90
-	'%'            reduce using rule 90
-	'<'            reduce using rule 90
-	'>'            reduce using rule 90
-	'&'            reduce using rule 90
-	'|'            reduce using rule 90
-	']'            reduce using rule 90
-	','            reduce using rule 90
-
-
-State 166
-
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp '*' Exp .                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-
-	'<<'           reduce using rule 89
-	'>>'           reduce using rule 89
-	'.'            shift, and enter state 138
-	'=='           reduce using rule 89
-	'>='           reduce using rule 89
-	'<='           reduce using rule 89
-	'!='           reduce using rule 89
-	'||'           reduce using rule 89
-	'&&'           reduce using rule 89
-	'+'            reduce using rule 89
-	'-'            reduce using rule 89
-	'*'            reduce using rule 89
-	'/'            reduce using rule 89
-	')'            reduce using rule 89
-	';'            reduce using rule 89
-	'%'            reduce using rule 89
-	'<'            reduce using rule 89
-	'>'            reduce using rule 89
-	'&'            reduce using rule 89
-	'|'            reduce using rule 89
-	']'            reduce using rule 89
-	','            reduce using rule 89
-
-
-State 167
-
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp '-' Exp .                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-
-	'<<'           reduce using rule 88
-	'>>'           reduce using rule 88
-	'.'            shift, and enter state 138
-	'=='           reduce using rule 88
-	'>='           reduce using rule 88
-	'<='           reduce using rule 88
-	'!='           reduce using rule 88
-	'||'           reduce using rule 88
-	'&&'           reduce using rule 88
-	'+'            reduce using rule 88
-	'-'            reduce using rule 88
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            reduce using rule 88
-	';'            reduce using rule 88
-	'%'            shift, and enter state 150
-	'<'            reduce using rule 88
-	'>'            reduce using rule 88
-	'&'            reduce using rule 88
-	'|'            reduce using rule 88
-	']'            reduce using rule 88
-	','            reduce using rule 88
-
-
-State 168
-
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp '+' Exp .                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-
-	'<<'           reduce using rule 87
-	'>>'           reduce using rule 87
-	'.'            shift, and enter state 138
-	'=='           reduce using rule 87
-	'>='           reduce using rule 87
-	'<='           reduce using rule 87
-	'!='           reduce using rule 87
-	'||'           reduce using rule 87
-	'&&'           reduce using rule 87
-	'+'            reduce using rule 87
-	'-'            reduce using rule 87
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            reduce using rule 87
-	';'            reduce using rule 87
-	'%'            shift, and enter state 150
-	'<'            reduce using rule 87
-	'>'            reduce using rule 87
-	'&'            reduce using rule 87
-	'|'            reduce using rule 87
-	']'            reduce using rule 87
-	','            reduce using rule 87
-
-
-State 169
-
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp '&&' Exp .                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
 	'||'           reduce using rule 102
 	'&&'           reduce using rule 102
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
 	')'            reduce using rule 102
 	';'            reduce using rule 102
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            reduce using rule 102
+	'|'            reduce using rule 102
 	']'            reduce using rule 102
 	','            reduce using rule 102
 
 
-State 170
+State 163
 
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp '||' Exp .                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp '>' Exp .                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           reduce using rule 103
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            reduce using rule 103
-	';'            reduce using rule 103
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
-	']'            reduce using rule 103
-	','            reduce using rule 103
-
-
-State 171
-
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp '!=' Exp .                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           fail
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           fail
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           reduce using rule 98
+	'>='           fail
+	'<='           fail
+	'!='           reduce using rule 98
 	'||'           reduce using rule 98
 	'&&'           reduce using rule 98
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
 	')'            reduce using rule 98
 	';'            reduce using rule 98
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
+	'%'            shift, and enter state 151
+	'<'            fail
+	'>'            fail
 	'&'            reduce using rule 98
 	'|'            reduce using rule 98
 	']'            reduce using rule 98
 	','            reduce using rule 98
 
 
-State 172
+State 164
 
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp '<=' Exp .                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp '<' Exp .                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           reduce using rule 94
-	'>='           fail
-	'<='           fail
-	'!='           reduce using rule 94
-	'||'           reduce using rule 94
-	'&&'           reduce using rule 94
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            reduce using rule 94
-	';'            reduce using rule 94
-	'%'            shift, and enter state 150
-	'<'            fail
-	'>'            fail
-	'&'            reduce using rule 94
-	'|'            reduce using rule 94
-	']'            reduce using rule 94
-	','            reduce using rule 94
-
-
-State 173
-
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp '>=' Exp .                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
 	'=='           reduce using rule 96
 	'>='           fail
 	'<='           fail
 	'!='           reduce using rule 96
 	'||'           reduce using rule 96
 	'&&'           reduce using rule 96
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
 	')'            reduce using rule 96
 	';'            reduce using rule 96
-	'%'            shift, and enter state 150
+	'%'            shift, and enter state 151
 	'<'            fail
 	'>'            fail
 	'&'            reduce using rule 96
@@ -3608,118 +3188,136 @@ State 173
 	','            reduce using rule 96
 
 
-State 174
+State 165
 
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp '==' Exp .                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp '%' Exp .                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           fail
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           fail
-	'||'           reduce using rule 97
-	'&&'           reduce using rule 97
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            reduce using rule 97
-	';'            reduce using rule 97
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            reduce using rule 97
-	'|'            reduce using rule 97
-	']'            reduce using rule 97
-	','            reduce using rule 97
-
-
-State 175
-
-	Exp -> Exp '.' var .                                (rule 104)
-
-	'<<'           reduce using rule 104
-	'>>'           reduce using rule 104
-	'.'            reduce using rule 104
-	'=='           reduce using rule 104
-	'>='           reduce using rule 104
-	'<='           reduce using rule 104
-	'!='           reduce using rule 104
-	'||'           reduce using rule 104
-	'&&'           reduce using rule 104
-	'+'            reduce using rule 104
-	'-'            reduce using rule 104
-	'*'            reduce using rule 104
-	'/'            reduce using rule 104
-	')'            reduce using rule 104
-	';'            reduce using rule 104
-	'%'            reduce using rule 104
-	'<'            reduce using rule 104
-	'>'            reduce using rule 104
-	'&'            reduce using rule 104
-	'|'            reduce using rule 104
-	']'            reduce using rule 104
-	','            reduce using rule 104
+	'<<'           reduce using rule 103
+	'>>'           reduce using rule 103
+	'.'            shift, and enter state 139
+	'=='           reduce using rule 103
+	'>='           reduce using rule 103
+	'<='           reduce using rule 103
+	'!='           reduce using rule 103
+	'||'           reduce using rule 103
+	'&&'           reduce using rule 103
+	'+'            reduce using rule 103
+	'-'            reduce using rule 103
+	'*'            reduce using rule 103
+	'/'            reduce using rule 103
+	')'            reduce using rule 103
+	';'            reduce using rule 103
+	'%'            reduce using rule 103
+	'<'            reduce using rule 103
+	'>'            reduce using rule 103
+	'&'            reduce using rule 103
+	'|'            reduce using rule 103
+	']'            reduce using rule 103
+	','            reduce using rule 103
 
 
-State 176
+State 166
 
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp '>>' Exp .                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp '/' Exp .                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           reduce using rule 93
+	'>>'           reduce using rule 93
+	'.'            shift, and enter state 139
+	'=='           reduce using rule 93
+	'>='           reduce using rule 93
+	'<='           reduce using rule 93
+	'!='           reduce using rule 93
+	'||'           reduce using rule 93
+	'&&'           reduce using rule 93
+	'+'            reduce using rule 93
+	'-'            reduce using rule 93
+	'*'            reduce using rule 93
+	'/'            reduce using rule 93
+	')'            reduce using rule 93
+	';'            reduce using rule 93
+	'%'            reduce using rule 93
+	'<'            reduce using rule 93
+	'>'            reduce using rule 93
+	'&'            reduce using rule 93
+	'|'            reduce using rule 93
+	']'            reduce using rule 93
+	','            reduce using rule 93
+
+
+State 167
+
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp '*' Exp .                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
 	'<<'           reduce using rule 92
 	'>>'           reduce using rule 92
-	'.'            shift, and enter state 138
+	'.'            shift, and enter state 139
 	'=='           reduce using rule 92
 	'>='           reduce using rule 92
 	'<='           reduce using rule 92
 	'!='           reduce using rule 92
 	'||'           reduce using rule 92
 	'&&'           reduce using rule 92
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
+	'+'            reduce using rule 92
+	'-'            reduce using rule 92
+	'*'            reduce using rule 92
+	'/'            reduce using rule 92
 	')'            reduce using rule 92
 	';'            reduce using rule 92
-	'%'            shift, and enter state 150
+	'%'            reduce using rule 92
 	'<'            reduce using rule 92
 	'>'            reduce using rule 92
 	'&'            reduce using rule 92
@@ -3728,44 +3326,44 @@ State 176
 	','            reduce using rule 92
 
 
-State 177
+State 168
 
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp '<<' Exp .                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp '-' Exp .                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
 	'<<'           reduce using rule 91
 	'>>'           reduce using rule 91
-	'.'            shift, and enter state 138
+	'.'            shift, and enter state 139
 	'=='           reduce using rule 91
 	'>='           reduce using rule 91
 	'<='           reduce using rule 91
 	'!='           reduce using rule 91
 	'||'           reduce using rule 91
 	'&&'           reduce using rule 91
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
+	'+'            reduce using rule 91
+	'-'            reduce using rule 91
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
 	')'            reduce using rule 91
 	';'            reduce using rule 91
-	'%'            shift, and enter state 150
+	'%'            shift, and enter state 151
 	'<'            reduce using rule 91
 	'>'            reduce using rule 91
 	'&'            reduce using rule 91
@@ -3774,103 +3372,546 @@ State 177
 	','            reduce using rule 91
 
 
+State 169
+
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp '+' Exp .                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           reduce using rule 90
+	'>>'           reduce using rule 90
+	'.'            shift, and enter state 139
+	'=='           reduce using rule 90
+	'>='           reduce using rule 90
+	'<='           reduce using rule 90
+	'!='           reduce using rule 90
+	'||'           reduce using rule 90
+	'&&'           reduce using rule 90
+	'+'            reduce using rule 90
+	'-'            reduce using rule 90
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            reduce using rule 90
+	';'            reduce using rule 90
+	'%'            shift, and enter state 151
+	'<'            reduce using rule 90
+	'>'            reduce using rule 90
+	'&'            reduce using rule 90
+	'|'            reduce using rule 90
+	']'            reduce using rule 90
+	','            reduce using rule 90
+
+
+State 170
+
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp '&&' Exp .                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           reduce using rule 105
+	'&&'           reduce using rule 105
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            reduce using rule 105
+	';'            reduce using rule 105
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
+	']'            reduce using rule 105
+	','            reduce using rule 105
+
+
+State 171
+
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp '||' Exp .                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           reduce using rule 106
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            reduce using rule 106
+	';'            reduce using rule 106
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
+	']'            reduce using rule 106
+	','            reduce using rule 106
+
+
+State 172
+
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp '!=' Exp .                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           fail
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           fail
+	'||'           reduce using rule 101
+	'&&'           reduce using rule 101
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            reduce using rule 101
+	';'            reduce using rule 101
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            reduce using rule 101
+	'|'            reduce using rule 101
+	']'            reduce using rule 101
+	','            reduce using rule 101
+
+
+State 173
+
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp '<=' Exp .                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           reduce using rule 97
+	'>='           fail
+	'<='           fail
+	'!='           reduce using rule 97
+	'||'           reduce using rule 97
+	'&&'           reduce using rule 97
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            reduce using rule 97
+	';'            reduce using rule 97
+	'%'            shift, and enter state 151
+	'<'            fail
+	'>'            fail
+	'&'            reduce using rule 97
+	'|'            reduce using rule 97
+	']'            reduce using rule 97
+	','            reduce using rule 97
+
+
+State 174
+
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp '>=' Exp .                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           reduce using rule 99
+	'>='           fail
+	'<='           fail
+	'!='           reduce using rule 99
+	'||'           reduce using rule 99
+	'&&'           reduce using rule 99
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            reduce using rule 99
+	';'            reduce using rule 99
+	'%'            shift, and enter state 151
+	'<'            fail
+	'>'            fail
+	'&'            reduce using rule 99
+	'|'            reduce using rule 99
+	']'            reduce using rule 99
+	','            reduce using rule 99
+
+
+State 175
+
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp '==' Exp .                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           fail
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           fail
+	'||'           reduce using rule 100
+	'&&'           reduce using rule 100
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            reduce using rule 100
+	';'            reduce using rule 100
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            reduce using rule 100
+	'|'            reduce using rule 100
+	']'            reduce using rule 100
+	','            reduce using rule 100
+
+
+State 176
+
+	Exp -> Exp '.' var .                                (rule 107)
+
+	'<<'           reduce using rule 107
+	'>>'           reduce using rule 107
+	'.'            reduce using rule 107
+	'=='           reduce using rule 107
+	'>='           reduce using rule 107
+	'<='           reduce using rule 107
+	'!='           reduce using rule 107
+	'||'           reduce using rule 107
+	'&&'           reduce using rule 107
+	'+'            reduce using rule 107
+	'-'            reduce using rule 107
+	'*'            reduce using rule 107
+	'/'            reduce using rule 107
+	')'            reduce using rule 107
+	';'            reduce using rule 107
+	'%'            reduce using rule 107
+	'<'            reduce using rule 107
+	'>'            reduce using rule 107
+	'&'            reduce using rule 107
+	'|'            reduce using rule 107
+	']'            reduce using rule 107
+	','            reduce using rule 107
+
+
+State 177
+
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp '>>' Exp .                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           reduce using rule 95
+	'>>'           reduce using rule 95
+	'.'            shift, and enter state 139
+	'=='           reduce using rule 95
+	'>='           reduce using rule 95
+	'<='           reduce using rule 95
+	'!='           reduce using rule 95
+	'||'           reduce using rule 95
+	'&&'           reduce using rule 95
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            reduce using rule 95
+	';'            reduce using rule 95
+	'%'            shift, and enter state 151
+	'<'            reduce using rule 95
+	'>'            reduce using rule 95
+	'&'            reduce using rule 95
+	'|'            reduce using rule 95
+	']'            reduce using rule 95
+	','            reduce using rule 95
+
+
 State 178
 
-	Asignacion -> var '[' Exp . ']' '=' Exp             (rule 65)
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp '<<' Exp .                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           shift, and enter state 143
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
-	']'            shift, and enter state 204
+	'<<'           reduce using rule 94
+	'>>'           reduce using rule 94
+	'.'            shift, and enter state 139
+	'=='           reduce using rule 94
+	'>='           reduce using rule 94
+	'<='           reduce using rule 94
+	'!='           reduce using rule 94
+	'||'           reduce using rule 94
+	'&&'           reduce using rule 94
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            reduce using rule 94
+	';'            reduce using rule 94
+	'%'            shift, and enter state 151
+	'<'            reduce using rule 94
+	'>'            reduce using rule 94
+	'&'            reduce using rule 94
+	'|'            reduce using rule 94
+	']'            reduce using rule 94
+	','            reduce using rule 94
 
 
 State 179
 
-	LLamada -> var '(' ParametrosIn . ')'               (rule 66)
-	ParametrosIn -> ParametrosIn . ',' Exp              (rule 68)
+	Asignacion -> var '[' Exp . ']' '=' Exp             (rule 65)
+	arr -> '[' Exp . ']'                                (rule 81)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	')'            shift, and enter state 202
-	','            shift, and enter state 203
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
+	']'            shift, and enter state 209
 
 
 State 180
 
-	ParametrosIn -> Exp .                               (rule 69)
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	LLamada -> var '(' ParametrosIn . ')'               (rule 66)
+	ParametrosIn -> ParametrosIn . ',' Exp              (rule 68)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           shift, and enter state 143
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            reduce using rule 69
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
-	','            reduce using rule 69
+	')'            shift, and enter state 207
+	','            shift, and enter state 208
 
 
 State 181
+
+	ParametrosIn -> Exp .                               (rule 69)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            reduce using rule 69
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
+	','            reduce using rule 69
+
+
+State 182
 
 	LLamada -> var '(' ')' .                            (rule 67)
 
@@ -3898,144 +3939,162 @@ State 181
 	','            reduce using rule 67
 
 
-State 182
-
-	Asignacion -> var '=' Exp .                         (rule 64)
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
-
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           shift, and enter state 143
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	';'            reduce using rule 64
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
-
-
 State 183
 
-	If -> if '(' Exp . ')' Block                        (rule 62)
-	If -> if '(' Exp . ')' Block else Instruccion       (rule 63)
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Asignacion -> var '=' Exp .                         (rule 64)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           shift, and enter state 143
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            shift, and enter state 201
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	';'            reduce using rule 64
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
 
 
 State 184
 
-	While -> while '(' Exp . ')' Instruccion            (rule 61)
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	arr -> arr '[' . Exp ']'                            (rule 80)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           shift, and enter state 143
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	')'            shift, and enter state 200
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
+	var            shift, and enter state 120
+	int            shift, and enter state 82
+	float          shift, and enter state 83
+	bool           shift, and enter state 84
+	str            shift, and enter state 93
+	'-'            shift, and enter state 94
+	'*'            shift, and enter state 95
+	'('            shift, and enter state 122
 
+	LLamada        goto state 76
+	AnomFun        goto state 78
+	Atom           goto state 79
+	Exp            goto state 206
 
 State 185
 
-	For -> for '(' Instruccion . ';' Exp ';' Instruccion ')' Instruccion    (rule 60)
+	If -> if '(' Exp . ')' Block                        (rule 62)
+	If -> if '(' Exp . ')' Block else Instruccion       (rule 63)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	';'            shift, and enter state 199
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            shift, and enter state 205
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
 
 
 State 186
+
+	While -> while '(' Exp . ')' Instruccion            (rule 61)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	')'            shift, and enter state 204
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
+
+
+State 187
+
+	For -> for '(' Instruccion . ';' Exp ';' Instruccion ')' Instruccion    (rule 60)
+
+	';'            shift, and enter state 203
+
+
+State 188
 
 	Instruccion -> return Exp ';' .                     (rule 56)
 
@@ -4066,7 +4125,7 @@ State 186
 	';'            reduce using rule 56
 
 
-State 187
+State 189
 
 	Instruccion -> read var ';' .                       (rule 57)
 
@@ -4097,7 +4156,7 @@ State 187
 	';'            reduce using rule 57
 
 
-State 188
+State 190
 
 	Instruccion -> write Exp ';' .                      (rule 58)
 
@@ -4128,51 +4187,69 @@ State 188
 	';'            reduce using rule 58
 
 
-State 189
+State 191
 
 	AnomFun -> '(' Types . ')' '(' Parametros ')' '{' Instrucciones '}'    (rule 78)
 	AnomFun -> '(' Types . ')' '(' ')' '{' Instrucciones '}'    (rule 79)
 
-	')'            shift, and enter state 191
+	')'            shift, and enter state 194
 
 
-State 190
+State 192
 
-	Exp -> '(' Exp ')' .                                (rule 105)
+	arr -> '[' . Exp ']'                                (rule 81)
 
-	'<<'           reduce using rule 105
-	'>>'           reduce using rule 105
-	'.'            reduce using rule 105
-	'=='           reduce using rule 105
-	'>='           reduce using rule 105
-	'<='           reduce using rule 105
-	'!='           reduce using rule 105
-	'||'           reduce using rule 105
-	'&&'           reduce using rule 105
-	'+'            reduce using rule 105
-	'-'            reduce using rule 105
-	'*'            reduce using rule 105
-	'/'            reduce using rule 105
-	')'            reduce using rule 105
-	';'            reduce using rule 105
-	'%'            reduce using rule 105
-	'<'            reduce using rule 105
-	'>'            reduce using rule 105
-	'&'            reduce using rule 105
-	'|'            reduce using rule 105
-	']'            reduce using rule 105
-	','            reduce using rule 105
+	var            shift, and enter state 120
+	int            shift, and enter state 82
+	float          shift, and enter state 83
+	bool           shift, and enter state 84
+	str            shift, and enter state 93
+	'-'            shift, and enter state 94
+	'*'            shift, and enter state 95
+	'('            shift, and enter state 122
+
+	LLamada        goto state 76
+	AnomFun        goto state 78
+	Atom           goto state 79
+	Exp            goto state 202
+
+State 193
+
+	Exp -> '(' Exp ')' .                                (rule 108)
+
+	'<<'           reduce using rule 108
+	'>>'           reduce using rule 108
+	'.'            reduce using rule 108
+	'=='           reduce using rule 108
+	'>='           reduce using rule 108
+	'<='           reduce using rule 108
+	'!='           reduce using rule 108
+	'||'           reduce using rule 108
+	'&&'           reduce using rule 108
+	'+'            reduce using rule 108
+	'-'            reduce using rule 108
+	'*'            reduce using rule 108
+	'/'            reduce using rule 108
+	')'            reduce using rule 108
+	';'            reduce using rule 108
+	'%'            reduce using rule 108
+	'<'            reduce using rule 108
+	'>'            reduce using rule 108
+	'&'            reduce using rule 108
+	'|'            reduce using rule 108
+	']'            reduce using rule 108
+	','            reduce using rule 108
 
 
-State 191
+State 194
 
 	AnomFun -> '(' Types ')' . '(' Parametros ')' '{' Instrucciones '}'    (rule 78)
 	AnomFun -> '(' Types ')' . '(' ')' '{' Instrucciones '}'    (rule 79)
 
-	'('            shift, and enter state 198
+	'('            shift, and enter state 201
 
 
-State 192
+State 195
 
 	Funcion -> Types VarVar FuncionP2 Parametros ')' registra2 Block . FuncionP3    (rule 37)
 
@@ -4184,9 +4261,9 @@ State 192
 	'('            reduce using rule 43
 	%eof           reduce using rule 43
 
-	FuncionP3      goto state 197
+	FuncionP3      goto state 200
 
-State 193
+State 196
 
 	ManyTypes -> pretype Types .                        (rule 12)
 
@@ -4194,7 +4271,7 @@ State 193
 	','            reduce using rule 12
 
 
-State 194
+State 197
 
 	Types -> functionType '(' Types ')' '(' ManyTypes ')' .    (rule 21)
 
@@ -4204,7 +4281,7 @@ State 194
 	','            reduce using rule 21
 
 
-State 195
+State 198
 
 	ManyTypes -> ManyTypes ',' . Types                  (rule 11)
 
@@ -4216,9 +4293,9 @@ State 195
 	'('            shift, and enter state 14
 
 	basicType      goto state 3
-	Types          goto state 196
+	Types          goto state 199
 
-State 196
+State 199
 
 	ManyTypes -> ManyTypes ',' Types .                  (rule 11)
 
@@ -4226,7 +4303,7 @@ State 196
 	','            reduce using rule 11
 
 
-State 197
+State 200
 
 	Funcion -> Types VarVar FuncionP2 Parametros ')' registra2 Block FuncionP3 .    (rule 37)
 
@@ -4239,7 +4316,7 @@ State 197
 	%eof           reduce using rule 37
 
 
-State 198
+State 201
 
 	AnomFun -> '(' Types ')' '(' . Parametros ')' '{' Instrucciones '}'    (rule 78)
 	AnomFun -> '(' Types ')' '(' . ')' '{' Instrucciones '}'    (rule 79)
@@ -4251,14 +4328,57 @@ State 198
 	struct         shift, and enter state 22
 	unsigned       shift, and enter state 13
 	'('            shift, and enter state 14
-	')'            shift, and enter state 211
+	')'            shift, and enter state 218
 
 	basicType      goto state 3
 	Types          goto state 59
 	Parametro      goto state 60
-	Parametros     goto state 210
+	Parametros     goto state 217
 
-State 199
+State 202
+
+	arr -> '[' Exp . ']'                                (rule 81)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
+	']'            shift, and enter state 216
+
+
+State 203
 
 	For -> for '(' Instruccion ';' . Exp ';' Instruccion ')' Instruccion    (rule 60)
 
@@ -4274,9 +4394,9 @@ State 199
 	LLamada        goto state 76
 	AnomFun        goto state 78
 	Atom           goto state 79
-	Exp            goto state 209
+	Exp            goto state 215
 
-State 200
+State 204
 
 	While -> while '(' Exp ')' . Instruccion            (rule 61)
 
@@ -4301,7 +4421,7 @@ State 200
 
 	Block          goto state 70
 	Block2         goto state 64
-	Instruccion    goto state 208
+	Instruccion    goto state 214
 	For            goto state 72
 	While          goto state 73
 	If             goto state 74
@@ -4311,17 +4431,60 @@ State 200
 	Atom           goto state 79
 	Exp            goto state 80
 
-State 201
+State 205
 
 	If -> if '(' Exp ')' . Block                        (rule 62)
 	If -> if '(' Exp ')' . Block else Instruccion       (rule 63)
 
 	'{'            shift, and enter state 45
 
-	Block          goto state 207
+	Block          goto state 213
 	Block2         goto state 64
 
-State 202
+State 206
+
+	arr -> arr '[' Exp . ']'                            (rule 80)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
+	']'            shift, and enter state 212
+
+
+State 207
 
 	LLamada -> var '(' ParametrosIn ')' .               (rule 66)
 
@@ -4349,7 +4512,7 @@ State 202
 	','            reduce using rule 66
 
 
-State 203
+State 208
 
 	ParametrosIn -> ParametrosIn ',' . Exp              (rule 68)
 
@@ -4365,16 +4528,37 @@ State 203
 	LLamada        goto state 76
 	AnomFun        goto state 78
 	Atom           goto state 79
-	Exp            goto state 206
+	Exp            goto state 211
 
-State 204
+State 209
 
 	Asignacion -> var '[' Exp ']' . '=' Exp             (rule 65)
+	arr -> '[' Exp ']' .                                (rule 81)
 
-	'='            shift, and enter state 205
+	'<<'           reduce using rule 81
+	'>>'           reduce using rule 81
+	'.'            reduce using rule 81
+	'=='           reduce using rule 81
+	'>='           reduce using rule 81
+	'<='           reduce using rule 81
+	'!='           reduce using rule 81
+	'||'           reduce using rule 81
+	'&&'           reduce using rule 81
+	'='            shift, and enter state 210
+	'+'            reduce using rule 81
+	'-'            reduce using rule 81
+	'*'            reduce using rule 81
+	'/'            reduce using rule 81
+	';'            reduce using rule 81
+	'%'            reduce using rule 81
+	'<'            reduce using rule 81
+	'>'            reduce using rule 81
+	'&'            reduce using rule 81
+	'|'            reduce using rule 81
+	'['            reduce using rule 81
 
 
-State 205
+State 210
 
 	Asignacion -> var '[' Exp ']' '=' . Exp             (rule 65)
 
@@ -4390,53 +4574,82 @@ State 205
 	LLamada        goto state 76
 	AnomFun        goto state 78
 	Atom           goto state 79
-	Exp            goto state 216
+	Exp            goto state 223
 
-State 206
+State 211
 
 	ParametrosIn -> ParametrosIn ',' Exp .              (rule 68)
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           shift, and enter state 143
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
 	')'            reduce using rule 68
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
 	','            reduce using rule 68
 
 
-State 207
+State 212
+
+	arr -> arr '[' Exp ']' .                            (rule 80)
+
+	'<<'           reduce using rule 80
+	'>>'           reduce using rule 80
+	'.'            reduce using rule 80
+	'=='           reduce using rule 80
+	'>='           reduce using rule 80
+	'<='           reduce using rule 80
+	'!='           reduce using rule 80
+	'||'           reduce using rule 80
+	'&&'           reduce using rule 80
+	'+'            reduce using rule 80
+	'-'            reduce using rule 80
+	'*'            reduce using rule 80
+	'/'            reduce using rule 80
+	')'            reduce using rule 80
+	';'            reduce using rule 80
+	'%'            reduce using rule 80
+	'<'            reduce using rule 80
+	'>'            reduce using rule 80
+	'&'            reduce using rule 80
+	'|'            reduce using rule 80
+	'['            reduce using rule 80
+	']'            reduce using rule 80
+	','            reduce using rule 80
+
+
+State 213
 
 	If -> if '(' Exp ')' Block .                        (rule 62)
 	If -> if '(' Exp ')' Block . else Instruccion       (rule 63)
@@ -4450,7 +4663,7 @@ State 207
 	if             reduce using rule 62
 	while          reduce using rule 62
 	for            reduce using rule 62
-	else           shift, and enter state 215
+	else           shift, and enter state 222
 	union          reduce using rule 62
 	struct         reduce using rule 62
 	unsigned       reduce using rule 62
@@ -4469,7 +4682,7 @@ State 207
 	';'            reduce using rule 62
 
 
-State 208
+State 214
 
 	While -> while '(' Exp ')' Instruccion .            (rule 61)
 
@@ -4500,66 +4713,95 @@ State 208
 	';'            reduce using rule 61
 
 
-State 209
+State 215
 
 	For -> for '(' Instruccion ';' Exp . ';' Instruccion ')' Instruccion    (rule 60)
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           shift, and enter state 143
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
-	';'            shift, and enter state 214
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	';'            shift, and enter state 221
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
 
 
-State 210
+State 216
+
+	arr -> '[' Exp ']' .                                (rule 81)
+
+	'<<'           reduce using rule 81
+	'>>'           reduce using rule 81
+	'.'            reduce using rule 81
+	'=='           reduce using rule 81
+	'>='           reduce using rule 81
+	'<='           reduce using rule 81
+	'!='           reduce using rule 81
+	'||'           reduce using rule 81
+	'&&'           reduce using rule 81
+	'+'            reduce using rule 81
+	'-'            reduce using rule 81
+	'*'            reduce using rule 81
+	'/'            reduce using rule 81
+	')'            reduce using rule 81
+	';'            reduce using rule 81
+	'%'            reduce using rule 81
+	'<'            reduce using rule 81
+	'>'            reduce using rule 81
+	'&'            reduce using rule 81
+	'|'            reduce using rule 81
+	'['            reduce using rule 81
+	']'            reduce using rule 81
+	','            reduce using rule 81
+
+
+State 217
 
 	Parametros -> Parametros . ',' Parametro            (rule 76)
 	AnomFun -> '(' Types ')' '(' Parametros . ')' '{' Instrucciones '}'    (rule 78)
 
-	')'            shift, and enter state 213
+	')'            shift, and enter state 220
 	','            shift, and enter state 100
 
 
-State 211
+State 218
 
 	AnomFun -> '(' Types ')' '(' ')' . '{' Instrucciones '}'    (rule 79)
 
-	'{'            shift, and enter state 212
+	'{'            shift, and enter state 219
 
 
-State 212
+State 219
 
 	AnomFun -> '(' Types ')' '(' ')' '{' . Instrucciones '}'    (rule 79)
 
@@ -4598,19 +4840,19 @@ State 212
 	If             goto state 74
 	Asignacion     goto state 75
 	LLamada        goto state 76
-	Instrucciones  goto state 220
+	Instrucciones  goto state 227
 	AnomFun        goto state 78
 	Atom           goto state 79
 	Exp            goto state 80
 
-State 213
+State 220
 
 	AnomFun -> '(' Types ')' '(' Parametros ')' . '{' Instrucciones '}'    (rule 78)
 
-	'{'            shift, and enter state 219
+	'{'            shift, and enter state 226
 
 
-State 214
+State 221
 
 	For -> for '(' Instruccion ';' Exp ';' . Instruccion ')' Instruccion    (rule 60)
 
@@ -4635,7 +4877,7 @@ State 214
 
 	Block          goto state 70
 	Block2         goto state 64
-	Instruccion    goto state 218
+	Instruccion    goto state 225
 	For            goto state 72
 	While          goto state 73
 	If             goto state 74
@@ -4645,7 +4887,7 @@ State 214
 	Atom           goto state 79
 	Exp            goto state 80
 
-State 215
+State 222
 
 	If -> if '(' Exp ')' Block else . Instruccion       (rule 63)
 
@@ -4670,7 +4912,7 @@ State 215
 
 	Block          goto state 70
 	Block2         goto state 64
-	Instruccion    goto state 217
+	Instruccion    goto state 224
 	For            goto state 72
 	While          goto state 73
 	If             goto state 74
@@ -4680,50 +4922,50 @@ State 215
 	Atom           goto state 79
 	Exp            goto state 80
 
-State 216
+State 223
 
 	Asignacion -> var '[' Exp ']' '=' Exp .             (rule 65)
-	Exp -> Exp . '+' Exp                                (rule 87)
-	Exp -> Exp . '-' Exp                                (rule 88)
-	Exp -> Exp . '*' Exp                                (rule 89)
-	Exp -> Exp . '/' Exp                                (rule 90)
-	Exp -> Exp . '<<' Exp                               (rule 91)
-	Exp -> Exp . '>>' Exp                               (rule 92)
-	Exp -> Exp . '<' Exp                                (rule 93)
-	Exp -> Exp . '<=' Exp                               (rule 94)
-	Exp -> Exp . '>' Exp                                (rule 95)
-	Exp -> Exp . '>=' Exp                               (rule 96)
-	Exp -> Exp . '==' Exp                               (rule 97)
-	Exp -> Exp . '!=' Exp                               (rule 98)
-	Exp -> Exp . '&' Exp                                (rule 99)
-	Exp -> Exp . '%' Exp                                (rule 100)
-	Exp -> Exp . '|' Exp                                (rule 101)
-	Exp -> Exp . '&&' Exp                               (rule 102)
-	Exp -> Exp . '||' Exp                               (rule 103)
-	Exp -> Exp . '.' var                                (rule 104)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
 
-	'<<'           shift, and enter state 136
-	'>>'           shift, and enter state 137
-	'.'            shift, and enter state 138
-	'=='           shift, and enter state 139
-	'>='           shift, and enter state 140
-	'<='           shift, and enter state 141
-	'!='           shift, and enter state 142
-	'||'           shift, and enter state 143
-	'&&'           shift, and enter state 144
-	'+'            shift, and enter state 145
-	'-'            shift, and enter state 146
-	'*'            shift, and enter state 147
-	'/'            shift, and enter state 148
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
 	';'            reduce using rule 65
-	'%'            shift, and enter state 150
-	'<'            shift, and enter state 151
-	'>'            shift, and enter state 152
-	'&'            shift, and enter state 153
-	'|'            shift, and enter state 154
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
 
 
-State 217
+State 224
 
 	If -> if '(' Exp ')' Block else Instruccion .       (rule 63)
 
@@ -4754,14 +4996,14 @@ State 217
 	';'            reduce using rule 63
 
 
-State 218
+State 225
 
 	For -> for '(' Instruccion ';' Exp ';' Instruccion . ')' Instruccion    (rule 60)
 
-	')'            shift, and enter state 223
+	')'            shift, and enter state 230
 
 
-State 219
+State 226
 
 	AnomFun -> '(' Types ')' '(' Parametros ')' '{' . Instrucciones '}'    (rule 78)
 
@@ -4800,12 +5042,12 @@ State 219
 	If             goto state 74
 	Asignacion     goto state 75
 	LLamada        goto state 76
-	Instrucciones  goto state 222
+	Instrucciones  goto state 229
 	AnomFun        goto state 78
 	Atom           goto state 79
 	Exp            goto state 80
 
-State 220
+State 227
 
 	Instrucciones -> Instrucciones . Instruccion        (rule 70)
 	Instrucciones -> Instrucciones . VarDeclaration     (rule 72)
@@ -4833,15 +5075,15 @@ State 220
 	'*'            shift, and enter state 95
 	'('            shift, and enter state 96
 	'{'            shift, and enter state 45
-	'}'            shift, and enter state 221
+	'}'            shift, and enter state 228
 	';'            shift, and enter state 97
 
 	basicType      goto state 3
 	Types          goto state 52
-	VarDeclaration goto state 155
+	VarDeclaration goto state 156
 	Block          goto state 70
 	Block2         goto state 64
-	Instruccion    goto state 157
+	Instruccion    goto state 158
 	For            goto state 72
 	While          goto state 73
 	If             goto state 74
@@ -4851,7 +5093,7 @@ State 220
 	Atom           goto state 79
 	Exp            goto state 80
 
-State 221
+State 228
 
 	AnomFun -> '(' Types ')' '(' ')' '{' Instrucciones '}' .    (rule 79)
 
@@ -4879,7 +5121,7 @@ State 221
 	','            reduce using rule 79
 
 
-State 222
+State 229
 
 	Instrucciones -> Instrucciones . Instruccion        (rule 70)
 	Instrucciones -> Instrucciones . VarDeclaration     (rule 72)
@@ -4907,15 +5149,15 @@ State 222
 	'*'            shift, and enter state 95
 	'('            shift, and enter state 96
 	'{'            shift, and enter state 45
-	'}'            shift, and enter state 225
+	'}'            shift, and enter state 232
 	';'            shift, and enter state 97
 
 	basicType      goto state 3
 	Types          goto state 52
-	VarDeclaration goto state 155
+	VarDeclaration goto state 156
 	Block          goto state 70
 	Block2         goto state 64
-	Instruccion    goto state 157
+	Instruccion    goto state 158
 	For            goto state 72
 	While          goto state 73
 	If             goto state 74
@@ -4925,7 +5167,7 @@ State 222
 	Atom           goto state 79
 	Exp            goto state 80
 
-State 223
+State 230
 
 	For -> for '(' Instruccion ';' Exp ';' Instruccion ')' . Instruccion    (rule 60)
 
@@ -4950,7 +5192,7 @@ State 223
 
 	Block          goto state 70
 	Block2         goto state 64
-	Instruccion    goto state 224
+	Instruccion    goto state 231
 	For            goto state 72
 	While          goto state 73
 	If             goto state 74
@@ -4960,7 +5202,7 @@ State 223
 	Atom           goto state 79
 	Exp            goto state 80
 
-State 224
+State 231
 
 	For -> for '(' Instruccion ';' Exp ';' Instruccion ')' Instruccion .    (rule 60)
 
@@ -4991,7 +5233,7 @@ State 224
 	';'            reduce using rule 60
 
 
-State 225
+State 232
 
 	AnomFun -> '(' Types ')' '(' Parametros ')' '{' Instrucciones '}' .    (rule 78)
 
@@ -5022,7 +5264,7 @@ State 225
 -----------------------------------------------------------------------------
 Grammar Totals
 -----------------------------------------------------------------------------
-Number of rules: 109
+Number of rules: 112
 Number of terminals: 47
-Number of non-terminals: 37
-Number of states: 226
+Number of non-terminals: 38
+Number of states: 233

@@ -5,7 +5,7 @@ import Control.Monad.Writer
 import Control.Monad.State
 import qualified Fc.Tabla as T
 import qualified Fc.MyState as MyState
-import Fc.Datas (TypeData(..))
+import Fc.Datas (TypeData(..),operAcc,operAccMono)
 import Data.Maybe
 }
 
@@ -79,14 +79,26 @@ import Data.Maybe
 
 %%
 
-All : All Funcion                  { }
+All : All Funcion                  {% do
+  [x,y] <- pop 2
+  modify $ MyState.push (if x==TVoid && y==TVoid then TVoid else TError)
+  }
     | Funcion                      { }
-    | All Struct                   { }
-    | Struct                       { }
-    | All Union                    { }
-    | Union                        { }
-    | All VarDeclaration           { }
-    | VarDeclaration               { }
+    | All Struct                   {% do
+  [x] <- pop 1
+  modify $ MyState.push (if x==TVoid then TVoid else TError)
+  }
+    | Struct                       {%modify $ MyState.push TVoid }
+    | All Union                    {% do
+  [x,y] <- pop 2
+  modify $ MyState.push (if x==TVoid && y==TVoid then TVoid else TError)
+  }
+    | Union                        {%modify $ MyState.push TVoid }
+    | All VarDeclaration           {% do
+  [x,y] <- pop 2
+  modify $ MyState.push (if x==TVoid && y==TVoid then TVoid else TError)
+  }
+    | VarDeclaration               {%modify $ MyState.push TVoid }
 
 VarDeclarations : VarDeclarations VarDeclaration  { }
     | VarDeclaration  { }
@@ -131,11 +143,23 @@ variables : variables ',' var          {% modify $ (\s -> modifTabla $3 (MyState
 
 VarDeclaration : Types variables ';'  { }
 
-StructVar : var {% modify $ modifTabla $1 (TStruct $ (\(s,_,_)->s) $1) }
-Struct : struct StructVar Block2 VarDeclarations Block3 ';' {}
+StructVar : var {% do
+  modify $ modifTabla $1 (TStruct $ (\(s,_,_)->s) $1) 
+  modify $ MyState.push (TStruct $ (\(s,_,_)->s) $1) 
+  }
+Struct : struct StructVar Block2 VarDeclarations Block3 ';' {% do
+  [x] <- pop 1
+  modify $ (\s-> MyState.addus x (MyState.querrySimT (T.enterN 0) s) s) 
+  }
 
-UnionVar : var {% modify $ modifTabla $1 (TUnion $ (\(s,_,_)->s) $1) }
-Union : union UnionVar Block2 VarDeclarations Block3 ';' {}
+UnionVar : var {% do
+  modify $ modifTabla $1 (TUnion $ (\(s,_,_)->s) $1) 
+  modify $ MyState.push (TUnion $ (\(s,_,_)->s) $1) 
+  }
+Union : union UnionVar Block2 VarDeclarations Block3 ';' {% do
+  [x] <- pop 1
+  modify $ (\s-> MyState.addus x (MyState.querrySimT (T.enterN 0) s) s) 
+  }
 
 Funcion : Types VarVar FuncionP2 Parametros ')' registra2 Block FuncionP3   {  }
     | Types VarVar registra Block  {  }
@@ -162,34 +186,71 @@ Instruccion : Block { }
     | While { }
     | If { }
     | Asignacion ';' { }
-    | Exp ';' { }
-    | break ';' { }
-    | continue ';' { }
-    | return ';' { }
-    | return Exp ';' { }
-    | read var ';' {% modify $ checkExist $2 }
-    | write Exp ';' { }
-    | ';' { }
+    | Exp ';' {% do
+  [x] <- pop 1
+  modify $ MyState.push (if x==TError then TError else TVoid)
+ }
+    | break ';' {% modify $ MyState.push TVoid}
+    | continue ';' {% modify $ MyState.push TVoid}
+    | return ';' {% modify $ MyState.push TVoid}
+    | return Exp ';' {% do
+  [x] <- pop 1
+  modify $ MyState.push (if x==TError then TError else TVoid)
+ }
+    | read var ';' {% do 
+  modify $ checkExist $2 
+  modify $ MyState.push TVoid
+  }
+    | write Exp ';' {% modify $ MyState.push TVoid} --------------------------arreglar, chequear expresion
+    | ';' {% modify $ MyState.push TVoid}
 
-For : for '(' Instruccion ';' Exp ';' Instruccion ')' Instruccion { }
-While : while '(' Exp ')' Instruccion { }
+For : for '(' Instruccion ';' Exp ';' Instruccion ')' Instruccion {% do
+  [x,y,z,w] <- pop 4
+  modify $ MyState.push (if y==TBool && x==TVoid && z==TVoid && w==TVoid then TVoid else TError)
+ }
+While : while '(' Exp ')' Instruccion {% do
+  [x,y] <- pop 2
+  modify $ MyState.push (if x==TVoid && y==TBool then TVoid else TError)
+ }
 
-If : if '(' Exp ')' Block { }
-    | if '(' Exp ')' Block else Instruccion { }
+If : if '(' Exp ')' Block {% do
+  [x,y] <- pop 2
+  modify $ MyState.push (if x==TVoid && y==TBool then TVoid else TError)
+ }
+    | if '(' Exp ')' Block else Instruccion {% do
+  [x,y,z] <- pop 3
+  modify $ MyState.push (if y==TVoid && x==TVoid && z==TBool then TVoid else TError)
+ }
 
-Asignacion : var '=' Exp {% modify $ checkExist $1 }
-    | var '[' Exp ']' '=' Exp {% modify $ checkExist $1 }
+Asignacion : var '=' Exp {% do
+  modify $ checkExist $1 
+  [x] <- pop 1
+  let s = (\(x,_,_)->x) $1
+  modify $ (\estado->MyState.push (if x==(maybe TError id (MyState.querrySimT (T.lookup s) estado)) then TVoid else TError) estado)
+  }
+    | var '[' Exp ']' '=' Exp {% do
+  modify $ checkExist $1 
+  [x,y] <- pop 1
+  let s = (\(x,_,_)->x) $1
+  modify $ (\estado->MyState.push (if y==TInt && x==(maybe TError id (MyState.querrySimT (T.lookup s) estado)) then TVoid else TError) estado)
+  }
 
-LLamada : var '(' ParametrosIn ')' {% modify $ checkExist $1 }
-    | var '(' ')' {% modify $ checkExist $1 }
+LLamada : var '(' ParametrosIn ')' {% do
+  l <- pop $3
+  evalLlamada $1 l
+    }
+    | var '(' ')' {% evalLlamada $1 []}
 
-ParametrosIn : ParametrosIn ',' Exp { }
-    | Exp { }
+ParametrosIn : ParametrosIn ',' Exp { 1 + $1 }
+    | Exp { 1 } 
 
-Instrucciones : Instrucciones Instruccion { }
+Instrucciones : Instrucciones Instruccion {%do
+  [x,y] <- pop 2
+  modify $ MyState.push (if x==TVoid && y==TVoid then TVoid else TError)
+ }
     | Instruccion { }
     | Instrucciones VarDeclaration { }
-    | VarDeclaration { }
+    | VarDeclaration {% modify $ MyState.push TVoid }
 
 Parametro : ref Types var      {% do
   modify $ (\s -> modifTabla $3 (TRef $ MyState.getAType s) s)
@@ -204,35 +265,71 @@ Parametros : Parametros ',' Parametro { }
 AnomFun : '(' Types ')' '(' Parametros ')' '{' Instrucciones '}'  { }
     | '(' Types ')' '(' ')' '{' Instrucciones '}'  { }
 
+arr : arr '[' Exp ']' {%do
+  [x,y] <- pop 2
+  modify $ MyState.push (if y==TInt&&x==TInt then TInt else TError)
+  modify $ (\estado->MyState.asingFun (ayudaArreglo.(MyState.getFun estado)) estado)
+  }
+    | '[' Exp ']' {%do
+  [x] <- pop 1
+  modify $ MyState.push (if x==TInt then TInt else TError)
+  modify $ MyState.asingFun ayudaArreglo
+  }
+
 Atom : LLamada { }
-    | int { }
-    | float { }
-    | bool { }
-    | str {% modify $ MyState.addString $ (\(s,_,_)->s) $1}
-    | var {% modify $ checkExist $1 }
+    | int { % modify $ MyState.push TInt}
+    | float { % modify $ MyState.push TFloat}
+    | bool { % modify $ MyState.push TBool}
+    | str {% do
+  let s = (\(x,_,_)->x) $1
+  modify $ MyState.addString s 
+  modify $ MyState.push (TArray (length s) TChar)
+          }
+    | var {% do
+  let s = (\(x,_,_)->x) $1
+  modify $ checkExist $1 
+  modify $ (\estado->MyState.push (maybe TError id (MyState.querrySimT (T.lookup s) estado)) estado)
+          }
+    | var arr {% do
+  let s = (\(x,_,_)->x) $1
+  modify $ checkExist $1 
+  [x] <- pop 1
+  modify $ (\estado->MyState.push (if x==TError then TError else (maybe TError (MyState.getFun estado) (MyState.querrySimT (T.lookup s) estado))) estado)
+          }
     | AnomFun { }
 
-Exp : Exp '+' Exp            { }
-    | Exp '-' Exp            { }
-    | Exp '*' Exp            { }
-    | Exp '/' Exp            { }
-    | Exp '<<' Exp            { }
-    | Exp '>>' Exp            { }
-    | Exp '<' Exp            { }
-    | Exp '<=' Exp            { }
-    | Exp '>' Exp            { }
-    | Exp '>=' Exp            { }
-    | Exp '==' Exp            { }
-    | Exp '!=' Exp            { }
-    | Exp '&' Exp            { }
-    | Exp '%' Exp            { }
-    | Exp '|' Exp            { }
-    | Exp '&&' Exp            { }
-    | Exp '||' Exp            { }
-    | Exp '.' var            { }
+Exp : Exp '+' Exp            {% twoOperators "+" }
+    | Exp '-' Exp            {% twoOperators "-" }
+    | Exp '*' Exp            {% twoOperators "*" }
+    | Exp '/' Exp            {% twoOperators "/" }
+    | Exp '<<' Exp           {% twoOperators "<<" }
+    | Exp '>>' Exp           {% twoOperators ">>" }
+    | Exp '<' Exp            {% twoOperators "<" }
+    | Exp '<=' Exp           {% twoOperators "<=" }
+    | Exp '>' Exp            {% twoOperators ">" }
+    | Exp '>=' Exp           {% twoOperators ">=" }
+    | Exp '==' Exp           {% twoOperators "==" }
+    | Exp '!=' Exp           {% twoOperators "!=" }
+    | Exp '&' Exp            {% twoOperators "&" }
+    | Exp '%' Exp            {% twoOperators "%" }
+    | Exp '|' Exp            {% twoOperators "|" }
+    | Exp '&&' Exp           {% twoOperators "&&" }
+    | Exp '||' Exp           {% twoOperators "||" }
+    | Exp '.' var            {% do
+  [x] <- pop 1
+  let s = (\(x,_,_)->x) $3
+  if (ayudasu x) then modify $ MyState.push TError
+  else do
+    estado <- get
+    let maybeField = maybe Nothing (T.localLookup s) (MyState.buscasusymt x estado)
+    modify $ MyState.push $ maybe TError id maybeField
+ }
     | '(' Exp ')'            { }
-    | '-' Exp %prec NEG      { }
-    | '*' Exp %prec Deref      { }
+    | '-' Exp %prec NEG      {% oneOperators "||" }
+    | '*' Exp %prec Deref    {% do
+  [x] <- pop 1
+  modify $ MyState.push (ayudaApuntador x)
+ }
     | Atom                    { }
 
 {
@@ -242,6 +339,41 @@ unasteriscos i = TRef.(unasteriscos (i-1))
 
 parseError :: [Token] -> a
 parseError s = error ("Parse error in " ++ (lineCol $ head s))
+
+ayudaApuntador (TRef x) = x
+ayudaApuntador _ = TError
+
+ayudaArreglo (TArray _ x) = x
+ayudaArreglo _ = TError
+
+ayudasu (TStruct _) = False
+ayudasu (TUnion _) = False
+ayudasu _ = True
+
+pop :: Int -> State MyState.ParseState [TypeData]
+pop x = do
+  estado <- get
+  modify $ MyState.typePilaOperate (drop x)
+  return (take x $ MyState.typePila estado)
+
+twoOperators :: String -> State MyState.ParseState ()
+twoOperators o = do
+  [x,y] <- pop 2
+  modify $ MyState.push (operAcc x o y)
+
+oneOperators :: String -> State MyState.ParseState ()
+oneOperators o = do
+  [x] <- pop 1
+  modify $ MyState.push (operAccMono o x)
+
+evalLlamada :: (String,Int,Int) -> [TypeData] -> State MyState.ParseState ()
+evalLlamada inTok param = do 
+  let s = (\(x,_,_)->x) inTok
+  modify $ checkExist inTok
+  modify $ (\estado->MyState.push (maybe TError help (MyState.querrySimT (T.lookup s) estado)) estado)
+  where
+    help (FunGlob returnT tl) = if tl==param then returnT else TError
+    help (FunLoc returnT tl) = if tl==param then returnT else TError
 
 modifTabla (s,l,c) tipo estado = if ((MyState.querrySimT (T.localLookup s) estado) == Nothing)
   then

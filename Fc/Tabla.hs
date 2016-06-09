@@ -48,7 +48,7 @@ localLookup k t = Map.lookup k $ info t
 destroyLocal t = actualizaHijos (padre t) $ t {info=Map.empty}
 
 dumpLocal :: (Show a) => Tabla k a -> String
-dumpLocal = unwords.(map show).(foldl (flip (:)) []).info
+dumpLocal = unwords.(map (\s->"{"++s++"}")).(map show).(foldl (flip (:)) []).info
 
 enterScope t = x
   where
