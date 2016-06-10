@@ -2,7 +2,6 @@ module Fc.MyState (
   ParseState(pilaAT,auxS,typePila),
   empty,
   alterSimT,
-  addError,
   addString,
   querrySimT,
   empilaAT,
@@ -26,8 +25,7 @@ import Fc.Datas (TypeData(..))
 
 data ParseState = ParseState {
     simT :: T.Tabla String TypeData,
-    errores :: Seq.Seq String,
-    stringT :: Map.Map String Bool,
+    stringT :: Map.Map String Bool, --tabla de string
     activeType :: TypeData,
     pilaAT :: [TypeData],
     auxS :: (String,Int,Int),
@@ -54,7 +52,7 @@ empilaAT parS = parS {pilaAT=(activeType parS):(pilaAT parS)}
 
 ponAT parS = parS {pilaAT=(activeType parS):[]}
 
-empty = ParseState T.empty Seq.empty Map.empty TVoid [] ("",0,0) Map.empty [] id
+empty = ParseState T.empty Map.empty TVoid [] ("",0,0) Map.empty [] id
 
 modifAType f parS = parS {activeType=f (activeType parS)}
 
@@ -64,10 +62,8 @@ alterSimT f parS = parS {simT=f (simT parS)}
 
 querrySimT f parS = f (simT parS)
 
-addError parS e = parS {errores=(Seq.|>) (errores parS) e }
-
 addString s parS = parS {stringT=(Map.insert) s True (stringT parS) } 
 
 instance Show ParseState where
-  show parS = unlines $ [ unlines.toList $ errores parS , "" , (T.dump $ simT parS) , "" , unlines.(map fst).(Map.toList) $ stringT parS ,
+  show parS = unlines $ [ (T.dump $ simT parS) , "" , unlines.(map fst).(Map.toList) $ stringT parS ,
     "", unlines.(map (\(x,y)->unlines [show x,T.dump y])).(Map.toList) $ susymt parS ,"" , show.head $ typePila parS]

@@ -10,7 +10,6 @@ import qualified Fc.Tabla as T
 import qualified Fc.MyState as MyState
 import Fc.Datas (TypeData(..))
 --getopt -- buscar
-errStrPut = hPutStr stderr
 
 filfun (Error _ _) = False
 filfun _ = True

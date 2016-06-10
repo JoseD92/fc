@@ -1,12 +1,13 @@
 {
 module Fc.Grammar where
 import Fc.Lexer
-import Control.Monad.Writer
 import Control.Monad.State
 import qualified Fc.Tabla as T
 import qualified Fc.MyState as MyState
 import Fc.Datas (TypeData(..),operAcc,operAccMono)
 import Data.Maybe
+import System.IO
+import Control.Monad (when)
 }
 
 %monad { StateT MyState.ParseState IO } { (>>=) } { return }
@@ -121,8 +122,8 @@ basicType : type {% modify $ MyState.modifAType $ const $ case ((\(s,_,_)->s) $1
 
 Types : basicType                                      {}
     | unsigned basicType                               {% modify $ MyState.modifAType TUnsigned }
-    | struct var                                       {% modify $ checkExist2 $2 }
-    | union var                                        {% modify $ checkExist2 $2 }
+    | struct var                                       {% checkExist2 $2 }
+    | union var                                        {% checkExist2 $2 }
     | functionType '(' Types ')' '(' ManyTypes ')'     {%
   modify $ (\s -> MyState.modifAType (const $ FunLoc (last $ MyState.pilaAT s) (init $ MyState.pilaAT s)) s)
   }
@@ -134,17 +135,29 @@ Types : basicType                                      {}
 arrays : arrays '[' int ']' { (.) $1 (TArray ((\(i,_,_)->i) $3)) }
   | '[' int ']' { TArray ((\(i,_,_)->i) $2) }
 
-variables : variables ',' var          {% modify $ (\s -> modifTabla $3 (MyState.getAType s) s) }
-    | variables ',' var arrays    {% modify $ (\s -> modifTabla $3 ($4 $ MyState.getAType s) s) }
-    | variables ',' asteriscos var     {% modify $ (\s -> modifTabla $4 (unasteriscos $3 $ MyState.getAType s) s) }
-    | var                              {% modify $ (\s -> modifTabla $1 (MyState.getAType s) s) }
-    | asteriscos var                   {% modify $ (\s -> modifTabla $2 (unasteriscos $1 $ MyState.getAType s) s) }
-    | var arrays                  {% modify $ (\s -> modifTabla $1 ($2 $ MyState.getAType s) s) }
+variables : variables ',' var          {% do
+  s <- get
+  modifTabla $3 (MyState.getAType s) }
+    | variables ',' var arrays    {% do
+  s <- get
+  modifTabla $3 ($4 $ MyState.getAType s) }
+    | variables ',' asteriscos var     {% do
+  s <- get
+  modifTabla $4 (unasteriscos $3 $ MyState.getAType s) }
+    | var                              {% do
+  s <- get
+  modifTabla $1 (MyState.getAType s) }
+    | asteriscos var                   {% do
+  s <- get
+  modifTabla $2 (unasteriscos $1 $ MyState.getAType s) }
+    | var arrays                  {% do
+  s <- get
+  modifTabla $1 ($2 $ MyState.getAType s) }
 
 VarDeclaration : Types variables ';'  { }
 
 StructVar : var {% do
-  modify $ modifTabla $1 (TStruct $ (\(s,_,_)->s) $1) 
+  modifTabla $1 (TStruct $ (\(s,_,_)->s) $1) 
   modify $ MyState.push (TStruct $ (\(s,_,_)->s) $1) 
   }
 Struct : struct StructVar Block2 VarDeclarations Block3 ';' {% do
@@ -153,7 +166,7 @@ Struct : struct StructVar Block2 VarDeclarations Block3 ';' {% do
   }
 
 UnionVar : var {% do
-  modify $ modifTabla $1 (TUnion $ (\(s,_,_)->s) $1) 
+  modifTabla $1 (TUnion $ (\(s,_,_)->s) $1) 
   modify $ MyState.push (TUnion $ (\(s,_,_)->s) $1) 
   }
 Union : union UnionVar Block2 VarDeclarations Block3 ';' {% do
@@ -164,11 +177,14 @@ Union : union UnionVar Block2 VarDeclarations Block3 ';' {% do
 Funcion : Types VarVar FuncionP2 Parametros ')' registra2 Block FuncionP3   {  }
     | Types VarVar registra Block  {  }
 
-registra : '(' ')' {% modify $ (\s -> modifTabla (MyState.auxS s) (FunGlob (last $ MyState.pilaAT s) (init $ MyState.pilaAT s)) s) }
+registra : '(' ')' {% do
+  s <- get
+  modifTabla (MyState.auxS s) (FunGlob (last $ MyState.pilaAT s) (init $ MyState.pilaAT s)) }
 
 registra2 : {% do
   modify $ MyState.alterSimT T.exitScope
-  modify $ (\s -> modifTabla (MyState.auxS s) (FunGlob (last $ MyState.pilaAT s) (init $ MyState.pilaAT s)) s) 
+  s <- get
+  modifTabla (MyState.auxS s) (FunGlob (last $ MyState.pilaAT s) (init $ MyState.pilaAT s))
   modify $ MyState.alterSimT $ T.enterN 0
   }
 
@@ -198,7 +214,7 @@ Instruccion : Block { }
   modify $ MyState.push (if x==TError then TError else TVoid)
  }
     | read var ';' {% do 
-  modify $ checkExist $2 
+  checkExist $2 
   modify $ MyState.push TVoid
   }
     | write Exp ';' {% modify $ MyState.push TVoid} --------------------------arreglar, chequear expresion
@@ -223,13 +239,13 @@ If : if '(' Exp ')' Block {% do
  }
 
 Asignacion : var '=' Exp {% do
-  modify $ checkExist $1 
+  checkExist $1 
   [x] <- pop 1
   let s = (\(x,_,_)->x) $1
   modify $ (\estado->MyState.push (if x==(maybe TError id (MyState.querrySimT (T.lookup s) estado)) then TVoid else TError) estado)
   }
     | var '[' Exp ']' '=' Exp {% do
-  modify $ checkExist $1 
+  checkExist $1 
   [x,y] <- pop 1
   let s = (\(x,_,_)->x) $1
   modify $ (\estado->MyState.push (if y==TInt && x==(maybe TError id (MyState.querrySimT (T.lookup s) estado)) then TVoid else TError) estado)
@@ -253,11 +269,13 @@ Instrucciones : Instrucciones Instruccion {%do
     | VarDeclaration {% modify $ MyState.push TVoid }
 
 Parametro : ref Types var      {% do
-  modify $ (\s -> modifTabla $3 (TRef $ MyState.getAType s) s)
+  s <- get
+  modifTabla $3 (TRef $ MyState.getAType s)
   modify $ MyState.modifAType TRef
   modify $ MyState.empilaAT }
     | Types var                {% do
-  modify $ (\s -> modifTabla $2 (MyState.getAType s) s)
+  s <- get
+  modifTabla $2 (MyState.getAType s)
   modify $ MyState.empilaAT }
 Parametros : Parametros ',' Parametro { }
     | Parametro              { }
@@ -287,12 +305,12 @@ Atom : LLamada { }
           }
     | var {% do
   let s = (\(x,_,_)->x) $1
-  modify $ checkExist $1 
+  checkExist $1 
   modify $ (\estado->MyState.push (maybe TError id (MyState.querrySimT (T.lookup s) estado)) estado)
           }
     | var arr {% do
   let s = (\(x,_,_)->x) $1
-  modify $ checkExist $1 
+  checkExist $1 
   [x] <- pop 1
   modify $ (\estado->MyState.push (if x==TError then TError else (maybe TError (MyState.getFun estado) (MyState.querrySimT (T.lookup s) estado))) estado)
           }
@@ -334,6 +352,12 @@ Exp : Exp '+' Exp            {% twoOperators "+" }
 
 {
 
+errStrPut = hPutStrLn stderr
+
+printError = lift.errStrPut
+
+sprint = lift.putStrLn
+
 unasteriscos 1 = TRef
 unasteriscos i = TRef.(unasteriscos (i-1))
 
@@ -369,35 +393,38 @@ oneOperators o = do
 evalLlamada :: (String,Int,Int) -> [TypeData] -> StateT MyState.ParseState IO ()
 evalLlamada inTok param = do 
   let s = (\(x,_,_)->x) inTok
-  modify $ checkExist inTok
+  checkExist inTok
   modify $ (\estado->MyState.push (maybe TError help (MyState.querrySimT (T.lookup s) estado)) estado)
   where
     help (FunGlob returnT tl) = if tl==param then returnT else TError
     help (FunLoc returnT tl) = if tl==param then returnT else TError
 
-modifTabla (s,l,c) tipo estado = if ((MyState.querrySimT (T.localLookup s) estado) == Nothing)
+modifTabla (s,l,c) tipo = do
+  estado <- get
+  if ((MyState.querrySimT (T.localLookup s) estado) == Nothing)
   then
     --if ((MyState.querrySimT (T.lookup s) estado) /= Just FunGlob)
       --then
-        MyState.alterSimT (T.insert s tipo) estado
+        modify $ MyState.alterSimT (T.insert s tipo)
       --else
         --MyState.addError estado ("Existe una funcion global de nombre "++s++", no se puede declarar de nuevo. Linea: "++(show l)++" Columna: "++(show c))
   else 
-    MyState.addError estado ("Ya se encuentra declarada la variable "++s++" en este Alcance. Linea: "++(show l)++" Columna: "++(show c))
+    printError ("Ya se encuentra declarada la variable "++s++" en este Alcance. Linea: "++(show l)++" Columna: "++(show c))
 
-checkExist (s,l,c) estado = if (isNothing $ MyState.querrySimT (T.lookup s) estado)
-  then
-    MyState.addError estado ("No existe el simbolo "++s++". Linea: "++(show l)++" Columna: "++(show c))
-  else 
-    estado
+checkExist (s,l,c) = do
+  estado <- get
+  when (isNothing $ MyState.querrySimT (T.lookup s) estado) $ do
+    printError ("No existe el simbolo "++s++". Linea: "++(show l)++" Columna: "++(show c))
 
-checkExist2 (s,l,c) estado = if (isNothing resul)
+checkExist2 (s,l,c) = do
+  estado <- get
+  if (isNothing $ resul estado)
   then
-    MyState.addError estado ("No existe el simbolo "++s++". Linea: "++(show l)++" Columna: "++(show c))
+    printError ("No existe el simbolo "++s++". Linea: "++(show l)++" Columna: "++(show c))
   else 
-    MyState.modifAType (const (fromJust resul)) estado
+    modify $ MyState.modifAType (const (fromJust (resul estado)))
   where
-    resul = MyState.querrySimT (T.lookup s) estado
+    resul estado = MyState.querrySimT (T.lookup s) estado
 
 {-
 { Plus $1 $3 }
