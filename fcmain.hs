@@ -7,7 +7,7 @@ import Data.Char (ord)
 import Control.Monad.Writer
 import Control.Monad.State
 import qualified Fc.Tabla as T
-import qualified Fc.MyState as MyState
+import Fc.MyState
 import Fc.Datas (TypeData(..))
 --getopt -- buscar
 
@@ -16,7 +16,7 @@ filfun _ = True
 
 inicializaStado = (\s-> T.enterScope $ T.insert "write" (FunGlob TVoid [TAny]) $ T.insert "read" (FunGlob TAny []) s)
 
-run t = parsefc t >> modify (MyState.alterSimT T.goToRoot)
+run t = parsefc t >> modify (alterSimT T.goToRoot)
 
 main = do
   args <- getArgs
@@ -29,7 +29,7 @@ main = do
     errStrPut $ (unlines $ map show $ errores) ++ "\n"
   else return ()
 
-  estado <- execStateT (run tokens) $ (MyState.alterSimT inicializaStado $ MyState.empty)
+  estado <- execStateT (run tokens) $ (alterSimT inicializaStado $ parseStateEmpty)
 
   --let arbol = parsefc tokens
   if (elem "--parser" args) then do
