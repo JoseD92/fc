@@ -30,7 +30,9 @@ main = do
     errStrPut $ (unlines $ map show $ errores) ++ "\n"
   else return ()
 
+  estado <- execStateT (run tokens) $ (MyState.alterSimT inicializaStado $ MyState.empty)
+
   --let arbol = parsefc tokens
   if (elem "--parser" args) then do
-    putStr $ show $ execState (run tokens) $ (MyState.alterSimT inicializaStado $ MyState.empty)
+    putStr $ show estado 
   else return ()

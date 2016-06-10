@@ -9,7 +9,7 @@ import Fc.Datas (TypeData(..),operAcc,operAccMono)
 import Data.Maybe
 }
 
-%monad { State MyState.ParseState } { (>>=) } { return }
+%monad { StateT MyState.ParseState IO } { (>>=) } { return }
 %name parsefc All
 %tokentype { Token }
 %error { parseError }
@@ -350,23 +350,23 @@ ayudasu (TStruct _) = False
 ayudasu (TUnion _) = False
 ayudasu _ = True
 
-pop :: Int -> State MyState.ParseState [TypeData]
+pop :: Int -> StateT MyState.ParseState IO [TypeData]
 pop x = do
   estado <- get
   modify $ MyState.typePilaOperate (drop x)
   return (take x $ MyState.typePila estado)
 
-twoOperators :: String -> State MyState.ParseState ()
+twoOperators :: String -> StateT MyState.ParseState IO ()
 twoOperators o = do
   [x,y] <- pop 2
   modify $ MyState.push (operAcc x o y)
 
-oneOperators :: String -> State MyState.ParseState ()
+oneOperators :: String -> StateT MyState.ParseState IO ()
 oneOperators o = do
   [x] <- pop 1
   modify $ MyState.push (operAccMono o x)
 
-evalLlamada :: (String,Int,Int) -> [TypeData] -> State MyState.ParseState ()
+evalLlamada :: (String,Int,Int) -> [TypeData] -> StateT MyState.ParseState IO ()
 evalLlamada inTok param = do 
   let s = (\(x,_,_)->x) inTok
   modify $ checkExist inTok
