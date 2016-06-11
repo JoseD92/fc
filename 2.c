@@ -21,12 +21,13 @@ int main(){
    int a[6][5],c[5];
    struct Books b;
    x = 1;
+   if (True) {1;} else {2;}
    while (True) {
       x=a[4][1];
       a[2]=c;
       a[2][2]=x+1.0;
-      +y=*y;
-      ++y=a[2][2.0];
+      *y=*y;
+      **y=a[2][2.0];
       x=x.in;
       x=b.in;
       x=masuno( b.unhola.algo+***y+(*(b.next)).book_id , True);

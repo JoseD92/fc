@@ -6,3 +6,4 @@
 *.txt
 /Fc/Grammar.hs
 /Fc/Lexer.hs
+/Fc/Grammar.info
