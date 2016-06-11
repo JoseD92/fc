@@ -203,13 +203,16 @@ While : while '(' Exp ')' Instruccion {% return $ sReturnEmpty {tipo=(if (tipo $
 If : if '(' Exp ')' Block                   {% return $ sReturnEmpty {tipo=(if (tipo $5)==TVoid && (tipo $3)==TBool then TVoid else TError)} }
     | if '(' Exp ')' Block else Instruccion {% return $ sReturnEmpty {tipo=(if (tipo $7)==TVoid && (tipo $5)==TVoid && (tipo $3)==TBool then TVoid else TError)} }
 
-Asignacion : var '=' Exp {% do
-                              querry <- checkExist $1
-                              return $ sReturnEmpty {tipo=(if (tipo $3)/=TError && (tipo $3)==(maybe TError id querry) then TVoid else TError)}
-                         }
-    | var arr '=' Exp {% do
+mases : mases '+' {ayudaApuntador.$1}
+    | '+' {ayudaApuntador}
+
+Asignacion : var arr '=' Exp {% do
                            querry <- checkExist $1
                            return $ sReturnEmpty {tipo=(if (tipo $4)/=TError &&(tipo $2)==TInt && (tipo $4)==(maybe TError (ayudaArreglo (number $2)) querry) then TVoid else TError)}
+                      }
+    | mases var '=' Exp {% do
+                           querry <- checkExist $2
+                           return $ sReturnEmpty {tipo=(if (tipo $4)/=TError && (tipo $4)==(maybe TError $1 querry) then TVoid else TError)}
                       }
 
 LLamada : var '(' ParametrosIn ')'   {% evalLlamada $1 $3}
@@ -239,7 +242,7 @@ AnomFun : '(' Types ')' '(' Parametros ')' '{' Instrucciones '}'  { }
     | '(' Types ')' '(' ')' '{' Instrucciones '}'  { }
 
 arr : arr '[' Exp ']' {% return $ sReturnEmpty {tipo=if (tipo $1)==TInt&&(tipo $3)==TInt then TInt else TError,number=1+(number $1)} }
-    | '[' Exp ']' {% return $ sReturnEmpty {tipo=if (tipo $2)==TInt then TInt else TError,number=1} }
+    | {% return $ sReturnEmpty {tipo=TInt,number=0} }
 
 Atom : LLamada {% return $1 }
     | int { % return $ sReturnEmpty {tipo=TInt}}
@@ -249,10 +252,6 @@ Atom : LLamada {% return $1 }
   let s = (\(x,_,_)->x) $1
   modify $ addString s 
   return $ sReturnEmpty {tipo=(TArray (length s) TChar)}
-          }
-    | var {% do
-  querry <- checkExist $1
-  return $ sReturnEmpty {tipo=(maybe TError id querry)}
           }
     | var arr {% do
   querry <- checkExist $1
@@ -300,6 +299,9 @@ printError = lift.errStrPut
 
 unasteriscos 1 = TRef
 unasteriscos i = TRef.(unasteriscos (i-1))
+
+deasterisco 1 = ayudaApuntador
+deasterisco n = ayudaApuntador.(deasterisco (n-1))
 
 parseError :: [Token] -> a
 parseError s = error ("Parse error in " ++ (lineCol $ head s))

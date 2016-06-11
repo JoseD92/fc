@@ -37,5 +37,6 @@ main = do
   --let arbol = parsefc tokens
   if (elem "--parser" args) then do
     putStr $ show estado 
-    putStr $ show out 
+    putStr $ (show out) ++ "-----------------"
   else return ()
+  putStr $ (show out) ++ "-----------------"

@@ -18,12 +18,15 @@ int masuno(int x,bool b){
 
 int main(){
    int x,**y;
-   int a[5],c[5];
+   int a[6][5],c[5];
    struct Books b;
    x = 1;
    while (True) {
-      x=a[4];
-      a=c;
+      x=a[4][1];
+      a[2]=c;
+      a[2][2]=x;
+      +y=*y;
+      ++y=a[2][2];
       x=masuno( b.unhola.algo+**y+(*(b.next)).book_id , True);
       b=b;
    };
