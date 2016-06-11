@@ -204,19 +204,23 @@ For : for '(' Instruccion ';' Exp ';' Instruccion ')' Instruccion {% return $ sR
 While : while '(' Exp ')' Instruccion {% return $ sReturnEmpty {tipo=(if (tipo $5)==TVoid && (tipo $3)==TBool then TVoid else TError)} }
 
 If : if '(' Exp ')' Block                   {% return $ sReturnEmpty {tipo=(if (tipo $5)==TVoid && (tipo $3)==TBool then TVoid else TError)} }
-    | if '(' Exp ')' Block else Instruccion {% return $ sReturnEmpty {tipo=(if (tipo $7)==TVoid && (tipo $5)==TVoid && (tipo $3)==TBool then TVoid else TError)} }
+    | if '(' Exp ')' Block else Block {% return $ sReturnEmpty {tipo=(if (tipo $7)==TVoid && (tipo $5)==TVoid && (tipo $3)==TBool then TVoid else TError)} }
 
-mases : mases '+' {ayudaApuntador.$1}
-    | '+' {ayudaApuntador}
+--If : B  {% return $ sReturnEmpty {tipo=TVoid} }
+--  | U   {% return $ sReturnEmpty {tipo=TVoid} }
 
-Asignacion : var arr '=' Exp {% do
-                           querry <- checkExist $1
-                           return $ sReturnEmpty {tipo=(if (tipo $4)/=TError &&(tipo $2)==TInt && (tipo $4)==(maybe TError (ayudaArreglo (number $2)) querry) then TVoid else TError)}
-                      }
-    | mases var '=' Exp {% do
-                           querry <- checkExist $2
-                           return $ sReturnEmpty {tipo=(if (tipo $4)/=TError && (tipo $4)==(maybe TError $1 querry) then TVoid else TError)}
-                      }
+--B : I B else B {% return $ sReturnEmpty {tipo=TVoid} }
+--  | Instruccion             {% return $ sReturnEmpty {tipo=TVoid} }
+
+--U : I If       {% return $ sReturnEmpty {tipo=TVoid} }
+--  | I B else U {% return $ sReturnEmpty {tipo=TVoid} }
+
+--I : if '(' Exp ')' {% return $ sReturnEmpty {tipo=TVoid} }
+
+--mases : mases '+' {ayudaApuntador.$1}
+--    | '+' {ayudaApuntador}
+
+Asignacion : Atom2 '=' Exp {% return $ sReturnEmpty {tipo=(if (tipo $3)/=TError &&(tipo $1)==(tipo $3) then TVoid else TError)} }
 
 LLamada : var '(' ParametrosIn ')'   {% evalLlamada $1 $3}
     | var '(' ')'                    {% evalLlamada $1 []}
@@ -264,8 +268,17 @@ Atom : LLamada {% return $1 }
   modify $ addString s 
   return $ sReturnEmpty {tipo=(TArray (length s) TChar)}
           }
-    | var arr {% arrCheck $2 $1 }
     | AnomFun { % return $ sReturnEmpty {tipo=TAny}}
+
+Atom2 : var arr {% arrCheck $2 $1 }
+    | Exp '.' var            {% campos $1 $2 $3}
+    | '*' Exp %prec Deref    {% do
+  let (_,l,c) = $1
+  if ((tipo $2)==TError) then return $ sReturnEmpty {tipo=TError}
+  else do
+    when ((ayudaApuntador (tipo $2))==TError) $ printError $ "Error en la linea "++(show l)++" columna "++(show c)++
+      ". El tipo "++(show (tipo $2))++" no es una referencia."
+    return $ sReturnEmpty {tipo=(ayudaApuntador (tipo $2))}}
 
 Exp : Exp '+' Exp            {% twoOperators $2 $1 $3 }
     | Exp '-' Exp            {% twoOperators $2 $1 $3 }
@@ -284,16 +297,9 @@ Exp : Exp '+' Exp            {% twoOperators $2 $1 $3 }
     | Exp '|' Exp            {% twoOperators $2 $1 $3 }
     | Exp '&&' Exp           {% twoOperators $2 $1 $3 }
     | Exp '||' Exp           {% twoOperators $2 $1 $3 }
-    | Exp '.' var            {% campos $1 $2 $3}
     | '(' Exp ')'            {% return $2 }
     | '-' Exp %prec NEG      {% oneOperators $1 $2 }
-    | '*' Exp %prec Deref    {% do
-  let (_,l,c) = $1
-  if ((tipo $2)==TError) then return $ sReturnEmpty {tipo=TError}
-  else do
-    when ((ayudaApuntador (tipo $2))==TError) $ printError $ "Error en la linea "++(show l)++" columna "++(show c)++
-      ". El tipo "++(show (tipo $2))++" no es una referencia."
-    return $ sReturnEmpty {tipo=(ayudaApuntador (tipo $2))}}
+    | Atom2                  {% return $1 }
     | Atom                   {% return $1 }
 
 {
