@@ -24,10 +24,12 @@ int main(){
    while (True) {
       x=a[4][1];
       a[2]=c;
-      a[2][2]=x;
+      a[2][2]=x+1.0;
       +y=*y;
-      ++y=a[2][2];
-      x=masuno( b.unhola.algo+**y+(*(b.next)).book_id , True);
+      ++y=a[2][2.0];
+      x=x.in;
+      x=b.in;
+      x=masuno( b.unhola.algo+***y+(*(b.next)).book_id , True);
       b=b;
    };
 }

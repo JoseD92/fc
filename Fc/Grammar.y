@@ -1,4 +1,6 @@
+
 {
+
 module Fc.Grammar where
 import Fc.Lexer
 import Control.Monad.State
@@ -8,6 +10,7 @@ import Fc.Datas (TypeData(..),operAcc,operAccMono)
 import Data.Maybe
 import System.IO
 import Control.Monad (when)
+
 }
 
 %monad { StateT ParseState IO } { (>>=) } { return }
@@ -241,7 +244,15 @@ Parametros : Parametros ',' Parametro { }
 AnomFun : '(' Types ')' '(' Parametros ')' '{' Instrucciones '}'  { }
     | '(' Types ')' '(' ')' '{' Instrucciones '}'  { }
 
-arr : arr '[' Exp ']' {% return $ sReturnEmpty {tipo=if (tipo $1)==TInt&&(tipo $3)==TInt then TInt else TError,number=1+(number $1)} }
+arr : arr '[' Exp ']' {% do
+  if ((tipo $1)==TError) then return $ sReturnEmpty {tipo=TError,number=0}
+  else
+    if ((tipo $3)==TInt) then return $ sReturnEmpty {tipo=TInt,number=1+(number $1)}
+    else do
+      let (_,l,c)=$2
+      when ((tipo $3)/=TError) $ printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++". Se esperaba un valor de tipo entero."
+      return $ sReturnEmpty {tipo=TError,number=0}
+ }
     | {% return $ sReturnEmpty {tipo=TInt,number=0} }
 
 Atom : LLamada {% return $1 }
@@ -253,10 +264,7 @@ Atom : LLamada {% return $1 }
   modify $ addString s 
   return $ sReturnEmpty {tipo=(TArray (length s) TChar)}
           }
-    | var arr {% do
-  querry <- checkExist $1
-  return $ sReturnEmpty {tipo=(if (tipo $2)==TError then TError else (maybe TError (ayudaArreglo (number $2)) querry))}
-          }
+    | var arr {% arrCheck $2 $1 }
     | AnomFun { % return $ sReturnEmpty {tipo=TAny}}
 
 Exp : Exp '+' Exp            {% twoOperators $2 $1 $3 }
@@ -276,17 +284,16 @@ Exp : Exp '+' Exp            {% twoOperators $2 $1 $3 }
     | Exp '|' Exp            {% twoOperators $2 $1 $3 }
     | Exp '&&' Exp           {% twoOperators $2 $1 $3 }
     | Exp '||' Exp           {% twoOperators $2 $1 $3 }
-    | Exp '.' var            {% do
-  let s = (\(x,_,_)->x) $3
-  if (ayudasu (tipo $1)) then return $ sReturnEmpty {tipo=TError}
-  else do
-    estado <- get
-    let maybeField = maybe Nothing (T.localLookup s) (buscasusymt (tipo $1) estado)
-    return $ sReturnEmpty {tipo=maybe TError id maybeField}
- }
+    | Exp '.' var            {% campos $1 $2 $3}
     | '(' Exp ')'            {% return $2 }
     | '-' Exp %prec NEG      {% oneOperators $1 $2 }
-    | '*' Exp %prec Deref    {% return $ sReturnEmpty {tipo=(ayudaApuntador (tipo $2))}}
+    | '*' Exp %prec Deref    {% do
+  let (_,l,c) = $1
+  if ((tipo $2)==TError) then return $ sReturnEmpty {tipo=TError}
+  else do
+    when ((ayudaApuntador (tipo $2))==TError) $ printError $ "Error en la linea "++(show l)++" columna "++(show c)++
+      ". El tipo "++(show (tipo $2))++" no es una referencia."
+    return $ sReturnEmpty {tipo=(ayudaApuntador (tipo $2))}}
     | Atom                   {% return $1 }
 
 {
@@ -317,19 +324,68 @@ ayudasu (TStruct _) = False
 ayudasu (TUnion _) = False
 ayudasu _ = True
 
+arrCheck expIn tok@(s,l,c) = do
+  if ((tipo expIn)==TError) then return $ sReturnEmpty {tipo=TError}
+  else do
+    querry <- checkExist tok
+    if (isNothing querry) then return $ sReturnEmpty {tipo=TError}
+    else do
+      let resultype=(ayudaArreglo (number expIn)) $ fromJust querry
+      when (resultype == TError) $ printError $ "Error en la linea "++(show l)++" columna "++(show c)++
+        ". Mala dimencion para la variable "++s++"."
+      return $ sReturnEmpty {tipo=resultype}
+
 twoOperators :: (String,Int,Int) -> SReturn -> SReturn -> StateT ParseState IO SReturn
 twoOperators (o,l,c) r1 r2 = do
-  return $ sReturnEmpty {tipo=(operAcc (tipo r1) o (tipo r2))}
+  if ((tipo r1)==TError || (tipo r2)==TError) then return $ sReturnEmpty {tipo=TError}
+  else
+    if resultype == TError then do
+      printError $ "Error de tipos en la linea "++(show l)++" columna "++(show c)++
+        ". El operador \""++o++"\" recibio argumentos de tipo: "++(show (tipo r1))++" y "++(show (tipo r2))++"."
+      return $ sReturnEmpty {tipo=TError}
+    else
+      return $ sReturnEmpty {tipo=resultype}
+  where resultype = (operAcc (tipo r1) o (tipo r2))
+  
+campos expIn (_,l,c) (s,_,_)  = do
+  if ((tipo expIn)==TError) then return $ sReturnEmpty {tipo=TError}
+  else
+    if (ayudasu (tipo expIn)) then do
+      printError $ "Error en la linea "++(show l)++" columna "++(show c)++". El tipo "++(show (tipo expIn))++" no posee campos."
+      return $ sReturnEmpty {tipo=TError}
+    else do
+      estado <- get
+      let maybeField = maybe Nothing (T.localLookup s) (buscasusymt (tipo expIn) estado)
+      when (isNothing maybeField) $ printError $ "Error en la linea "++(show l)++" columna "++(show c)++
+        ". El tipo "++(show (tipo expIn))++" no posee el campo "++s++"."
+      return $ sReturnEmpty {tipo=maybe TError id maybeField}
 
 oneOperators :: (String,Int,Int) -> SReturn -> StateT ParseState IO SReturn
 oneOperators (o,l,c) r1 = do
-  return $ sReturnEmpty {tipo=(operAccMono o (tipo r1))}
+  if ((tipo r1)==TError) then return $ sReturnEmpty {tipo=TError}
+  else
+    if resultype == TError then do
+      printError $ "Error de tipos en la linea "++(show l)++" columna "++(show c)++
+        ". El operador \""++o++"\" recibio un argumento de tipo: "++(show (tipo r1))++"."
+      return $ sReturnEmpty {tipo=TError}
+    else
+      return $ sReturnEmpty {tipo=resultype}
+  where  resultype = (operAccMono o (tipo r1))
 
 evalLlamada :: (String,Int,Int) -> [TypeData] -> StateT ParseState IO SReturn
-evalLlamada inTok param = do 
-  querry <- checkExist inTok
-  return $ sReturnEmpty {tipo=(maybe TError help querry)}
+evalLlamada inTok@(s,l,c) param = do 
+  if (elem TError param) then return $ sReturnEmpty {tipo=TError}
+  else do
+    querry <- checkExist inTok
+    if (isNothing querry) then return $ sReturnEmpty {tipo=TError}
+    else do
+      if(resultype querry == TError) then do
+        printError $ "Error en la linea "++(show l)++" columna "++(show c)++". Argumentos no son validos para la funcion "++s++"."
+        return $ sReturnEmpty {tipo=TError}
+      else
+        return $ sReturnEmpty {tipo=resultype querry}
   where
+    resultype = help.fromJust
     help (FunGlob returnT tl) = if tl==param then returnT else TError
     help (FunLoc returnT tl) = if tl==param then returnT else TError
 
