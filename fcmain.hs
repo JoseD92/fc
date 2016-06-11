@@ -16,7 +16,10 @@ filfun _ = True
 
 inicializaStado = (\s-> T.enterScope $ T.insert "write" (FunGlob TVoid [TAny]) $ T.insert "read" (FunGlob TAny []) s)
 
-run t = parsefc t >> modify (alterSimT T.goToRoot)
+run t = do
+  r <- parsefc t
+  modify (alterSimT T.goToRoot)
+  return r
 
 main = do
   args <- getArgs
@@ -29,9 +32,10 @@ main = do
     errStrPut $ (unlines $ map show $ errores) ++ "\n"
   else return ()
 
-  estado <- execStateT (run tokens) $ (alterSimT inicializaStado $ parseStateEmpty)
+  (out,estado) <- runStateT (run tokens) $ (alterSimT inicializaStado $ parseStateEmpty)
 
   --let arbol = parsefc tokens
   if (elem "--parser" args) then do
     putStr $ show estado 
+    putStr $ show out 
   else return ()

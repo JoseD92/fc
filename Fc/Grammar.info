@@ -71,7 +71,7 @@ Grammar
 	If -> if '(' Exp ')' Block                         (62)
 	If -> if '(' Exp ')' Block else Instruccion        (63)
 	Asignacion -> var '=' Exp                          (64)
-	Asignacion -> var '[' Exp ']' '=' Exp              (65)
+	Asignacion -> var arr '=' Exp                      (65)
 	LLamada -> var '(' ParametrosIn ')'                (66)
 	LLamada -> var '(' ')'                             (67)
 	ParametrosIn -> ParametrosIn ',' Exp               (68)
@@ -1427,7 +1427,7 @@ State 80
 State 81
 
 	Asignacion -> var . '=' Exp                         (rule 64)
-	Asignacion -> var . '[' Exp ']' '=' Exp             (rule 65)
+	Asignacion -> var . arr '=' Exp                     (rule 65)
 	LLamada -> var . '(' ParametrosIn ')'               (rule 66)
 	LLamada -> var . '(' ')'                            (rule 67)
 	Atom -> var .                                       (rule 87)
@@ -1921,8 +1921,8 @@ State 112
 	ManyTypes -> ManyTypes . ',' Types                  (rule 11)
 	Types -> functionType '(' Types ')' '(' ManyTypes . ')'    (rule 21)
 
-	')'            shift, and enter state 197
-	','            shift, and enter state 198
+	')'            shift, and enter state 198
+	','            shift, and enter state 199
 
 
 State 113
@@ -1937,7 +1937,7 @@ State 113
 	'('            shift, and enter state 14
 
 	basicType      goto state 3
-	Types          goto state 196
+	Types          goto state 197
 
 State 114
 
@@ -1963,7 +1963,7 @@ State 116
 
 	'{'            shift, and enter state 45
 
-	Block          goto state 195
+	Block          goto state 196
 	Block2         goto state 64
 
 State 117
@@ -1981,7 +1981,7 @@ State 118
 	AnomFun -> '(' Types . ')' '(' ')' '{' Instrucciones '}'    (rule 79)
 
 	'*'            shift, and enter state 33
-	')'            shift, and enter state 194
+	')'            shift, and enter state 195
 
 	asteriscos     goto state 49
 
@@ -2020,7 +2020,7 @@ State 119
 	'-'            shift, and enter state 147
 	'*'            shift, and enter state 148
 	'/'            shift, and enter state 149
-	')'            shift, and enter state 193
+	')'            shift, and enter state 194
 	'%'            shift, and enter state 151
 	'<'            shift, and enter state 152
 	'>'            shift, and enter state 153
@@ -2056,11 +2056,11 @@ State 120
 	'>'            reduce using rule 87
 	'&'            reduce using rule 87
 	'|'            reduce using rule 87
-	'['            shift, and enter state 192
+	'['            shift, and enter state 136
 	']'            reduce using rule 87
 	','            reduce using rule 87
 
-	arr            goto state 133
+	arr            goto state 193
 
 State 121
 
@@ -2129,7 +2129,7 @@ State 122
 	'('            shift, and enter state 96
 
 	basicType      goto state 3
-	Types          goto state 191
+	Types          goto state 192
 	LLamada        goto state 76
 	AnomFun        goto state 78
 	Atom           goto state 79
@@ -2216,7 +2216,7 @@ State 124
 	'-'            shift, and enter state 147
 	'*'            shift, and enter state 148
 	'/'            shift, and enter state 149
-	';'            shift, and enter state 190
+	';'            shift, and enter state 191
 	'%'            shift, and enter state 151
 	'<'            shift, and enter state 152
 	'>'            shift, and enter state 153
@@ -2228,7 +2228,7 @@ State 125
 
 	Instruccion -> read var . ';'                       (rule 57)
 
-	';'            shift, and enter state 189
+	';'            shift, and enter state 190
 
 
 State 126
@@ -2266,7 +2266,7 @@ State 126
 	'-'            shift, and enter state 147
 	'*'            shift, and enter state 148
 	'/'            shift, and enter state 149
-	';'            shift, and enter state 188
+	';'            shift, and enter state 189
 	'%'            shift, and enter state 151
 	'<'            shift, and enter state 152
 	'>'            shift, and enter state 153
@@ -2392,7 +2392,7 @@ State 130
 
 	Block          goto state 70
 	Block2         goto state 64
-	Instruccion    goto state 187
+	Instruccion    goto state 188
 	For            goto state 72
 	While          goto state 73
 	If             goto state 74
@@ -2418,7 +2418,7 @@ State 131
 	LLamada        goto state 76
 	AnomFun        goto state 78
 	Atom           goto state 79
-	Exp            goto state 186
+	Exp            goto state 187
 
 State 132
 
@@ -2437,10 +2437,11 @@ State 132
 	LLamada        goto state 76
 	AnomFun        goto state 78
 	Atom           goto state 79
-	Exp            goto state 185
+	Exp            goto state 186
 
 State 133
 
+	Asignacion -> var arr . '=' Exp                     (rule 65)
 	arr -> arr . '[' Exp ']'                            (rule 80)
 	Atom -> var arr .                                   (rule 88)
 
@@ -2453,20 +2454,18 @@ State 133
 	'!='           reduce using rule 88
 	'||'           reduce using rule 88
 	'&&'           reduce using rule 88
+	'='            shift, and enter state 184
 	'+'            reduce using rule 88
 	'-'            reduce using rule 88
 	'*'            reduce using rule 88
 	'/'            reduce using rule 88
-	')'            reduce using rule 88
 	';'            reduce using rule 88
 	'%'            reduce using rule 88
 	'<'            reduce using rule 88
 	'>'            reduce using rule 88
 	'&'            reduce using rule 88
 	'|'            reduce using rule 88
-	'['            shift, and enter state 184
-	']'            reduce using rule 88
-	','            reduce using rule 88
+	'['            shift, and enter state 185
 
 
 State 134
@@ -2510,7 +2509,6 @@ State 135
 
 State 136
 
-	Asignacion -> var '[' . Exp ']' '=' Exp             (rule 65)
 	arr -> '[' . Exp ']'                                (rule 81)
 
 	var            shift, and enter state 120
@@ -3816,7 +3814,6 @@ State 178
 
 State 179
 
-	Asignacion -> var '[' Exp . ']' '=' Exp             (rule 65)
 	arr -> '[' Exp . ']'                                (rule 81)
 	Exp -> Exp . '+' Exp                                (rule 90)
 	Exp -> Exp . '-' Exp                                (rule 91)
@@ -3855,7 +3852,7 @@ State 179
 	'>'            shift, and enter state 153
 	'&'            shift, and enter state 154
 	'|'            shift, and enter state 155
-	']'            shift, and enter state 209
+	']'            shift, and enter state 210
 
 
 State 180
@@ -3863,8 +3860,8 @@ State 180
 	LLamada -> var '(' ParametrosIn . ')'               (rule 66)
 	ParametrosIn -> ParametrosIn . ',' Exp              (rule 68)
 
-	')'            shift, and enter state 207
-	','            shift, and enter state 208
+	')'            shift, and enter state 208
+	','            shift, and enter state 209
 
 
 State 181
@@ -3984,6 +3981,24 @@ State 183
 
 State 184
 
+	Asignacion -> var arr '=' . Exp                     (rule 65)
+
+	var            shift, and enter state 120
+	int            shift, and enter state 82
+	float          shift, and enter state 83
+	bool           shift, and enter state 84
+	str            shift, and enter state 93
+	'-'            shift, and enter state 94
+	'*'            shift, and enter state 95
+	'('            shift, and enter state 122
+
+	LLamada        goto state 76
+	AnomFun        goto state 78
+	Atom           goto state 79
+	Exp            goto state 207
+
+State 185
+
 	arr -> arr '[' . Exp ']'                            (rule 80)
 
 	var            shift, and enter state 120
@@ -4000,7 +4015,7 @@ State 184
 	Atom           goto state 79
 	Exp            goto state 206
 
-State 185
+State 186
 
 	If -> if '(' Exp . ')' Block                        (rule 62)
 	If -> if '(' Exp . ')' Block else Instruccion       (rule 63)
@@ -4044,7 +4059,7 @@ State 185
 	'|'            shift, and enter state 155
 
 
-State 186
+State 187
 
 	While -> while '(' Exp . ')' Instruccion            (rule 61)
 	Exp -> Exp . '+' Exp                                (rule 90)
@@ -4087,14 +4102,14 @@ State 186
 	'|'            shift, and enter state 155
 
 
-State 187
+State 188
 
 	For -> for '(' Instruccion . ';' Exp ';' Instruccion ')' Instruccion    (rule 60)
 
 	';'            shift, and enter state 203
 
 
-State 188
+State 189
 
 	Instruccion -> return Exp ';' .                     (rule 56)
 
@@ -4125,7 +4140,7 @@ State 188
 	';'            reduce using rule 56
 
 
-State 189
+State 190
 
 	Instruccion -> read var ';' .                       (rule 57)
 
@@ -4156,7 +4171,7 @@ State 189
 	';'            reduce using rule 57
 
 
-State 190
+State 191
 
 	Instruccion -> write Exp ';' .                      (rule 58)
 
@@ -4187,33 +4202,45 @@ State 190
 	';'            reduce using rule 58
 
 
-State 191
+State 192
 
 	AnomFun -> '(' Types . ')' '(' Parametros ')' '{' Instrucciones '}'    (rule 78)
 	AnomFun -> '(' Types . ')' '(' ')' '{' Instrucciones '}'    (rule 79)
 
-	')'            shift, and enter state 194
+	')'            shift, and enter state 195
 
-
-State 192
-
-	arr -> '[' . Exp ']'                                (rule 81)
-
-	var            shift, and enter state 120
-	int            shift, and enter state 82
-	float          shift, and enter state 83
-	bool           shift, and enter state 84
-	str            shift, and enter state 93
-	'-'            shift, and enter state 94
-	'*'            shift, and enter state 95
-	'('            shift, and enter state 122
-
-	LLamada        goto state 76
-	AnomFun        goto state 78
-	Atom           goto state 79
-	Exp            goto state 202
 
 State 193
+
+	arr -> arr . '[' Exp ']'                            (rule 80)
+	Atom -> var arr .                                   (rule 88)
+
+	'<<'           reduce using rule 88
+	'>>'           reduce using rule 88
+	'.'            reduce using rule 88
+	'=='           reduce using rule 88
+	'>='           reduce using rule 88
+	'<='           reduce using rule 88
+	'!='           reduce using rule 88
+	'||'           reduce using rule 88
+	'&&'           reduce using rule 88
+	'+'            reduce using rule 88
+	'-'            reduce using rule 88
+	'*'            reduce using rule 88
+	'/'            reduce using rule 88
+	')'            reduce using rule 88
+	';'            reduce using rule 88
+	'%'            reduce using rule 88
+	'<'            reduce using rule 88
+	'>'            reduce using rule 88
+	'&'            reduce using rule 88
+	'|'            reduce using rule 88
+	'['            shift, and enter state 185
+	']'            reduce using rule 88
+	','            reduce using rule 88
+
+
+State 194
 
 	Exp -> '(' Exp ')' .                                (rule 108)
 
@@ -4241,15 +4268,15 @@ State 193
 	','            reduce using rule 108
 
 
-State 194
+State 195
 
 	AnomFun -> '(' Types ')' . '(' Parametros ')' '{' Instrucciones '}'    (rule 78)
 	AnomFun -> '(' Types ')' . '(' ')' '{' Instrucciones '}'    (rule 79)
 
-	'('            shift, and enter state 201
+	'('            shift, and enter state 202
 
 
-State 195
+State 196
 
 	Funcion -> Types VarVar FuncionP2 Parametros ')' registra2 Block . FuncionP3    (rule 37)
 
@@ -4261,9 +4288,9 @@ State 195
 	'('            reduce using rule 43
 	%eof           reduce using rule 43
 
-	FuncionP3      goto state 200
+	FuncionP3      goto state 201
 
-State 196
+State 197
 
 	ManyTypes -> pretype Types .                        (rule 12)
 
@@ -4271,7 +4298,7 @@ State 196
 	','            reduce using rule 12
 
 
-State 197
+State 198
 
 	Types -> functionType '(' Types ')' '(' ManyTypes ')' .    (rule 21)
 
@@ -4281,7 +4308,7 @@ State 197
 	','            reduce using rule 21
 
 
-State 198
+State 199
 
 	ManyTypes -> ManyTypes ',' . Types                  (rule 11)
 
@@ -4293,9 +4320,9 @@ State 198
 	'('            shift, and enter state 14
 
 	basicType      goto state 3
-	Types          goto state 199
+	Types          goto state 200
 
-State 199
+State 200
 
 	ManyTypes -> ManyTypes ',' Types .                  (rule 11)
 
@@ -4303,7 +4330,7 @@ State 199
 	','            reduce using rule 11
 
 
-State 200
+State 201
 
 	Funcion -> Types VarVar FuncionP2 Parametros ')' registra2 Block FuncionP3 .    (rule 37)
 
@@ -4316,7 +4343,7 @@ State 200
 	%eof           reduce using rule 37
 
 
-State 201
+State 202
 
 	AnomFun -> '(' Types ')' '(' . Parametros ')' '{' Instrucciones '}'    (rule 78)
 	AnomFun -> '(' Types ')' '(' . ')' '{' Instrucciones '}'    (rule 79)
@@ -4328,55 +4355,12 @@ State 201
 	struct         shift, and enter state 22
 	unsigned       shift, and enter state 13
 	'('            shift, and enter state 14
-	')'            shift, and enter state 218
+	')'            shift, and enter state 217
 
 	basicType      goto state 3
 	Types          goto state 59
 	Parametro      goto state 60
-	Parametros     goto state 217
-
-State 202
-
-	arr -> '[' Exp . ']'                                (rule 81)
-	Exp -> Exp . '+' Exp                                (rule 90)
-	Exp -> Exp . '-' Exp                                (rule 91)
-	Exp -> Exp . '*' Exp                                (rule 92)
-	Exp -> Exp . '/' Exp                                (rule 93)
-	Exp -> Exp . '<<' Exp                               (rule 94)
-	Exp -> Exp . '>>' Exp                               (rule 95)
-	Exp -> Exp . '<' Exp                                (rule 96)
-	Exp -> Exp . '<=' Exp                               (rule 97)
-	Exp -> Exp . '>' Exp                                (rule 98)
-	Exp -> Exp . '>=' Exp                               (rule 99)
-	Exp -> Exp . '==' Exp                               (rule 100)
-	Exp -> Exp . '!=' Exp                               (rule 101)
-	Exp -> Exp . '&' Exp                                (rule 102)
-	Exp -> Exp . '%' Exp                                (rule 103)
-	Exp -> Exp . '|' Exp                                (rule 104)
-	Exp -> Exp . '&&' Exp                               (rule 105)
-	Exp -> Exp . '||' Exp                               (rule 106)
-	Exp -> Exp . '.' var                                (rule 107)
-
-	'<<'           shift, and enter state 137
-	'>>'           shift, and enter state 138
-	'.'            shift, and enter state 139
-	'=='           shift, and enter state 140
-	'>='           shift, and enter state 141
-	'<='           shift, and enter state 142
-	'!='           shift, and enter state 143
-	'||'           shift, and enter state 144
-	'&&'           shift, and enter state 145
-	'+'            shift, and enter state 146
-	'-'            shift, and enter state 147
-	'*'            shift, and enter state 148
-	'/'            shift, and enter state 149
-	'%'            shift, and enter state 151
-	'<'            shift, and enter state 152
-	'>'            shift, and enter state 153
-	'&'            shift, and enter state 154
-	'|'            shift, and enter state 155
-	']'            shift, and enter state 216
-
+	Parametros     goto state 216
 
 State 203
 
@@ -4486,6 +4470,49 @@ State 206
 
 State 207
 
+	Asignacion -> var arr '=' Exp .                     (rule 65)
+	Exp -> Exp . '+' Exp                                (rule 90)
+	Exp -> Exp . '-' Exp                                (rule 91)
+	Exp -> Exp . '*' Exp                                (rule 92)
+	Exp -> Exp . '/' Exp                                (rule 93)
+	Exp -> Exp . '<<' Exp                               (rule 94)
+	Exp -> Exp . '>>' Exp                               (rule 95)
+	Exp -> Exp . '<' Exp                                (rule 96)
+	Exp -> Exp . '<=' Exp                               (rule 97)
+	Exp -> Exp . '>' Exp                                (rule 98)
+	Exp -> Exp . '>=' Exp                               (rule 99)
+	Exp -> Exp . '==' Exp                               (rule 100)
+	Exp -> Exp . '!=' Exp                               (rule 101)
+	Exp -> Exp . '&' Exp                                (rule 102)
+	Exp -> Exp . '%' Exp                                (rule 103)
+	Exp -> Exp . '|' Exp                                (rule 104)
+	Exp -> Exp . '&&' Exp                               (rule 105)
+	Exp -> Exp . '||' Exp                               (rule 106)
+	Exp -> Exp . '.' var                                (rule 107)
+
+	'<<'           shift, and enter state 137
+	'>>'           shift, and enter state 138
+	'.'            shift, and enter state 139
+	'=='           shift, and enter state 140
+	'>='           shift, and enter state 141
+	'<='           shift, and enter state 142
+	'!='           shift, and enter state 143
+	'||'           shift, and enter state 144
+	'&&'           shift, and enter state 145
+	'+'            shift, and enter state 146
+	'-'            shift, and enter state 147
+	'*'            shift, and enter state 148
+	'/'            shift, and enter state 149
+	';'            reduce using rule 65
+	'%'            shift, and enter state 151
+	'<'            shift, and enter state 152
+	'>'            shift, and enter state 153
+	'&'            shift, and enter state 154
+	'|'            shift, and enter state 155
+
+
+State 208
+
 	LLamada -> var '(' ParametrosIn ')' .               (rule 66)
 
 	'<<'           reduce using rule 66
@@ -4512,7 +4539,7 @@ State 207
 	','            reduce using rule 66
 
 
-State 208
+State 209
 
 	ParametrosIn -> ParametrosIn ',' . Exp              (rule 68)
 
@@ -4530,9 +4557,8 @@ State 208
 	Atom           goto state 79
 	Exp            goto state 211
 
-State 209
+State 210
 
-	Asignacion -> var '[' Exp ']' . '=' Exp             (rule 65)
 	arr -> '[' Exp ']' .                                (rule 81)
 
 	'<<'           reduce using rule 81
@@ -4544,11 +4570,12 @@ State 209
 	'!='           reduce using rule 81
 	'||'           reduce using rule 81
 	'&&'           reduce using rule 81
-	'='            shift, and enter state 210
+	'='            reduce using rule 81
 	'+'            reduce using rule 81
 	'-'            reduce using rule 81
 	'*'            reduce using rule 81
 	'/'            reduce using rule 81
+	')'            reduce using rule 81
 	';'            reduce using rule 81
 	'%'            reduce using rule 81
 	'<'            reduce using rule 81
@@ -4556,25 +4583,9 @@ State 209
 	'&'            reduce using rule 81
 	'|'            reduce using rule 81
 	'['            reduce using rule 81
+	']'            reduce using rule 81
+	','            reduce using rule 81
 
-
-State 210
-
-	Asignacion -> var '[' Exp ']' '=' . Exp             (rule 65)
-
-	var            shift, and enter state 120
-	int            shift, and enter state 82
-	float          shift, and enter state 83
-	bool           shift, and enter state 84
-	str            shift, and enter state 93
-	'-'            shift, and enter state 94
-	'*'            shift, and enter state 95
-	'('            shift, and enter state 122
-
-	LLamada        goto state 76
-	AnomFun        goto state 78
-	Atom           goto state 79
-	Exp            goto state 223
 
 State 211
 
@@ -4633,6 +4644,7 @@ State 212
 	'!='           reduce using rule 80
 	'||'           reduce using rule 80
 	'&&'           reduce using rule 80
+	'='            reduce using rule 80
 	'+'            reduce using rule 80
 	'-'            reduce using rule 80
 	'*'            reduce using rule 80
@@ -4663,7 +4675,7 @@ State 213
 	if             reduce using rule 62
 	while          reduce using rule 62
 	for            reduce using rule 62
-	else           shift, and enter state 222
+	else           shift, and enter state 221
 	union          reduce using rule 62
 	struct         reduce using rule 62
 	unsigned       reduce using rule 62
@@ -4748,7 +4760,7 @@ State 215
 	'-'            shift, and enter state 147
 	'*'            shift, and enter state 148
 	'/'            shift, and enter state 149
-	';'            shift, and enter state 221
+	';'            shift, and enter state 220
 	'%'            shift, and enter state 151
 	'<'            shift, and enter state 152
 	'>'            shift, and enter state 153
@@ -4758,52 +4770,182 @@ State 215
 
 State 216
 
-	arr -> '[' Exp ']' .                                (rule 81)
+	Parametros -> Parametros . ',' Parametro            (rule 76)
+	AnomFun -> '(' Types ')' '(' Parametros . ')' '{' Instrucciones '}'    (rule 78)
 
-	'<<'           reduce using rule 81
-	'>>'           reduce using rule 81
-	'.'            reduce using rule 81
-	'=='           reduce using rule 81
-	'>='           reduce using rule 81
-	'<='           reduce using rule 81
-	'!='           reduce using rule 81
-	'||'           reduce using rule 81
-	'&&'           reduce using rule 81
-	'+'            reduce using rule 81
-	'-'            reduce using rule 81
-	'*'            reduce using rule 81
-	'/'            reduce using rule 81
-	')'            reduce using rule 81
-	';'            reduce using rule 81
-	'%'            reduce using rule 81
-	'<'            reduce using rule 81
-	'>'            reduce using rule 81
-	'&'            reduce using rule 81
-	'|'            reduce using rule 81
-	'['            reduce using rule 81
-	']'            reduce using rule 81
-	','            reduce using rule 81
+	')'            shift, and enter state 219
+	','            shift, and enter state 100
 
 
 State 217
 
-	Parametros -> Parametros . ',' Parametro            (rule 76)
-	AnomFun -> '(' Types ')' '(' Parametros . ')' '{' Instrucciones '}'    (rule 78)
+	AnomFun -> '(' Types ')' '(' ')' . '{' Instrucciones '}'    (rule 79)
 
-	')'            shift, and enter state 220
-	','            shift, and enter state 100
+	'{'            shift, and enter state 218
 
 
 State 218
 
-	AnomFun -> '(' Types ')' '(' ')' . '{' Instrucciones '}'    (rule 79)
+	AnomFun -> '(' Types ')' '(' ')' '{' . Instrucciones '}'    (rule 79)
 
-	'{'            shift, and enter state 219
+	var            shift, and enter state 81
+	int            shift, and enter state 82
+	float          shift, and enter state 83
+	type           shift, and enter state 9
+	functionType   shift, and enter state 10
+	bool           shift, and enter state 84
+	if             shift, and enter state 85
+	while          shift, and enter state 86
+	for            shift, and enter state 87
+	union          shift, and enter state 21
+	struct         shift, and enter state 22
+	unsigned       shift, and enter state 13
+	continue       shift, and enter state 88
+	break          shift, and enter state 89
+	return         shift, and enter state 90
+	read           shift, and enter state 91
+	write          shift, and enter state 92
+	str            shift, and enter state 93
+	'-'            shift, and enter state 94
+	'*'            shift, and enter state 95
+	'('            shift, and enter state 96
+	'{'            shift, and enter state 45
+	';'            shift, and enter state 97
 
+	basicType      goto state 3
+	Types          goto state 52
+	VarDeclaration goto state 69
+	Block          goto state 70
+	Block2         goto state 64
+	Instruccion    goto state 71
+	For            goto state 72
+	While          goto state 73
+	If             goto state 74
+	Asignacion     goto state 75
+	LLamada        goto state 76
+	Instrucciones  goto state 225
+	AnomFun        goto state 78
+	Atom           goto state 79
+	Exp            goto state 80
 
 State 219
 
-	AnomFun -> '(' Types ')' '(' ')' '{' . Instrucciones '}'    (rule 79)
+	AnomFun -> '(' Types ')' '(' Parametros ')' . '{' Instrucciones '}'    (rule 78)
+
+	'{'            shift, and enter state 224
+
+
+State 220
+
+	For -> for '(' Instruccion ';' Exp ';' . Instruccion ')' Instruccion    (rule 60)
+
+	var            shift, and enter state 81
+	int            shift, and enter state 82
+	float          shift, and enter state 83
+	bool           shift, and enter state 84
+	if             shift, and enter state 85
+	while          shift, and enter state 86
+	for            shift, and enter state 87
+	continue       shift, and enter state 88
+	break          shift, and enter state 89
+	return         shift, and enter state 90
+	read           shift, and enter state 91
+	write          shift, and enter state 92
+	str            shift, and enter state 93
+	'-'            shift, and enter state 94
+	'*'            shift, and enter state 95
+	'('            shift, and enter state 122
+	'{'            shift, and enter state 45
+	';'            shift, and enter state 97
+
+	Block          goto state 70
+	Block2         goto state 64
+	Instruccion    goto state 223
+	For            goto state 72
+	While          goto state 73
+	If             goto state 74
+	Asignacion     goto state 75
+	LLamada        goto state 76
+	AnomFun        goto state 78
+	Atom           goto state 79
+	Exp            goto state 80
+
+State 221
+
+	If -> if '(' Exp ')' Block else . Instruccion       (rule 63)
+
+	var            shift, and enter state 81
+	int            shift, and enter state 82
+	float          shift, and enter state 83
+	bool           shift, and enter state 84
+	if             shift, and enter state 85
+	while          shift, and enter state 86
+	for            shift, and enter state 87
+	continue       shift, and enter state 88
+	break          shift, and enter state 89
+	return         shift, and enter state 90
+	read           shift, and enter state 91
+	write          shift, and enter state 92
+	str            shift, and enter state 93
+	'-'            shift, and enter state 94
+	'*'            shift, and enter state 95
+	'('            shift, and enter state 122
+	'{'            shift, and enter state 45
+	';'            shift, and enter state 97
+
+	Block          goto state 70
+	Block2         goto state 64
+	Instruccion    goto state 222
+	For            goto state 72
+	While          goto state 73
+	If             goto state 74
+	Asignacion     goto state 75
+	LLamada        goto state 76
+	AnomFun        goto state 78
+	Atom           goto state 79
+	Exp            goto state 80
+
+State 222
+
+	If -> if '(' Exp ')' Block else Instruccion .       (rule 63)
+
+	var            reduce using rule 63
+	int            reduce using rule 63
+	float          reduce using rule 63
+	type           reduce using rule 63
+	functionType   reduce using rule 63
+	bool           reduce using rule 63
+	if             reduce using rule 63
+	while          reduce using rule 63
+	for            reduce using rule 63
+	union          reduce using rule 63
+	struct         reduce using rule 63
+	unsigned       reduce using rule 63
+	continue       reduce using rule 63
+	break          reduce using rule 63
+	return         reduce using rule 63
+	read           reduce using rule 63
+	write          reduce using rule 63
+	str            reduce using rule 63
+	'-'            reduce using rule 63
+	'*'            reduce using rule 63
+	'('            reduce using rule 63
+	')'            reduce using rule 63
+	'{'            reduce using rule 63
+	'}'            reduce using rule 63
+	';'            reduce using rule 63
+
+
+State 223
+
+	For -> for '(' Instruccion ';' Exp ';' Instruccion . ')' Instruccion    (rule 60)
+
+	')'            shift, and enter state 228
+
+
+State 224
+
+	AnomFun -> '(' Types ')' '(' Parametros ')' '{' . Instrucciones '}'    (rule 78)
 
 	var            shift, and enter state 81
 	int            shift, and enter state 82
@@ -4845,209 +4987,7 @@ State 219
 	Atom           goto state 79
 	Exp            goto state 80
 
-State 220
-
-	AnomFun -> '(' Types ')' '(' Parametros ')' . '{' Instrucciones '}'    (rule 78)
-
-	'{'            shift, and enter state 226
-
-
-State 221
-
-	For -> for '(' Instruccion ';' Exp ';' . Instruccion ')' Instruccion    (rule 60)
-
-	var            shift, and enter state 81
-	int            shift, and enter state 82
-	float          shift, and enter state 83
-	bool           shift, and enter state 84
-	if             shift, and enter state 85
-	while          shift, and enter state 86
-	for            shift, and enter state 87
-	continue       shift, and enter state 88
-	break          shift, and enter state 89
-	return         shift, and enter state 90
-	read           shift, and enter state 91
-	write          shift, and enter state 92
-	str            shift, and enter state 93
-	'-'            shift, and enter state 94
-	'*'            shift, and enter state 95
-	'('            shift, and enter state 122
-	'{'            shift, and enter state 45
-	';'            shift, and enter state 97
-
-	Block          goto state 70
-	Block2         goto state 64
-	Instruccion    goto state 225
-	For            goto state 72
-	While          goto state 73
-	If             goto state 74
-	Asignacion     goto state 75
-	LLamada        goto state 76
-	AnomFun        goto state 78
-	Atom           goto state 79
-	Exp            goto state 80
-
-State 222
-
-	If -> if '(' Exp ')' Block else . Instruccion       (rule 63)
-
-	var            shift, and enter state 81
-	int            shift, and enter state 82
-	float          shift, and enter state 83
-	bool           shift, and enter state 84
-	if             shift, and enter state 85
-	while          shift, and enter state 86
-	for            shift, and enter state 87
-	continue       shift, and enter state 88
-	break          shift, and enter state 89
-	return         shift, and enter state 90
-	read           shift, and enter state 91
-	write          shift, and enter state 92
-	str            shift, and enter state 93
-	'-'            shift, and enter state 94
-	'*'            shift, and enter state 95
-	'('            shift, and enter state 122
-	'{'            shift, and enter state 45
-	';'            shift, and enter state 97
-
-	Block          goto state 70
-	Block2         goto state 64
-	Instruccion    goto state 224
-	For            goto state 72
-	While          goto state 73
-	If             goto state 74
-	Asignacion     goto state 75
-	LLamada        goto state 76
-	AnomFun        goto state 78
-	Atom           goto state 79
-	Exp            goto state 80
-
-State 223
-
-	Asignacion -> var '[' Exp ']' '=' Exp .             (rule 65)
-	Exp -> Exp . '+' Exp                                (rule 90)
-	Exp -> Exp . '-' Exp                                (rule 91)
-	Exp -> Exp . '*' Exp                                (rule 92)
-	Exp -> Exp . '/' Exp                                (rule 93)
-	Exp -> Exp . '<<' Exp                               (rule 94)
-	Exp -> Exp . '>>' Exp                               (rule 95)
-	Exp -> Exp . '<' Exp                                (rule 96)
-	Exp -> Exp . '<=' Exp                               (rule 97)
-	Exp -> Exp . '>' Exp                                (rule 98)
-	Exp -> Exp . '>=' Exp                               (rule 99)
-	Exp -> Exp . '==' Exp                               (rule 100)
-	Exp -> Exp . '!=' Exp                               (rule 101)
-	Exp -> Exp . '&' Exp                                (rule 102)
-	Exp -> Exp . '%' Exp                                (rule 103)
-	Exp -> Exp . '|' Exp                                (rule 104)
-	Exp -> Exp . '&&' Exp                               (rule 105)
-	Exp -> Exp . '||' Exp                               (rule 106)
-	Exp -> Exp . '.' var                                (rule 107)
-
-	'<<'           shift, and enter state 137
-	'>>'           shift, and enter state 138
-	'.'            shift, and enter state 139
-	'=='           shift, and enter state 140
-	'>='           shift, and enter state 141
-	'<='           shift, and enter state 142
-	'!='           shift, and enter state 143
-	'||'           shift, and enter state 144
-	'&&'           shift, and enter state 145
-	'+'            shift, and enter state 146
-	'-'            shift, and enter state 147
-	'*'            shift, and enter state 148
-	'/'            shift, and enter state 149
-	';'            reduce using rule 65
-	'%'            shift, and enter state 151
-	'<'            shift, and enter state 152
-	'>'            shift, and enter state 153
-	'&'            shift, and enter state 154
-	'|'            shift, and enter state 155
-
-
-State 224
-
-	If -> if '(' Exp ')' Block else Instruccion .       (rule 63)
-
-	var            reduce using rule 63
-	int            reduce using rule 63
-	float          reduce using rule 63
-	type           reduce using rule 63
-	functionType   reduce using rule 63
-	bool           reduce using rule 63
-	if             reduce using rule 63
-	while          reduce using rule 63
-	for            reduce using rule 63
-	union          reduce using rule 63
-	struct         reduce using rule 63
-	unsigned       reduce using rule 63
-	continue       reduce using rule 63
-	break          reduce using rule 63
-	return         reduce using rule 63
-	read           reduce using rule 63
-	write          reduce using rule 63
-	str            reduce using rule 63
-	'-'            reduce using rule 63
-	'*'            reduce using rule 63
-	'('            reduce using rule 63
-	')'            reduce using rule 63
-	'{'            reduce using rule 63
-	'}'            reduce using rule 63
-	';'            reduce using rule 63
-
-
 State 225
-
-	For -> for '(' Instruccion ';' Exp ';' Instruccion . ')' Instruccion    (rule 60)
-
-	')'            shift, and enter state 230
-
-
-State 226
-
-	AnomFun -> '(' Types ')' '(' Parametros ')' '{' . Instrucciones '}'    (rule 78)
-
-	var            shift, and enter state 81
-	int            shift, and enter state 82
-	float          shift, and enter state 83
-	type           shift, and enter state 9
-	functionType   shift, and enter state 10
-	bool           shift, and enter state 84
-	if             shift, and enter state 85
-	while          shift, and enter state 86
-	for            shift, and enter state 87
-	union          shift, and enter state 21
-	struct         shift, and enter state 22
-	unsigned       shift, and enter state 13
-	continue       shift, and enter state 88
-	break          shift, and enter state 89
-	return         shift, and enter state 90
-	read           shift, and enter state 91
-	write          shift, and enter state 92
-	str            shift, and enter state 93
-	'-'            shift, and enter state 94
-	'*'            shift, and enter state 95
-	'('            shift, and enter state 96
-	'{'            shift, and enter state 45
-	';'            shift, and enter state 97
-
-	basicType      goto state 3
-	Types          goto state 52
-	VarDeclaration goto state 69
-	Block          goto state 70
-	Block2         goto state 64
-	Instruccion    goto state 71
-	For            goto state 72
-	While          goto state 73
-	If             goto state 74
-	Asignacion     goto state 75
-	LLamada        goto state 76
-	Instrucciones  goto state 229
-	AnomFun        goto state 78
-	Atom           goto state 79
-	Exp            goto state 80
-
-State 227
 
 	Instrucciones -> Instrucciones . Instruccion        (rule 70)
 	Instrucciones -> Instrucciones . VarDeclaration     (rule 72)
@@ -5075,7 +5015,7 @@ State 227
 	'*'            shift, and enter state 95
 	'('            shift, and enter state 96
 	'{'            shift, and enter state 45
-	'}'            shift, and enter state 228
+	'}'            shift, and enter state 226
 	';'            shift, and enter state 97
 
 	basicType      goto state 3
@@ -5093,7 +5033,7 @@ State 227
 	Atom           goto state 79
 	Exp            goto state 80
 
-State 228
+State 226
 
 	AnomFun -> '(' Types ')' '(' ')' '{' Instrucciones '}' .    (rule 79)
 
@@ -5121,7 +5061,7 @@ State 228
 	','            reduce using rule 79
 
 
-State 229
+State 227
 
 	Instrucciones -> Instrucciones . Instruccion        (rule 70)
 	Instrucciones -> Instrucciones . VarDeclaration     (rule 72)
@@ -5149,7 +5089,7 @@ State 229
 	'*'            shift, and enter state 95
 	'('            shift, and enter state 96
 	'{'            shift, and enter state 45
-	'}'            shift, and enter state 232
+	'}'            shift, and enter state 230
 	';'            shift, and enter state 97
 
 	basicType      goto state 3
@@ -5167,7 +5107,7 @@ State 229
 	Atom           goto state 79
 	Exp            goto state 80
 
-State 230
+State 228
 
 	For -> for '(' Instruccion ';' Exp ';' Instruccion ')' . Instruccion    (rule 60)
 
@@ -5192,7 +5132,7 @@ State 230
 
 	Block          goto state 70
 	Block2         goto state 64
-	Instruccion    goto state 231
+	Instruccion    goto state 229
 	For            goto state 72
 	While          goto state 73
 	If             goto state 74
@@ -5202,7 +5142,7 @@ State 230
 	Atom           goto state 79
 	Exp            goto state 80
 
-State 231
+State 229
 
 	For -> for '(' Instruccion ';' Exp ';' Instruccion ')' Instruccion .    (rule 60)
 
@@ -5233,7 +5173,7 @@ State 231
 	';'            reduce using rule 60
 
 
-State 232
+State 230
 
 	AnomFun -> '(' Types ')' '(' Parametros ')' '{' Instrucciones '}' .    (rule 78)
 
@@ -5267,4 +5207,4 @@ Grammar Totals
 Number of rules: 112
 Number of terminals: 47
 Number of non-terminals: 38
-Number of states: 233
+Number of states: 231
