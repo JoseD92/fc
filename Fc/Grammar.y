@@ -199,12 +199,35 @@ Instruccion : Block  {% return $1 }
     | write Exp ';'  {% return $ sReturnEmpty {tipo=(if (tipo $2)==TError then TError else TVoid)} }
     | ';'            {% return $ sReturnEmpty {tipo=TVoid} }
 
-For : for '(' Instruccion ';' Exp ';' Instruccion ')' Instruccion {% return $ sReturnEmpty {tipo=(if (tipo $5)==TBool && (tipo $3)==TVoid && (tipo $7)==TVoid && (tipo $9)==TVoid then TVoid else TError)} }
+For : for '(' Instruccion BoolE2 Instruccion ')' Instruccion 
+  {% return $ sReturnEmpty {tipo=(if (tipo $5)==TBool && (tipo $3)==TVoid && (tipo $5)==TVoid && (tipo $7)==TVoid then TVoid else TError)} }
 
-While : while '(' Exp ')' Instruccion {% return $ sReturnEmpty {tipo=(if (tipo $5)==TVoid && (tipo $3)==TBool then TVoid else TError)} }
+While : while BoolE Instruccion {% return $ sReturnEmpty {tipo=(if (tipo $3)==TVoid && (tipo $2)==TBool then TVoid else TError)} }
 
-If : if '(' Exp ')' Block                   {% return $ sReturnEmpty {tipo=(if (tipo $5)==TVoid && (tipo $3)==TBool then TVoid else TError)} }
-    | if '(' Exp ')' Block else Block {% return $ sReturnEmpty {tipo=(if (tipo $7)==TVoid && (tipo $5)==TVoid && (tipo $3)==TBool then TVoid else TError)} }
+If : if BoolE Block             {% return $ sReturnEmpty {tipo=(if (tipo $3)==TVoid && (tipo $2)==TBool then TVoid else TError)} }
+    | if BoolE Block else Block {% return $ sReturnEmpty {tipo=(if (tipo $3)==TVoid && (tipo $5)==TVoid && (tipo $2)==TBool then TVoid else TError)} }
+
+BoolE2 : ';' Exp ';' {% do
+  if ((tipo $2)==TError) then return $ sReturnEmpty {tipo=TError}
+  else
+    if ((tipo $2)==TBool) then return $ sReturnEmpty {tipo=TBool}
+    else do
+      let (_,l,c) = $1
+      printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++
+        ". Se esperaba un valor de tipo Bool, pero se encontro: "++(show (tipo $2))++"."
+      return $ sReturnEmpty {tipo=TError}
+  }
+
+BoolE : '(' Exp ')' {% do
+  if ((tipo $2)==TError) then return $ sReturnEmpty {tipo=TError}
+  else
+    if ((tipo $2)==TBool) then return $ sReturnEmpty {tipo=TBool}
+    else do
+      let (_,l,c) = $1
+      printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++
+        ". Se esperaba un valor de tipo Bool, pero se encontro: "++(show (tipo $2))++"."
+      return $ sReturnEmpty {tipo=TError}
+  }
 
 --If : B  {% return $ sReturnEmpty {tipo=TVoid} }
 --  | U   {% return $ sReturnEmpty {tipo=TVoid} }
@@ -220,7 +243,16 @@ If : if '(' Exp ')' Block                   {% return $ sReturnEmpty {tipo=(if (
 --mases : mases '+' {ayudaApuntador.$1}
 --    | '+' {ayudaApuntador}
 
-Asignacion : Atom2 '=' Exp {% return $ sReturnEmpty {tipo=(if (tipo $3)/=TError &&(tipo $1)==(tipo $3) then TVoid else TError)} }
+Asignacion : Atom2 '=' Exp {% do
+  if ((tipo $3)==TError || (tipo $1)==TError) then return $ sReturnEmpty {tipo=TError}
+  else
+    if ((tipo $1)==(tipo $3)) then return $ sReturnEmpty {tipo=TVoid}
+    else do
+      let (_,l,c) = $2
+      printError $ "Error en la linea "++(show l)++" columna "++(show c)++
+        ". Los lados de una asignacion deben de ser del mismo tipo, pero se encontro: "++(show (tipo $1))++" y "++(show (tipo $3))++"."
+      return $ sReturnEmpty {tipo=TError}
+ }
 
 LLamada : var '(' ParametrosIn ')'   {% evalLlamada $1 $3}
     | var '(' ')'                    {% evalLlamada $1 []}

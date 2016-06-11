@@ -24,6 +24,7 @@ int main(){
    if (True) {1;} else {2;}
    while (True) {
       x=a[4][1];
+      x=1.0;
       a[2]=c;
       a[2][2]=x+1.0;
       *y=*y;
