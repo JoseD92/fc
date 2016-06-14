@@ -8,7 +8,7 @@ import Control.Monad.Writer
 import Control.Monad.State
 import qualified Fc.Tabla as T
 import Fc.MyState
-import Fc.Datas (TypeData(..))
+import Fc.Datas
 --getopt -- buscar
 
 filfun (Error _ _) = False

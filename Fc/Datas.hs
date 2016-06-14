@@ -1,4 +1,4 @@
-module Fc.Datas (TypeData(..),operAcc,operAccMono)
+module Fc.Datas (TypeData(..),operAcc,operAccMono,tam)
 where
 
 import qualified Fc.Tabla as T(Tabla(info,hijos))
@@ -30,8 +30,14 @@ tam TBool _ = 1
 tam TChar _ = 1
 tam (TArray i x) m = i*(tam x m)
 tam (TUnsigned x) m = tam x m
---tam (TStruct s) susymt = (sum (map tam (T.info laTabla)))+
---  where laTabla = Map.lookup s susymt
---tam (TUnion s) susymt =
---  where laTabla = Map.lookup s susymt
+tam s@(TStruct _) susymt = maybe 0 (go) laTabla
+  where 
+    laTabla = Map.lookup s susymt
+    go t = (sum (fmap (go2 susymt) (T.info t)))
+    go2 = flip tam
+tam s@(TUnion _) susymt = maybe 0 (go) laTabla
+  where 
+    laTabla = Map.lookup s susymt
+    go t = (foldl1 max (fmap (go2 susymt) (T.info t)))
+    go2 = flip tam
 tam _ _ = 0

@@ -1,5 +1,5 @@
 module Fc.MyState (
-  ParseState,
+  ParseState(..),
   SReturn(..),
   sReturnEmpty,
   parseStateEmpty,
