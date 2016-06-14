@@ -89,63 +89,57 @@ All : All Funcion                  {% return $ sReturnEmpty {tipo=(if (tipo $1)=
     | Struct                       {% return $ sReturnEmpty {tipo=TVoid} }
     | All Union                    {% return $1 }
     | Union                        {% return $ sReturnEmpty {tipo=TVoid} }
-    | All VarDeclaration           {% return $1 }
-    | VarDeclaration               {% return $ sReturnEmpty {tipo=TVoid} }
+    | All VarDeclaration           {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
+    | VarDeclaration               {% return $1 }
 
-VarDeclarations : VarDeclarations VarDeclaration  { }
-    | VarDeclaration  { }
+VarDeclarations : VarDeclarations VarDeclaration  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
+    | VarDeclaration  {% return $1 }
 
-ManyTypes : ManyTypes ',' Types    {% modify $ empilaAT }
-    | pretype Types {% modify $ empilaAT}
-
-pretype : {% modify $ ponAT}
+ManyTypes : ManyTypes ',' Types    { (tipo $3):$1 }
+    | Types { [tipo $1] }
 
 asteriscos : asteriscos '*' { $1 + 1 }
     | '*' { 1 }
 
-basicType : type {% modify $ modifAType $ const $ case ((\(s,_,_)->s) $1) of
+basicType : type {% return $ sReturnEmpty {tipo=case ((\(s,_,_)->s) $1) of
   "int" ->  TInt
   "float" ->  TFloat
   "bool" ->  TBool
   "void" ->  TVoid
-  "char" ->  TChar
+  "char" ->  TChar}
   }
 
-Types : basicType                                      {}
-    | unsigned basicType                               {% modify $ modifAType TUnsigned }
+Types : basicType                                      {% return $1 }
+    | unsigned basicType                               {% return $ sReturnEmpty {tipo=TUnsigned (tipo $2)} }
     | struct var                                       {% checkExist2 $2 }
     | union var                                        {% checkExist2 $2 }
-    | functionType '(' Types ')' '(' ManyTypes ')'     {%
-  modify $ (\s -> modifAType (const $ FunLoc (last $ pilaAT s) (init $ pilaAT s)) s)
-  }
-    | functionType '(' Types ')' '(' ')'               {%
-  modify $ (\s -> modifAType (const $ FunLoc (getAType s) []) s)
-  }
-    | '(' Types asteriscos ')'                         {% modify $ modifAType $ unasteriscos $3 }
+    | functionType '(' Types ')' '(' ManyTypes ')'     {% return $ sReturnEmpty {tipo= FunLoc (tipo $3) $6} }
+    | functionType '(' Types ')' '(' ')'               {% return $ sReturnEmpty {tipo= FunLoc (tipo $3) []} }
+    | '(' Types asteriscos ')'                         {% return $ sReturnEmpty {tipo= unasteriscos $3 (tipo $2) } }
 
 arrays : arrays '[' int ']' { (.) $1 (TArray ((\(i,_,_)->i) $3)) }
   | '[' int ']' { TArray ((\(i,_,_)->i) $2) }
 
-variables : variables ',' var          {% do
-  s <- get
-  modifTabla $3 (getAType s) }
-    | variables ',' var arrays    {% do
-  s <- get
-  modifTabla $3 ($4 $ getAType s) }
-    | variables ',' asteriscos var     {% do
-  s <- get
-  modifTabla $4 (unasteriscos $3 $ getAType s) }
-    | var                              {% do
-  s <- get
-  modifTabla $1 (getAType s) }
-    | asteriscos var                   {% do
-  s <- get
-  modifTabla $2 (unasteriscos $1 $ getAType s) }
-    | var arrays                  {% do
-  s <- get
-  modifTabla $1 ($2 $ getAType s) }
+variables : variables ',' var                {% do
+  modifTabla $3 (tipo $1) 
+  return $1}
+    | variables ',' var arrays               {% do
+  modifTabla $3 ($4 $ tipo $1) 
+  return $1}
+    | variables ',' asteriscos var           {% do
+  modifTabla $4 (unasteriscos $3 $ tipo $1) 
+  return $1}
+    | Types var                              {% do
+  modifTabla $2 (tipo $1) 
+  return $1}
+    | Types asteriscos var                   {% do
+  modifTabla $3 (unasteriscos $2 $ tipo $1) 
+  return $1}
+    | Types var arrays                       {% do
+  modifTabla $2 ($3 $ tipo $1) 
+  return $1}
 
-VarDeclaration : Types variables ';'  { }
+VarDeclaration : variables ';'  {% if (tipo $1 == TError) then return $1 else return $ sReturnEmpty {tipo=TVoid} }
 
 StructVar : var {% do
   modifTabla $1 (TStruct $ (\(s,_,_)->s) $1) 
@@ -159,21 +153,20 @@ UnionVar : var {% do
   }
 Union : union UnionVar Block2 VarDeclarations Block3 ';' {% modify $ (\s-> addus (tipo $2) (querrySimT (T.enterN 0) s) s) }
 
-Funcion : Types VarVar FuncionP2 Parametros ')' registra2 Block FuncionP3   {% return $7 }
-    | Types VarVar registra Block  {% return $4 }
+Funcion : FuncionConArgs Block FuncionP3   {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
+    | FuncionNoArgs Block  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
 
-registra : '(' ')' {% do
-  s <- get
-  modifTabla (auxS s) (FunGlob (last $ pilaAT s) (init $ pilaAT s)) }
+FuncionNoArgs : Types var '(' ')' {% do 
+  modifTabla $2 (FunGlob (tipo $1) [])
+  return $ sReturnEmpty {tipo=if ((tipo $1) == TError) then TError else TVoid}
+ }
 
-registra2 : {% do
+FuncionConArgs : Types var FuncionP2 Parametros ')'  {% do
   modify $ alterSimT T.exitScope
-  s <- get
-  modifTabla (auxS s) (FunGlob (last $ pilaAT s) (init $ pilaAT s))
+  modifTabla $2 (FunGlob (tipo $1) $4)
   modify $ alterSimT $ T.enterN 0
-  }
-
-VarVar : var {% do modify $ ponAT; modify $ newAusS $1}
+  return $ sReturnEmpty {tipo=if ((tipo $1) == TError || (elem TError $4)) then TError else TVoid}
+}
  
 FuncionP2 : '(' {% modify $ alterSimT T.enterScope}
 FuncionP3 : {% modify $ alterSimT T.exitScope}
@@ -262,20 +255,19 @@ ParametrosIn : ParametrosIn ',' Exp { (tipo $3):$1 }
 
 Instrucciones : Instrucciones Instruccion {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)}}
     | Instruccion                         {% return $1 }
-    | Instrucciones VarDeclaration        {% return $1 }
-    | VarDeclaration                      {% return $ sReturnEmpty {tipo=TVoid} }
+    | Instrucciones VarDeclaration        {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)}}
+    | VarDeclaration                      {% return $1 }
 
 Parametro : ref Types var      {% do
-  s <- get
-  modifTabla $3 (TRef $ getAType s)
-  modify $ modifAType TRef
-  modify $ empilaAT }
+  modifTabla $3 (TRef $ (tipo $2))
+  return $ sReturnEmpty {tipo=(TRef $ (tipo $2)) }
+  }
     | Types var                {% do
-  s <- get
-  modifTabla $2 (getAType s)
-  modify $ empilaAT }
-Parametros : Parametros ',' Parametro { }
-    | Parametro              { }
+  modifTabla $2 (tipo $1)
+  return $ sReturnEmpty {tipo=(tipo $1)}
+  }
+Parametros : Parametros ',' Parametro { (tipo $3):$1 }
+    | Parametro              { [(tipo $1)] }
 
 AnomFun : '(' Types ')' '(' Parametros ')' '{' Instrucciones '}'  { }
     | '(' Types ')' '(' ')' '{' Instrucciones '}'  { }
@@ -450,30 +442,17 @@ checkExist (s,l,c) = do
 checkExist2 (s,l,c) = do
   estado <- get
   if (isNothing $ resul estado)
-  then
-    printError ("No existe el simbolo "++s++". Linea: "++(show l)++" Columna: "++(show c))
+  then do
+    printError ("No existe la estructura o union "++s++". Linea: "++(show l)++" Columna: "++(show c))
+    return $ sReturnEmpty {tipo=TError}
   else 
-    modify $ modifAType (const (fromJust (resul estado)))
+    if (ayudasu $ fromJust (resul estado)) then do
+      printError (s++" no es una estructura o union. Linea: "++(show l)++" Columna: "++(show c))
+      return $ sReturnEmpty {tipo=TError}
+    else
+      return $ sReturnEmpty {tipo=fromJust (resul estado)}
   where
     resul estado = querrySimT (T.lookup s) estado
 
-{-
-{ Plus $1 $3 }
-{ Minus $1 $3 }
-{ Times $1 $3 }
-{ Div $1 $3 }
-{ $2 }
-{ Negate $2 }
- { (\(n,_,_)->Val n) $1 }
-
-data Exp = Plus Exp Exp
-         | Minus Exp Exp
-         | Times Exp Exp
-         | Div Exp Exp
-         | Negate Exp
-         | Brack Exp
-         | Val Int
-         deriving Show
--}
 
 }

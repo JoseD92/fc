@@ -1,16 +1,11 @@
 module Fc.MyState (
-  ParseState(pilaAT,auxS),
+  ParseState,
   SReturn(..),
   sReturnEmpty,
   parseStateEmpty,
   alterSimT,
   addString,
   querrySimT,
-  empilaAT,
-  ponAT,
-  modifAType,
-  getAType,
-  newAusS,
   addus,
   buscasusymt
 )where
@@ -24,9 +19,6 @@ import Fc.Datas (TypeData(..))
 data ParseState = ParseState {
     simT :: T.Tabla String TypeData,
     stringT :: Map.Map String Bool, --tabla de string
-    activeType :: TypeData,
-    pilaAT :: [TypeData],
-    auxS :: (String,Int,Int),
     susymt :: Map.Map TypeData (T.Tabla String TypeData) --tabla de simbolos de cada union/struct
   }
 
@@ -34,17 +26,7 @@ addus k v parS = parS {susymt=(Map.insert) k v (susymt parS) }
 
 buscasusymt k parS = Map.lookup k $ susymt parS
 
-newAusS s parS = parS {auxS=s}
-
-empilaAT parS = parS {pilaAT=(activeType parS):(pilaAT parS)}
-
-ponAT parS = parS {pilaAT=(activeType parS):[]}
-
-parseStateEmpty = ParseState T.empty Map.empty TVoid [] ("",0,0) Map.empty
-
-modifAType f parS = parS {activeType=f (activeType parS)}
-
-getAType = activeType
+parseStateEmpty = ParseState T.empty Map.empty Map.empty
 
 alterSimT f parS = parS {simT=f (simT parS)}
 

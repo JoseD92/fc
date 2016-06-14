@@ -16,7 +16,7 @@ int masuno(int x,bool b){
   return x+1;
 }
 
-int main(int m){
+int main(){
    int x,**y;
    int a[6][5],c[5];
    struct Books b;
@@ -24,14 +24,14 @@ int main(int m){
    if (True) {1;} else {2;}
    while (True) {
       x=a[4][1];
-      x=1;
+      x=1.0;
       a[2]=c;
-      a[2][2]=x+1;
+      a[2][2]=x+1.0;
       *y=*y;
-      **y=a[2][2];
-      x=x;
-      x=b.book_id;
-      x=masuno( b.unhola.algo+**y+(*(b.next)).book_id , True);
+      **y=a[2][2.0];
+      x=x.in;
+      x=b.in;
+      x=masuno( b.unhola.algo+***y+(*(b.next)).book_id , True);
       b=b;
    };
 }
