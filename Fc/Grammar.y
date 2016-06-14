@@ -85,10 +85,10 @@ import Control.Monad (when)
 
 All : All Funcion                  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
     | Funcion                      {% return $1 }
-    | All Struct                   {% return $1 }
-    | Struct                       {% return $ sReturnEmpty {tipo=TVoid} }
-    | All Union                    {% return $1 }
-    | Union                        {% return $ sReturnEmpty {tipo=TVoid} }
+    | All Struct                   {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
+    | Struct                       {% return $1 }
+    | All Union                    {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
+    | Union                        {% return $1 }
     | All VarDeclaration           {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
     | VarDeclaration               {% return $1 }
 
@@ -145,13 +145,35 @@ StructVar : var {% do
   modifTabla $1 (TStruct $ (\(s,_,_)->s) $1) 
   return $ sReturnEmpty {tipo=(TStruct $ (\(s,_,_)->s) $1)}
   }
-Struct : struct StructVar Block2 VarDeclarations Block3 ';' {% modify $ (\s-> addus (tipo $2) (querrySimT (T.enterN 0) s) s) }
+Struct : struct StructVar Block2 VarDeclarations Block3 ';' {% do
+  s <- get
+  let miTabla = querrySimT (T.enterN 0) s
+  let (_,l,c) = $1
+  modify $ addus (tipo $2) miTabla
+  --aqui podria agregar un comando para quitar la tabla de la tabla general
+  if (T.pertenece (tipo $2) miTabla) then do
+    printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++
+      ". La estructura se contiene a si misma."
+    return $ sReturnEmpty {tipo=TError}
+  else return $ sReturnEmpty {tipo=if ((tipo $4) == TError) then TError else TVoid}
+}
 
 UnionVar : var {% do
   modifTabla $1 (TUnion $ (\(s,_,_)->s) $1) 
   return $ sReturnEmpty {tipo=(TUnion $ (\(s,_,_)->s) $1)}
   }
-Union : union UnionVar Block2 VarDeclarations Block3 ';' {% modify $ (\s-> addus (tipo $2) (querrySimT (T.enterN 0) s) s) }
+Union : union UnionVar Block2 VarDeclarations Block3 ';' {% do
+  s <- get
+  let miTabla = querrySimT (T.enterN 0) s
+  let (_,l,c) = $1
+  modify $ addus (tipo $2) miTabla
+  --aqui podria agregar un comando para quitar la tabla de la tabla general
+  if (T.pertenece (tipo $2) miTabla) then do
+    printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++
+      ". La union se contiene a si misma."
+    return $ sReturnEmpty {tipo=TError}
+  else return $ sReturnEmpty {tipo=if ((tipo $4) == TError) then TError else TVoid}
+}
 
 Funcion : FuncionConArgs Block FuncionP3   {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
     | FuncionNoArgs Block  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }

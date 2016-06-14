@@ -39,4 +39,3 @@ main = do
     putStr $ show estado 
     putStr $ (show out) ++ "-----------------"
   else return ()
-  putStr $ (show out) ++ "-----------------"

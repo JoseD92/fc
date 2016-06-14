@@ -7,10 +7,11 @@ module Fc.Tabla (
   enterScope,
   exitScope,
   dump,
-  Tabla,
+  Tabla(info,hijos),
   enterN,
   goToRoot,
-  localLookup
+  localLookup,
+  pertenece
 ) where
 
 import qualified Data.Map.Strict as Map
@@ -75,7 +76,8 @@ enterN i t = Seq.index (hijos t) i
 goToRoot t@(Tabla _ Null _) = t
 goToRoot t@(Tabla _ p _) = goToRoot $ exitScope t
 
-
+pertenece :: (Eq a) => a -> Tabla b a -> Bool
+pertenece s t = (elem s (Map.elems (info t))) || or (fmap (pertenece s) (hijos t))
 
 
 
