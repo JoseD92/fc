@@ -6,10 +6,11 @@ import Fc.Lexer
 import Control.Monad.State
 import qualified Fc.Tabla as T
 import Fc.MyState
-import Fc.Datas (TypeData(..),operAcc,operAccMono)
+import Fc.Datas (TypeData(..),operAcc,operAccMono,tam)
 import Data.Maybe
 import System.IO
 import Control.Monad (when)
+import qualified Data.Map.Strict as Map
 
 }
 
@@ -111,8 +112,8 @@ basicType : type {% return $ sReturnEmpty {tipo=case ((\(s,_,_)->s) $1) of
 
 Types : basicType                                      {% return $1 }
     | unsigned basicType                               {% return $ sReturnEmpty {tipo=TUnsigned (tipo $2)} }
-    | struct var                                       {% checkExist2 $2 }
-    | union var                                        {% checkExist2 $2 }
+    | struct var                                       {% checkExist2 $2 (TStruct $ (\(s,_,_)->s) $2) }
+    | union var                                        {% checkExist2 $2 (TUnion $ (\(s,_,_)->s) $2) }
     | functionType '(' Types ')' '(' ManyTypes ')'     {% return $ sReturnEmpty {tipo= FunLoc (tipo $3) $6} }
     | functionType '(' Types ')' '(' ')'               {% return $ sReturnEmpty {tipo= FunLoc (tipo $3) []} }
     | '(' Types asteriscos ')'                         {% return $ sReturnEmpty {tipo= unasteriscos $3 (tipo $2) } }
@@ -142,7 +143,7 @@ variables : variables ',' var                {% do
 VarDeclaration : variables ';'  {% if (tipo $1 == TError) then return $1 else return $ sReturnEmpty {tipo=TVoid} }
 
 StructVar : var {% do
-  modifTabla $1 (TStruct $ (\(s,_,_)->s) $1) 
+  modify $ addus (TStruct $ (\(s,_,_)->s) $1) T.empty
   return $ sReturnEmpty {tipo=(TStruct $ (\(s,_,_)->s) $1)}
   }
 Struct : struct StructVar Block2 VarDeclarations Block3 ';' {% do
@@ -150,7 +151,8 @@ Struct : struct StructVar Block2 VarDeclarations Block3 ';' {% do
   let miTabla = querrySimT (T.enterN 0) s
   let (_,l,c) = $1
   modify $ addus (tipo $2) miTabla
-  --aqui podria agregar un comando para quitar la tabla de la tabla general
+  modify $ addTam (tipo $2) (sum (fmap ((flip tam) (tamTable s)) (T.info miTabla)))
+  modify $ alterSimT T.eliminaPrimero --aqui podria agregar un comando para quitar la tabla de la tabla general
   if (T.pertenece (tipo $2) miTabla) then do
     printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++
       ". La estructura se contiene a si misma."
@@ -159,7 +161,7 @@ Struct : struct StructVar Block2 VarDeclarations Block3 ';' {% do
 }
 
 UnionVar : var {% do
-  modifTabla $1 (TUnion $ (\(s,_,_)->s) $1) 
+  modify $ addus (TUnion $ (\(s,_,_)->s) $1) T.empty
   return $ sReturnEmpty {tipo=(TUnion $ (\(s,_,_)->s) $1)}
   }
 Union : union UnionVar Block2 VarDeclarations Block3 ';' {% do
@@ -167,7 +169,8 @@ Union : union UnionVar Block2 VarDeclarations Block3 ';' {% do
   let miTabla = querrySimT (T.enterN 0) s
   let (_,l,c) = $1
   modify $ addus (tipo $2) miTabla
-  --aqui podria agregar un comando para quitar la tabla de la tabla general
+  modify $ addTam (tipo $2) (foldl1 max (fmap ((flip tam) (tamTable s)) (T.info miTabla)))
+  modify $ alterSimT T.eliminaPrimero--aqui podria agregar un comando para quitar la tabla de la tabla general
   if (T.pertenece (tipo $2) miTabla) then do
     printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++
       ". La union se contiene a si misma."
@@ -461,20 +464,14 @@ checkExist (s,l,c) = do
     printError ("No existe el simbolo "++s++". Linea: "++(show l)++" Columna: "++(show c))
   return resul
 
-checkExist2 (s,l,c) = do
+checkExist2 (s,l,c) t = do
   estado <- get
-  if (isNothing $ resul estado)
-  then do
+  if (resul estado) then return $ sReturnEmpty {tipo=t}
+  else do
     printError ("No existe la estructura o union "++s++". Linea: "++(show l)++" Columna: "++(show c))
-    return $ sReturnEmpty {tipo=TError}
-  else 
-    if (ayudasu $ fromJust (resul estado)) then do
-      printError (s++" no es una estructura o union. Linea: "++(show l)++" Columna: "++(show c))
-      return $ sReturnEmpty {tipo=TError}
-    else
-      return $ sReturnEmpty {tipo=fromJust (resul estado)}
+    return $ sReturnEmpty {tipo=TError}      
   where
-    resul estado = querrySimT (T.lookup s) estado
+    resul estado = Map.member t $ susymt estado
 
 
 }

@@ -1,4 +1,4 @@
-struct hola {
+union hola {
    int   holaid;
    int   algo;
 };
@@ -9,7 +9,7 @@ struct Books {
    char  subject[100][2];
    int   book_id;
    struct Books *next;
-   struct hola unhola;
+   union hola unhola;
 }; 
 
 int masuno(int x,bool b){
