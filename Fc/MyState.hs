@@ -67,8 +67,9 @@ print3 tamTable s i t = (unlines kvo) ++ paso2
     paso2 = foldl (++) [] seqs
 
 offset :: Int -> [Int] -> [Int]
-offset i l = reverse $ foldl (\l x -> (x+(head l)):l) [i] l
+offset i l = reverse $ foldl (\l x -> (mimod (x+(head l))):l) [i] l
 
+mimod x = 4-(mod x 4) + x
 
 ----------------------------------return del monad state
 

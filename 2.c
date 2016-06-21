@@ -5,14 +5,19 @@ union hola {
 
 struct Books {
    char  title[50];
+   float mifloat;
    char  author[50];
    char  subject[100][2];
    int   book_id;
    struct Books *next;
    union hola unhola;
+   bool btbt;
 }; 
 
-int masuno(int x,bool b){
+int masuno(int x,bool b,float f){
+  float p;
+  char c;
+  int kk;
   return x+1;
 }
 
@@ -23,10 +28,10 @@ int main(int m){
    x = 1;
    if (True) {1;} else {2;}
    while (True) {
-      x=a[4][1];
+      x=a[4][1.0];
       x=1;
       a[2]=c;
-      a[2][2]=x+1;
+      a[2][2]=x+1.0;
       *y=*y;
       **y=a[2][2];
       x=x;

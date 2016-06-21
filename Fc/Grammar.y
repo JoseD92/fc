@@ -151,7 +151,7 @@ Struct : struct StructVar Block2 VarDeclarations Block3 ';' {% do
   let miTabla = querrySimT (T.enterN 0) s
   let (_,l,c) = $1
   modify $ addus (tipo $2) miTabla
-  modify $ addTam (tipo $2) (sum (fmap ((flip tam) (tamTable s)) (T.info miTabla)))
+  modify $ addTam (tipo $2) (sum.(fmap mimod) $ (fmap ((flip tam) (tamTable s)) (T.info miTabla)))
   modify $ alterSimT T.eliminaPrimero --aqui podria agregar un comando para quitar la tabla de la tabla general
   if (T.pertenece (tipo $2) miTabla) then do
     printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++
@@ -169,7 +169,7 @@ Union : union UnionVar Block2 VarDeclarations Block3 ';' {% do
   let miTabla = querrySimT (T.enterN 0) s
   let (_,l,c) = $1
   modify $ addus (tipo $2) miTabla
-  modify $ addTam (tipo $2) (foldl1 max (fmap ((flip tam) (tamTable s)) (T.info miTabla)))
+  modify $ addTam (tipo $2) (mimod (foldl1 max (fmap ((flip tam) (tamTable s)) (T.info miTabla))))
   modify $ alterSimT T.eliminaPrimero--aqui podria agregar un comando para quitar la tabla de la tabla general
   if (T.pertenece (tipo $2) miTabla) then do
     printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++
@@ -473,5 +473,5 @@ checkExist2 (s,l,c) t = do
   where
     resul estado = Map.member t $ susymt estado
 
-
+mimod x = 4-(mod x 4) + x
 }
