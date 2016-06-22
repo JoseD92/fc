@@ -15,7 +15,7 @@ import Fc.Datas (TypeData)
 import qualified Data.Map.Strict as Map
 import qualified Data.Sequence as Seq
 import Data.Foldable (toList)
-import Fc.Datas (TypeData(..),tam)
+import Fc.Datas (TypeData(..),tam,Expre(..),Instruc(..))
 import Data.Maybe
 
 data ParseState = ParseState {
@@ -75,7 +75,11 @@ mimod x = 4-(mod x 4) + x
 
 data SReturn = SReturn {
   tipo :: !TypeData,
-  number :: !Int
-} deriving (Show)
+  number :: !Int,
+  expre :: Expre,
+  expreList :: [Expre],
+  ins :: Instruc,
+  insList :: [Instruc]
+}
 
-sReturnEmpty = SReturn TAny 0
+sReturnEmpty = SReturn TAny 0 ExpreNull [] InstrucNull []

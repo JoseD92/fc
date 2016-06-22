@@ -6,7 +6,7 @@ import Fc.Lexer
 import Control.Monad.State
 import qualified Fc.Tabla as T
 import Fc.MyState
-import Fc.Datas (TypeData(..),operAcc,operAccMono,tam)
+import Fc.Datas (TypeData(..),operAcc,operAccMono,tam,Expre(..),Instruc(..))
 import Data.Maybe
 import System.IO
 import Control.Monad (when)
@@ -84,13 +84,13 @@ import qualified Data.Map.Strict as Map
 
 %%
 
-All : All Funcion                  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
-    | Funcion                      {% return $1 }
-    | All Struct                   {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
+All : All Funcion                  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),insList=insToList $2 $1} }
+    | Funcion                      {% return ($1 {insList=[ins $1]}) }
+    | All Struct                   {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),insList=insToList $2 $1} }
     | Struct                       {% return $1 }
-    | All Union                    {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
+    | All Union                    {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),insList=insToList $2 $1} }
     | Union                        {% return $1 }
-    | All VarDeclaration           {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
+    | All VarDeclaration           {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),insList=insToList $2 $1} }
     | VarDeclaration               {% return $1 }
 
 VarDeclarations : VarDeclarations VarDeclaration  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
@@ -178,8 +178,8 @@ Union : union UnionVar Block2 VarDeclarations Block3 ';' {% do
   else return $ sReturnEmpty {tipo=if ((tipo $4) == TError) then TError else TVoid}
 }
 
-Funcion : FuncionConArgs Block FuncionP3   {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
-    | FuncionNoArgs Block  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
+Funcion : FuncionConArgs Block FuncionP3   {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),ins=InstrucFun (ins $2)} }
+    | FuncionNoArgs Block  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),ins=InstrucFun (ins $2)} }
 
 FuncionNoArgs : Types var '(' ')' {% do 
   modifTabla $2 (FunGlob (tipo $1) [])
@@ -196,7 +196,7 @@ FuncionConArgs : Types var FuncionP2 Parametros ')'  {% do
 FuncionP2 : '(' {% modify $ alterSimT T.enterScope}
 FuncionP3 : {% modify $ alterSimT T.exitScope}
 
-Block : Block2 Instrucciones Block3 {% return $2 }
+Block : Block2 Instrucciones Block3 {% return ($2 {ins=InstrucBlock (reverse $ insList $2),insList=[]}) }
 Block2 : '{' {% modify $ alterSimT T.enterScope}
 Block3 : '}' {% modify $ alterSimT T.exitScope}
 
@@ -205,11 +205,11 @@ Instruccion : Block  {% return $1 }
     | While          {% return $1 }
     | If             {% return $1 }
     | Asignacion ';' {% return $1 }
-    | Exp ';'        {% return $ sReturnEmpty {tipo=(if (tipo $1)==TError then TError else TVoid)} }
-    | break ';'      {% return $ sReturnEmpty {tipo=TVoid} }
-    | continue ';'   {% return $ sReturnEmpty {tipo=TVoid} }
-    | return ';'     {% return $ sReturnEmpty {tipo=TVoid} }
-    | return Exp ';' {% return $ sReturnEmpty {tipo=(if (tipo $2)==TError then TError else TVoid)} }
+    | Exp ';'        {% return $ sReturnEmpty {tipo=(if (tipo $1)==TError then TError else TVoid),ins=(\(_,l,c)->InstrucExpre (expre $1) l c) $2} }
+    | break ';'      {% return $ sReturnEmpty {tipo=TVoid,ins=(\(_,l,c)->InstrucBreak l c) $1} }
+    | continue ';'   {% return $ sReturnEmpty {tipo=TVoid,ins=(\(_,l,c)->InstrucCon l c) $1} }
+    | return ';'     {% return $ sReturnEmpty {tipo=TVoid,ins=(\(_,l,c)->InstrucRet l c) $1} }
+    | return Exp ';' {% return $ sReturnEmpty {tipo=(if (tipo $2)==TError then TError else TVoid),ins=(\(_,l,c)->InstrucRetW (expre $2) l c) $1} }
     | read var ';'   {% do 
                           querry <- checkExist $2
                           return $ sReturnEmpty {tipo=(maybe TError (const TVoid) querry)}
@@ -218,17 +218,21 @@ Instruccion : Block  {% return $1 }
     | ';'            {% return $ sReturnEmpty {tipo=TVoid} }
 
 For : for '(' Instruccion BoolE2 Instruccion ')' Instruccion 
-  {% return $ sReturnEmpty {tipo=(if (tipo $5)==TBool && (tipo $3)==TVoid && (tipo $5)==TVoid && (tipo $7)==TVoid then TVoid else TError)} }
+  {% return $ sReturnEmpty {tipo=(if (tipo $5)==TBool && (tipo $3)==TVoid && (tipo $5)==TVoid && (tipo $7)==TVoid then TVoid else TError),
+    ins=(\(_,l,c)->InstrucFor (ins $3) (expre $4) (ins $5) (ins $7) l c) $1} }
 
-While : while BoolE Instruccion {% return $ sReturnEmpty {tipo=(if (tipo $3)==TVoid && (tipo $2)==TBool then TVoid else TError)} }
+While : while BoolE Instruccion {% return $ sReturnEmpty {tipo=(if (tipo $3)==TVoid && (tipo $2)==TBool then TVoid else TError),
+  ins=(\(_,l,c)->InstrucWhile (expre $2) (ins $3) l c) $1} }
 
-If : if BoolE Block             {% return $ sReturnEmpty {tipo=(if (tipo $3)==TVoid && (tipo $2)==TBool then TVoid else TError)} }
-    | if BoolE Block else Block {% return $ sReturnEmpty {tipo=(if (tipo $3)==TVoid && (tipo $5)==TVoid && (tipo $2)==TBool then TVoid else TError)} }
+If : if BoolE Block             {% return $ sReturnEmpty {tipo=(if (tipo $3)==TVoid && (tipo $2)==TBool then TVoid else TError),
+  ins=(\(_,l,c)->InstrucIf (expre $2) (ins $3) l c) $1} }
+    | if BoolE Block else Block {% return $ sReturnEmpty {tipo=(if (tipo $3)==TVoid && (tipo $5)==TVoid && (tipo $2)==TBool then TVoid else TError),
+  ins=(\(_,l,c)->InstrucIfElse (expre $2) (ins $3) (ins $5) l c) $1} }
 
 BoolE2 : ';' Exp ';' {% do
   if ((tipo $2)==TError) then return $ sReturnEmpty {tipo=TError}
   else
-    if ((tipo $2)==TBool) then return $ sReturnEmpty {tipo=TBool}
+    if ((tipo $2)==TBool) then return $ sReturnEmpty {tipo=TBool,expre=expre $2}
     else do
       let (_,l,c) = $1
       printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++
@@ -239,7 +243,7 @@ BoolE2 : ';' Exp ';' {% do
 BoolE : '(' Exp ')' {% do
   if ((tipo $2)==TError) then return $ sReturnEmpty {tipo=TError}
   else
-    if ((tipo $2)==TBool) then return $ sReturnEmpty {tipo=TBool}
+    if ((tipo $2)==TBool) then return $ sReturnEmpty {tipo=TBool,expre=expre $2}
     else do
       let (_,l,c) = $1
       printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++
@@ -264,7 +268,7 @@ BoolE : '(' Exp ')' {% do
 Asignacion : Atom2 '=' Exp {% do
   if ((tipo $3)==TError || (tipo $1)==TError) then return $ sReturnEmpty {tipo=TError}
   else
-    if ((tipo $1)==(tipo $3)) then return $ sReturnEmpty {tipo=TVoid}
+    if ((tipo $1)==(tipo $3)) then return $ sReturnEmpty {tipo=TVoid,ins=(\(_,l,c)->InstrucAsing (expre $1) (expre $3) l c) $2}
     else do
       let (_,l,c) = $2
       printError $ "Error en la linea "++(show l)++" columna "++(show c)++
@@ -272,15 +276,15 @@ Asignacion : Atom2 '=' Exp {% do
       return $ sReturnEmpty {tipo=TError}
  }
 
-LLamada : var '(' ParametrosIn ')'   {% evalLlamada $1 $3}
-    | var '(' ')'                    {% evalLlamada $1 []}
+LLamada : var '(' ParametrosIn ')'   {% evalLlamada $1 (fst $3) (snd $3)}
+    | var '(' ')'                    {% evalLlamada $1 [] []}
 
-ParametrosIn : ParametrosIn ',' Exp { (tipo $3):$1 }
-    | Exp { [tipo $1] } 
+ParametrosIn : ParametrosIn ',' Exp { ((tipo $3):(fst $1),(expre $3):(snd $1)) }
+    | Exp { ([tipo $1],[expre $1]) } 
 
-Instrucciones : Instrucciones Instruccion {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)}}
-    | Instruccion                         {% return $1 }
-    | Instrucciones VarDeclaration        {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)}}
+Instrucciones : Instrucciones Instruccion {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),insList=(ins $2):(insList $1)}}
+    | Instruccion                         {% return ($1 {insList=[ins $1]}) }
+    | Instrucciones VarDeclaration        {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),insList=insList $1}}
     | VarDeclaration                      {% return $1 }
 
 Parametro : ref Types var      {% do
@@ -300,22 +304,22 @@ AnomFun : '(' Types ')' '(' Parametros ')' '{' Instrucciones '}'  { }
 arr : arr '[' Exp ']' {% do
   if ((tipo $1)==TError) then return $ sReturnEmpty {tipo=TError,number=0}
   else
-    if ((tipo $3)==TInt) then return $ sReturnEmpty {tipo=TInt,number=1+(number $1)}
+    if ((tipo $3)==TInt) then return $ sReturnEmpty {tipo=TInt,number=1+(number $1),expreList=(expre $3):(expreList $1)}
     else do
       let (_,l,c)=$2
       when ((tipo $3)/=TError) $ printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++". Se esperaba un valor de tipo entero."
       return $ sReturnEmpty {tipo=TError,number=0}
  }
-    | {% return $ sReturnEmpty {tipo=TInt,number=0} }
+    | {% return $ sReturnEmpty {tipo=TInt,number=0,expreList=[]} }
 
 Atom : LLamada {% return $1 }
-    | int { % return $ sReturnEmpty {tipo=TInt}}
-    | float { % return $ sReturnEmpty {tipo=TFloat}}
-    | bool { % return $ sReturnEmpty {tipo=TBool}}
+    | int { % return $ sReturnEmpty {tipo=TInt,expre=(\(i,l,c)->ExpreBasicInt i l c ) $1 }}
+    | float { % return $ sReturnEmpty {tipo=TFloat,expre=(\(i,l,c)->ExpreBasicFloat i l c ) $1 }}
+    | bool { % return $ sReturnEmpty {tipo=TBool,expre=(\(i,l,c)->ExpreBasicBool (if (i=="True") then True else False) l c ) $1 }}
     | str {% do
   let s = (\(x,_,_)->x) $1
   modify $ addString s 
-  return $ sReturnEmpty {tipo=(TArray (length s) TChar)}
+  return $ sReturnEmpty {tipo=(TArray (length s) TChar),expre=(\(i,l,c)->ExpreBasicStr i l c ) $1 }
           }
     | AnomFun { % return $ sReturnEmpty {tipo=TAny}}
 
@@ -325,9 +329,11 @@ Atom2 : var arr {% arrCheck $2 $1 }
   let (_,l,c) = $1
   if ((tipo $2)==TError) then return $ sReturnEmpty {tipo=TError}
   else do
-    when ((ayudaApuntador (tipo $2))==TError) $ printError $ "Error en la linea "++(show l)++" columna "++(show c)++
-      ". El tipo "++(show (tipo $2))++" no es una referencia."
-    return $ sReturnEmpty {tipo=(ayudaApuntador (tipo $2))}}
+    if ((ayudaApuntador (tipo $2))==TError) then do
+      printError $ "Error en la linea "++(show l)++" columna "++(show c)++
+        ". El tipo "++(show (tipo $2))++" no es una referencia."
+      return $ sReturnEmpty {tipo=TError}
+    else return $ sReturnEmpty {tipo=(ayudaApuntador (tipo $2)),expre=ExpreDeRef (expre $2) l c} }
 
 Exp : Exp '+' Exp            {% twoOperators $2 $1 $3 }
     | Exp '-' Exp            {% twoOperators $2 $1 $3 }
@@ -359,6 +365,11 @@ printError = lift.errStrPut
 
 --sprint = lift.putStrLn
 
+isInsNull InstrucNull = True
+isInsNull _ = False
+
+insToList a b = if (isInsNull $ ins a) then (insList b) else (ins a):(insList b)
+
 unasteriscos 1 = TRef
 unasteriscos i = TRef.(unasteriscos (i-1))
 
@@ -386,9 +397,11 @@ arrCheck expIn tok@(s,l,c) = do
     if (isNothing querry) then return $ sReturnEmpty {tipo=TError}
     else do
       let resultype=(ayudaArreglo (number expIn)) $ fromJust querry
-      when (resultype == TError) $ printError $ "Error en la linea "++(show l)++" columna "++(show c)++
-        ". Mala dimencion para la variable "++s++"."
-      return $ sReturnEmpty {tipo=resultype}
+      if (resultype == TError) then do
+        printError $ "Error en la linea "++(show l)++" columna "++(show c)++
+          ". Mala dimencion para la variable "++s++"."
+        return $ sReturnEmpty {tipo=TError}
+      else return $ sReturnEmpty {tipo=resultype,expre=ExpreArr s (expreList expIn) l c}
 
 twoOperators :: (String,Int,Int) -> SReturn -> SReturn -> StateT ParseState IO SReturn
 twoOperators (o,l,c) r1 r2 = do
@@ -399,7 +412,7 @@ twoOperators (o,l,c) r1 r2 = do
         ". El operador \""++o++"\" recibio argumentos de tipo: "++(show (tipo r1))++" y "++(show (tipo r2))++"."
       return $ sReturnEmpty {tipo=TError}
     else
-      return $ sReturnEmpty {tipo=resultype}
+      return $ sReturnEmpty {tipo=resultype,expre=ExpreBin o (expre r1) (expre r2) l c}
   where resultype = (operAcc (tipo r1) o (tipo r2))
   
 campos expIn (_,l,c) (s,_,_)  = do
@@ -411,9 +424,11 @@ campos expIn (_,l,c) (s,_,_)  = do
     else do
       estado <- get
       let maybeField = maybe Nothing (T.localLookup s) (buscasusymt (tipo expIn) estado)
-      when (isNothing maybeField) $ printError $ "Error en la linea "++(show l)++" columna "++(show c)++
-        ". El tipo "++(show (tipo expIn))++" no posee el campo "++s++"."
-      return $ sReturnEmpty {tipo=maybe TError id maybeField}
+      if (isNothing maybeField) then do
+        printError $ "Error en la linea "++(show l)++" columna "++(show c)++
+          ". El tipo "++(show (tipo expIn))++" no posee el campo "++s++"."
+        return $ sReturnEmpty {tipo=TError}
+      else return $ sReturnEmpty {tipo=maybe TError id maybeField,expre=ExpreField s (expre expIn) l c}
 
 oneOperators :: (String,Int,Int) -> SReturn -> StateT ParseState IO SReturn
 oneOperators (o,l,c) r1 = do
@@ -424,11 +439,11 @@ oneOperators (o,l,c) r1 = do
         ". El operador \""++o++"\" recibio un argumento de tipo: "++(show (tipo r1))++"."
       return $ sReturnEmpty {tipo=TError}
     else
-      return $ sReturnEmpty {tipo=resultype}
+      return $ sReturnEmpty {tipo=resultype,expre=ExpreMono o (expre r1) l c}
   where  resultype = (operAccMono o (tipo r1))
 
-evalLlamada :: (String,Int,Int) -> [TypeData] -> StateT ParseState IO SReturn
-evalLlamada inTok@(s,l,c) param = do 
+evalLlamada :: (String,Int,Int) -> [TypeData] -> [Expre] -> StateT ParseState IO SReturn
+evalLlamada inTok@(s,l,c) param expreL = do 
   if (elem TError param) then return $ sReturnEmpty {tipo=TError}
   else do
     querry <- checkExist inTok
@@ -438,7 +453,7 @@ evalLlamada inTok@(s,l,c) param = do
         printError $ "Error en la linea "++(show l)++" columna "++(show c)++". Argumentos no son validos para la funcion "++s++"."
         return $ sReturnEmpty {tipo=TError}
       else
-        return $ sReturnEmpty {tipo=resultype querry}
+        return $ sReturnEmpty {tipo=resultype querry,expre=ExpreLLamada s expreL l c}
   where
     resultype = help.fromJust
     help (FunGlob returnT tl) = if tl==param then returnT else TError

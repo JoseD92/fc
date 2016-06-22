@@ -14,7 +14,7 @@ struct Books {
    bool btbt;
 }; 
 
-int masuno(int x,bool b,float f){
+int masuno(int x,bool b){
   float p;
   char c;
   int kk;
@@ -28,10 +28,10 @@ int main(int m){
    x = 1;
    if (True) {1;} else {2;}
    while (True) {
-      x=a[4][1.0];
+      x=a[4][1];
       x=1;
       a[2]=c;
-      a[2][2]=x+1.0;
+      a[2][2]=x+1;
       *y=*y;
       **y=a[2][2];
       x=x;

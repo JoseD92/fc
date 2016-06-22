@@ -37,5 +37,9 @@ main = do
   --let arbol = parsefc tokens
   if (elem "--parser" args) then do
     putStr $ show estado 
-    putStr $ (show out) ++ "-----------------"
+    putStr $ (show $ tipo out) ++ "-----------------"
+  else return ()
+
+  if (elem "--arbol" args) then do
+    mapM_ (putStrLn.(insToStr 0)) $ reverse.insList $ out
   else return ()
