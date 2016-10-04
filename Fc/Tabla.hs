@@ -21,15 +21,12 @@ import qualified Data.Sequence as Seq
 import Prelude hiding (lookup)
 import Data.Tree
 import Data.Tree.Pretty
-import           Data.Serialize
-import           GHC.Generics
 
 data Tabla k a = Tabla {
     info :: Map.Map k a,
     padre :: Tabla k a,
     hijos :: Seq.Seq (Tabla k a)
-  } | Null deriving (Show,Generic)
-instance (Ord k,Serialize k, Serialize a) => Serialize (Tabla k a)
+  } | Null deriving (Show)
 
 isNull :: Tabla k a -> Bool
 isNull Null = True

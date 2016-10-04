@@ -5,12 +5,9 @@ where
 import qualified Fc.Tabla as T(Tabla(info,hijos))
 import qualified Data.Map.Strict as Map
 import Data.Maybe
-import           Data.Serialize
-import           GHC.Generics
 
 data TypeData = FunGlob TypeData [TypeData] | FunLoc TypeData [TypeData] | TInt | TFloat| TBool | TAny | TError |
-  TVoid | TChar | TArray Int TypeData | TUnion String | TStruct String | TUnsigned TypeData | TRef TypeData deriving (Eq,Ord,Generic)
-instance Serialize TypeData
+  TVoid | TChar | TArray Int TypeData | TUnion String | TStruct String | TUnsigned TypeData | TRef TypeData deriving (Eq)
 
 operAcc :: TypeData -> String -> TypeData -> TypeData
 operAcc TError _ _ = TError

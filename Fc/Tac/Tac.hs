@@ -10,10 +10,8 @@ import           Data.Word
 import           GHC.Generics
 import Prelude hiding (GT)
 import Data.Foldable (toList)
-import qualified Fc.Tabla as T
-import Fc.Datas (TypeData)
 
-type DataSize = Word64 --tipo para los registros y etiquetas
+type DataSize = Word32 --tipo para los registros y etiquetas
 -- 64 bits porque correra en maquinas de 64bits,
 -- si se sabe correra en 32bits se puede cambiar a word32
 
@@ -60,12 +58,16 @@ instance Show BiOperators where
   show BitAnd = "&"
   show BitOr = "|"
 
-data Value = Val Registro | Var (String,T.Tabla String TypeData) | Cons DataSize
+data Value = Val Registro |
+  VarGlobal String | -- si es glogal solo nesecito el string para buscar en la tabla de simbolos y saber el offset
+  VarLoc String DataSize | --si es local, solo necesito saber el offset con el frame pointer, se debe crear usando la tabla de simbolos, el string es para debug e imprimir
+  Cons DataSize
   deriving (Generic)
 instance Serialize Value
 instance Show Value where
   show (Val x) = show x
-  show (Var (s,_)) = s
+  show (VarGlobal s) = s
+  show (VarLoc s _) = s
   show (Cons x) = show x
 
 data Tac = IntBiOp Etiqueta BiOperators Value Value Value
@@ -77,12 +79,12 @@ data Tac = IntBiOp Etiqueta BiOperators Value Value Value
   | Gotoz Etiqueta Etiqueta Value --goto if zero
   | Gotonz Etiqueta Etiqueta Value --goto if not zero
   | Param Etiqueta Value
-  | Call Etiqueta (String,T.Tabla String TypeData) Int
-  | Copy1 Etiqueta Value (String,T.Tabla String TypeData) [Value]
-  | Copy2 Etiqueta Value (String,T.Tabla String TypeData) [Value]
-  | Copy3 Etiqueta Value (String,T.Tabla String TypeData)
-  | Copy4 Etiqueta Value Value
-  | Copy5 Etiqueta Value Value
+  | Call Etiqueta String Int -- llama a una funcion con n parametros
+  | Copy1 Etiqueta Value Value [Value] -- x:=y[i,j,...]   el segundo value debe ser VarGlobal o VarLoc
+  | Copy2 Etiqueta Value Value [Value] -- y[i,j,...]:=x   el segundo value debe ser VarGlobal o VarLoc
+  | Copy3 Etiqueta Value Value -- x:=&y   el segundo value debe ser VarGlobal o VarLoc
+  | Copy4 Etiqueta Value Value -- x:=*y
+  | Copy5 Etiqueta Value Value -- *x:=y
   | Comentario String
   deriving (Generic)
 instance Serialize Tac
@@ -96,10 +98,10 @@ instance Show Tac where
   show (Gotoz eti1 eti2 r) = show eti1 ++":\tif "++ show r ++" Goto "++show eti2
   show (Gotonz eti1 eti2 r) = show eti1 ++":\tifnot "++ show r ++" Goto "++show eti2
   show (Param eti val) = show eti ++ ":\tParam " ++ show val
-  show (Call eti (s,_) n) = show eti ++ ":\tCall " ++ s ++" "++ show n
-  show (Copy1 eti r1 (s,_) l) = show eti ++":\t"++ show r1 ++" := "++ s ++ help l
-  show (Copy2 eti r1 (s,_) l) = show eti ++":\t" ++ s ++ help l ++" := " ++ show r1
-  show (Copy3 eti r1 (s,_)) = show eti ++":\t"++ show r1 ++" := &"++ s
+  show (Call eti s n) = show eti ++ ":\tCall " ++ s ++" "++ show n
+  show (Copy1 eti r1 r2 l) = show eti ++":\t"++ show r1 ++" := "++ show r2 ++ help l
+  show (Copy2 eti r1 r2 l) = show eti ++":\t" ++ show r2 ++ help l ++" := " ++ show r1
+  show (Copy3 eti r1 r2) = show eti ++":\t"++ show r1 ++" := &"++ show r2
   show (Copy4 eti r1 r2) = show eti ++":\t"++ show r1 ++" := *"++ show r2
   show (Copy5 eti r1 r2) = show eti ++":\t*"++ show r1 ++" := "++ show r2
   show (Comentario s) = s
