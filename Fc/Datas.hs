@@ -1,12 +1,16 @@
+{-# LANGUAGE DeriveGeneric #-}
 module Fc.Datas (TypeData(..),operAcc,operAccMono,tam,Expre(..),Instruc(..),insToStr)
 where
 
 import qualified Fc.Tabla as T(Tabla(info,hijos))
 import qualified Data.Map.Strict as Map
 import Data.Maybe
+import           Data.Serialize
+import           GHC.Generics
 
 data TypeData = FunGlob TypeData [TypeData] | FunLoc TypeData [TypeData] | TInt | TFloat| TBool | TAny | TError |
-  TVoid | TChar | TArray Int TypeData | TUnion String | TStruct String | TUnsigned TypeData | TRef TypeData deriving (Eq,Ord)
+  TVoid | TChar | TArray Int TypeData | TUnion String | TStruct String | TUnsigned TypeData | TRef TypeData deriving (Eq,Ord,Generic)
+instance Serialize TypeData
 
 operAcc :: TypeData -> String -> TypeData -> TypeData
 operAcc TError _ _ = TError
@@ -118,27 +122,3 @@ insToStr i (InstrucRetW e _ _) = init.unlines $ ((replicate i ' ')++"Return"):k
 insToStr i (InstrucFun i1) = init.unlines $ ((replicate i ' ')++"Funcion"):k
   where k = ((insToStr (i+2)) i1):[]
 insToStr i InstrucNull = ""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

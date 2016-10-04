@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveGeneric #-}
 module Fc.Tabla (
   empty,
   insert,
@@ -20,17 +21,20 @@ import qualified Data.Sequence as Seq
 import Prelude hiding (lookup)
 import Data.Tree
 import Data.Tree.Pretty
+import           Data.Serialize
+import           GHC.Generics
 
 data Tabla k a = Tabla {
     info :: Map.Map k a,
     padre :: Tabla k a,
     hijos :: Seq.Seq (Tabla k a)
-  } | Null deriving (Show)
+  } | Null deriving (Show,Generic)
+instance (Ord k,Serialize k, Serialize a) => Serialize (Tabla k a)
 
 isNull :: Tabla k a -> Bool
 isNull Null = True
 isNull _ = False
-  
+
 empty = Tabla (Map.empty) Null Seq.empty
 
 insert k v t = actualizaHijos (padre t) $ t {info= Map.insert k v (info t) }
@@ -70,7 +74,7 @@ actualizaHijos padre t = y
 
 toTree x = Node (dumpLocal x) ((map toTree).(foldl (flip (:)) []).hijos $ x)
 
-dump t = drawTree $ toTree t   
+dump t = drawTree $ toTree t
 
 enterN i t = Seq.index (hijos t) i
 
@@ -81,25 +85,3 @@ pertenece :: (Eq a) => a -> Tabla b a -> Bool
 pertenece s t = (elem s (Map.elems (info t))) || or (fmap (pertenece s) (hijos t))
 
 eliminaPrimero t = t{hijos=Seq.drop 1 (hijos t)}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
