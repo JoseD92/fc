@@ -9,6 +9,7 @@ import Control.Monad.State
 import qualified Fc.Tabla as T
 import Fc.MyState
 import Fc.Datas
+import Fc.Tac.Tac
 --getopt -- buscar
 
 filfun (Error _ _) = False
@@ -36,10 +37,12 @@ main = do
 
   --let arbol = parsefc tokens
   if (elem "--parser" args) then do
-    putStr $ show estado 
+    putStr $ show estado
     putStr $ (show $ tipo out) ++ "-----------------"
   else return ()
 
   if (elem "--arbol" args) then do
     mapM_ (putStrLn.(insToStr 0)) $ reverse.insList $ out
   else return ()
+
+  print $ toTac (insList out)

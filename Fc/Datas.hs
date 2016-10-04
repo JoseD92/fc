@@ -64,7 +64,7 @@ data Expre = ExpreBin String Expre Expre Int Int
   | ExpreBasicFloat Float Int Int
   | ExpreBasicBool Bool Int Int
   | ExpreBasicStr String Int Int
-  | ExpreNull
+  | ExpreNull --falta basicchar para representar las instrucciones que son un caracter
 
 expreToStr i (ExpreBin s e1 e2 _ _) = init.unlines $ ((replicate i ' ')++s):k
   where k = ((expreToStr (i+2)) e1):((expreToStr (i+2)) e2):[]

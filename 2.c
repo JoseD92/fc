@@ -25,7 +25,7 @@ int main(int m){
    int x,**y;
    int a[6][5],c[5];
    struct Books b;
-   x = 1;
+   x = 1;2;
    if (True) {1;} else {2;}
    while (True) {
       x=a[4][1];

@@ -1,15 +1,18 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Fc.Tac.Tac (
-compaq2file,decodeFromFile,Value(..),TacIns(..),Tac(..),Registro(..),Etiqueta(..),regGen,etiGen,BiOperators(..)
+compaq2file,decodeFromFile,Value(..),TacIns(..),Tac(..),Registro(..),Etiqueta(..),regGen,etiGen,BiOperators(..),toTac
 ) where
 
 import qualified Data.ByteString.Lazy as B
 import           Data.Sequence
-import           Data.Serialize
+import           Data.Serialize (Serialize,encodeLazy,decodeLazy)
 import           Data.Word
 import           GHC.Generics
 import Prelude hiding (GT)
 import Data.Foldable (toList)
+import Control.Monad.State
+import Fc.Datas
+import Control.Monad (mapM)
 
 type DataSize = Word32 --tipo para los registros y etiquetas
 -- 64 bits porque correra en maquinas de 64bits,
@@ -115,8 +118,84 @@ instance Serialize TacIns
 instance Show TacIns where
   show (TacIns s) = unlines $ map show $ toList s
 
+tacInsEmpty = TacIns empty
+
+insJoin (TacIns t1) (TacIns t2) = TacIns (t1 >< t2)
+
+tacInsSeqOp f (TacIns t1) a = TacIns (f t1 a)
+tiso = tacInsSeqOp
+
 compaq2file :: TacIns -> String -> IO ()
 compaq2file tac file = B.writeFile file $ encodeLazy tac
 
 decodeFromFile :: String -> IO (Either String TacIns)
 decodeFromFile file = fmap decodeLazy (B.readFile file)
+
+
+-- state para correr el tac
+
+data TacState = TacState {
+  registros :: [Registro],
+  etiquetas :: [Etiqueta]
+}
+instance Show TacState where
+  show s = "TacState "++(show.head.registros $ s) ++ " " ++ (show.head.etiquetas $ s)
+
+stateEmpty :: TacState
+stateEmpty = TacState regGen etiGen
+
+nextReg :: State TacState Registro
+nextReg = state (\s -> (head.registros $ s,s {registros=tail.registros $ s}))
+
+nextEti :: State TacState Etiqueta
+nextEti = state (\s -> (head.etiquetas $ s,s {etiquetas=tail.etiquetas $ s}))
+
+toTac :: [Instruc] -> TacIns
+toTac i = evalState (fctac i) stateEmpty
+
+fctac :: [Instruc] -> State TacState TacIns
+fctac i = do
+  evaluados <- mapM fcIns2Tac i
+  return (foldl1 insJoin evaluados)
+
+gg s = return $ tiso (|>) tacInsEmpty (Comentario s)
+
+fcIns2Tac :: Instruc -> State TacState TacIns
+fcIns2Tac (InstrucFun "main" i) = fcIns2Tac i
+fcIns2Tac (InstrucBlock i) = fctac i
+fcIns2Tac (InstrucExpre e l c) = do
+  i2 <- gg $ "Expresion en "++show l ++" "++show c
+  i1 <- fcExpre2Tac e
+  return $ insJoin i1 i2
+fcIns2Tac (InstrucAsing e1 e2 l c) = gg $ "Asingnacion en "++show l ++" "++show c
+
+fcIns2Tac _ = gg "Una Instruccion"
+
+
+fcExpre2Tac :: Expre -> State TacState TacIns
+
+{-
+ExpreBin String Expre Expre Int Int
+ExpreMono String Expre Int Int
+ExpreBasicInt Int Int Int
+ExpreBasicFloat Float Int Int
+ExpreBasicBool Bool Int Int
+ExpreArr String [Expre] Int Int
+-}
+--ExpreDeRef Expre Int Int
+--ExpreField String Expre Int Int
+--ExpreArr String [Expre] Int Int
+
+fcExpre2Tac _ = gg "Una expresion"
+
+
+
+
+
+
+
+
+
+
+
+--

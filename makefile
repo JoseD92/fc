@@ -6,7 +6,7 @@ all: fcmain.exe
 ./Fc/Lexer.hs: ./Fc/Tokens.x
 	alex ./Fc/Tokens.x -o ./Fc/Lexer.hs
 
-fcmain.exe: fcmain.hs ./Fc/Lexer.hs ./Fc/Grammar.hs ./Fc/Tabla.hs ./Fc/MyState.hs
+fcmain.exe: fcmain.hs ./Fc/Lexer.hs ./Fc/Grammar.hs ./Fc/Tabla.hs ./Fc/MyState.hs ./Fc/Tac/Tac.hs
 	ghc fcmain.hs
 
 winclean:
