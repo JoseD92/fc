@@ -25,7 +25,6 @@ import qualified Data.Map.Strict as Map
     int { Int $$ }
     float { Float $$ }
     type { Type $$ }
-    functionType { Function $$ }
     bool { Bool $$ }
     ref { Ref $$ }
     if { If $$ }
@@ -96,9 +95,6 @@ All : All Funcion                  {% return $ sReturnEmpty {tipo=(if (tipo $1)=
 VarDeclarations : VarDeclarations VarDeclaration  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError)} }
     | VarDeclaration  {% return $1 }
 
-ManyTypes : ManyTypes ',' Types    { (tipo $3):$1 }
-    | Types { [tipo $1] }
-
 asteriscos : asteriscos '*' { $1 + 1 }
     | '*' { 1 }
 
@@ -114,8 +110,6 @@ Types : basicType                                      {% return $1 }
     | unsigned basicType                               {% return $ sReturnEmpty {tipo=TUnsigned (tipo $2)} }
     | struct var                                       {% checkExist2 $2 (TStruct $ (\(s,_,_)->s) $2) }
     | union var                                        {% checkExist2 $2 (TUnion $ (\(s,_,_)->s) $2) }
-    | functionType '(' Types ')' '(' ManyTypes ')'     {% return $ sReturnEmpty {tipo= FunLoc (tipo $3) $6} }
-    | functionType '(' Types ')' '(' ')'               {% return $ sReturnEmpty {tipo= FunLoc (tipo $3) []} }
     | '(' Types asteriscos ')'                         {% return $ sReturnEmpty {tipo= unasteriscos $3 (tipo $2) } }
 
 arrays : arrays '[' int ']' { (.) $1 (TArray ((\(i,_,_)->i) $3)) }
@@ -298,9 +292,6 @@ Parametro : ref Types var      {% do
 Parametros : Parametros ',' Parametro { (tipo $3):$1 }
     | Parametro              { [(tipo $1)] }
 
-AnomFun : '(' Types ')' '(' Parametros ')' '{' Instrucciones '}'  { }
-    | '(' Types ')' '(' ')' '{' Instrucciones '}'  { }
-
 arr : arr '[' Exp ']' {% do
   if ((tipo $1)==TError) then return $ sReturnEmpty {tipo=TError,number=0}
   else
@@ -321,7 +312,6 @@ Atom : LLamada {% return $1 }
   modify $ addString s 
   return $ sReturnEmpty {tipo=(TArray (length s) TChar),expre=(\(i,l,c)->ExpreBasicStr i l c ) $1 }
           }
-    | AnomFun { % return $ sReturnEmpty {tipo=TAny}}
 
 Atom2 : var arr {% arrCheck $2 $1 }
     | Exp '.' var            {% campos $1 $2 $3}
@@ -457,7 +447,6 @@ evalLlamada inTok@(s,l,c) param expreL = do
   where
     resultype = help.fromJust
     help (FunGlob returnT tl) = if tl==param then returnT else TError
-    help (FunLoc returnT tl) = if tl==param then returnT else TError
 
 modifTabla (s,l,c) tipo = do
   estado <- get

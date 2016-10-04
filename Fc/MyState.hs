@@ -22,7 +22,8 @@ data ParseState = ParseState {
     simT :: T.Tabla String TypeData,
     stringT :: Map.Map String Bool, --tabla de string
     susymt :: Map.Map TypeData (T.Tabla String TypeData), --tabla de simbolos de cada union/struct
-    tamTable :: Map.Map TypeData Int
+    tamTable :: Map.Map TypeData Int,
+    stipo :: !TypeData
   }
 
 addus k v parS = parS {susymt=(Map.insert) k v (susymt parS) }
@@ -31,7 +32,7 @@ addTam k v parS = parS {tamTable=(Map.insert) k v (tamTable parS) }
 
 buscasusymt k parS = Map.lookup k $ susymt parS
 
-parseStateEmpty = ParseState T.empty Map.empty Map.empty Map.empty
+parseStateEmpty = ParseState T.empty Map.empty Map.empty Map.empty TAny
 
 alterSimT f parS = parS {simT=f (simT parS)}
 

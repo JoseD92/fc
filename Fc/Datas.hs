@@ -6,7 +6,7 @@ import qualified Fc.Tabla as T(Tabla(info,hijos))
 import qualified Data.Map.Strict as Map
 import Data.Maybe
 
-data TypeData = FunGlob TypeData [TypeData] | FunLoc TypeData [TypeData] | TInt | TFloat| TBool | TAny | TError |
+data TypeData = FunGlob TypeData [TypeData] | TInt | TFloat| TBool | TAny | TError |
   TVoid | TChar | TArray Int TypeData | TUnion String | TStruct String | TUnsigned TypeData | TRef TypeData deriving (Eq,Ord)
 
 operAcc :: TypeData -> String -> TypeData -> TypeData
@@ -37,7 +37,6 @@ tam _ _ = 0
 
 instance Show TypeData where
   show (FunGlob _ _) = "Function"
-  show (FunLoc _ _) = "Function"
   show (TInt) = "Int"
   show (TFloat) = "Float"
   show (TBool) = "Bool"
