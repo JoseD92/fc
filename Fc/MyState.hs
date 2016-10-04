@@ -25,9 +25,9 @@ data ParseState = ParseState {
     tamTable :: Map.Map TypeData Int
   }
 
-addus k v parS = parS {susymt=(Map.insert) k v (susymt parS) } 
+addus k v parS = parS {susymt=(Map.insert) k v (susymt parS) }
 
-addTam k v parS = parS {tamTable=(Map.insert) k v (tamTable parS) } 
+addTam k v parS = parS {tamTable=(Map.insert) k v (tamTable parS) }
 
 buscasusymt k parS = Map.lookup k $ susymt parS
 
@@ -37,7 +37,7 @@ alterSimT f parS = parS {simT=f (simT parS)}
 
 querrySimT f parS = f (simT parS)
 
-addString s parS = parS {stringT=(Map.insert) s True (stringT parS) } 
+addString s parS = parS {stringT=(Map.insert) s True (stringT parS) }
 
 --instance Show ParseState where
 --  show parS = unlines $ [ (T.dump $ simT parS) , "" , unlines.(map fst).(Map.toList) $ stringT parS ,
@@ -45,7 +45,7 @@ addString s parS = parS {stringT=(Map.insert) s True (stringT parS) }
 
 
 instance Show ParseState where
-  show parS = (print3 (tamTable parS) "" 0 (simT parS)) ++ 
+  show parS = (print3 (tamTable parS) "" 0 (simT parS)) ++
     (unlines.(map (\(x,y)->unlines [(show x) ++ " - tam: " ++(show.fromJust $ Map.lookup x (tamTable parS))
     ,print2 (tamTable parS) y])).(Map.toList) $ susymt parS)
 
@@ -55,7 +55,7 @@ print2 tamTable t = unlines kvo
     kv = (Map.toList) $ T.info t
     off = offset 0 $ map (\(k,v) -> tam v tamTable) kv
     kvo = zipWith (\(k,v) o-> "  "++k++": "++(show v)++" "++(show $ tam v tamTable)++" "++(show o)) kv off
-  
+
 
 print3 :: Map.Map TypeData Int -> String -> Int -> T.Tabla String TypeData -> String
 print3 tamTable s i t = (unlines kvo) ++ paso2
@@ -79,7 +79,8 @@ data SReturn = SReturn {
   expre :: Expre,
   expreList :: [Expre],
   ins :: Instruc,
-  insList :: [Instruc]
+  insList :: [Instruc],
+  name :: String
 }
 
-sReturnEmpty = SReturn TAny 0 ExpreNull [] InstrucNull []
+sReturnEmpty = SReturn TAny 0 ExpreNull [] InstrucNull [] ""

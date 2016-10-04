@@ -178,19 +178,19 @@ Union : union UnionVar Block2 VarDeclarations Block3 ';' {% do
   else return $ sReturnEmpty {tipo=if ((tipo $4) == TError) then TError else TVoid}
 }
 
-Funcion : FuncionConArgs Block FuncionP3   {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),ins=InstrucFun (ins $2)} }
-    | FuncionNoArgs Block  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),ins=InstrucFun (ins $2)} }
+Funcion : FuncionConArgs Block FuncionP3   {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),ins=InstrucFun (name $1) (ins $2)} }
+    | FuncionNoArgs Block  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),ins=InstrucFun (name $1) (ins $2)} }
 
 FuncionNoArgs : Types var '(' ')' {% do 
   modifTabla $2 (FunGlob (tipo $1) [])
-  return $ sReturnEmpty {tipo=if ((tipo $1) == TError) then TError else TVoid}
+  return $ sReturnEmpty {tipo=if ((tipo $1) == TError) then TError else TVoid,name=(\(s,_,_)->s) $2}
  }
 
 FuncionConArgs : Types var FuncionP2 Parametros ')'  {% do
   modify $ alterSimT T.exitScope
   modifTabla $2 (FunGlob (tipo $1) $4)
   modify $ alterSimT $ T.enterN 0
-  return $ sReturnEmpty {tipo=if ((tipo $1) == TError || (elem TError $4)) then TError else TVoid}
+  return $ sReturnEmpty {tipo=if ((tipo $1) == TError || (elem TError $4)) then TError else TVoid,name=(\(s,_,_)->s) $2}
 }
  
 FuncionP2 : '(' {% modify $ alterSimT T.enterScope}

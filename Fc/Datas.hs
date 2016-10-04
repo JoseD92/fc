@@ -7,7 +7,7 @@ import qualified Data.Map.Strict as Map
 import Data.Maybe
 
 data TypeData = FunGlob TypeData [TypeData] | FunLoc TypeData [TypeData] | TInt | TFloat| TBool | TAny | TError |
-  TVoid | TChar | TArray Int TypeData | TUnion String | TStruct String | TUnsigned TypeData | TRef TypeData deriving (Eq)
+  TVoid | TChar | TArray Int TypeData | TUnion String | TStruct String | TUnsigned TypeData | TRef TypeData deriving (Eq,Ord)
 
 operAcc :: TypeData -> String -> TypeData -> TypeData
 operAcc TError _ _ = TError
@@ -94,7 +94,7 @@ data Instruc = InstrucBlock [Instruc]
   | InstrucCon Int Int
   | InstrucRet Int Int
   | InstrucRetW Expre Int Int
-  | InstrucFun Instruc
+  | InstrucFun String Instruc
   | InstrucNull
 
 insToStr i (InstrucBlock l) = init.unlines $ ((replicate i ' ')++"Bloque"):k
@@ -116,6 +116,6 @@ insToStr i (InstrucCon  _ _) = init.unlines $ ((replicate i ' ')++"Continue"):[]
 insToStr i (InstrucRet  _ _) = init.unlines $ ((replicate i ' ')++"Return"):[]
 insToStr i (InstrucRetW e _ _) = init.unlines $ ((replicate i ' ')++"Return"):k
   where k = ((expreToStr (i+2)) e):[]
-insToStr i (InstrucFun i1) = init.unlines $ ((replicate i ' ')++"Funcion"):k
+insToStr i (InstrucFun s i1) = init.unlines $ ((replicate i ' ')++"Funcion --"++s++"--"):k
   where k = ((insToStr (i+2)) i1):[]
 insToStr i InstrucNull = ""
