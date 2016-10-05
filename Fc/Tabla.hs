@@ -78,7 +78,7 @@ enterN i t = Seq.index (hijos t) i
 goToRoot t@(Tabla _ Null _) = t
 goToRoot t@(Tabla _ p _) = goToRoot $ exitScope t
 
-pertenece :: (Eq a) => a -> Tabla b a -> Bool
-pertenece s t = (elem s (Map.elems (info t))) || or (fmap (pertenece s) (hijos t))
+pertenece :: (Eq a) => a -> Tabla b (a,c) -> Bool
+pertenece s t = (elem s (map fst $ Map.elems (info t))) || or (fmap (pertenece s) (hijos t))
 
 eliminaPrimero t = t{hijos=Seq.drop 1 (hijos t)}

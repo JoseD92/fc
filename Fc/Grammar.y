@@ -6,7 +6,7 @@ import Fc.Lexer
 import Control.Monad.State
 import qualified Fc.Tabla as T
 import Fc.MyState
-import Fc.Datas (TypeData(..),operAcc,operAccMono,tam,Expre(..),Instruc(..))
+import Fc.Datas (TypeData(..),operAcc,operAccMono,tam,Expre(..),Instruc(..),Offset(..))
 import Data.Maybe
 import System.IO
 import Control.Monad (when)
@@ -138,14 +138,16 @@ VarDeclaration : variables ';'  {% if (tipo $1 == TError) then return $1 else re
 
 StructVar : var {% do
   modify $ addus (TStruct $ (\(s,_,_)->s) $1) T.empty
+  modify $ changeOff SUVar ((\(s,_,_)->s) $1)
   return $ sReturnEmpty {tipo=(TStruct $ (\(s,_,_)->s) $1)}
   }
 Struct : struct StructVar Block2 VarDeclarations Block3 ';' {% do
   s <- get
   let miTabla = querrySimT (T.enterN 0) s
   let (_,l,c) = $1
+  modify $ restoreOff
   modify $ addus (tipo $2) miTabla
-  modify $ addTam (tipo $2) (sum.(fmap mimod) $ (fmap ((flip tam) (tamTable s)) (T.info miTabla)))
+  modify $ addTam (tipo $2) (sum.(fmap mimod) $ (fmap ((flip (tam.fst)) (tamTable s)) (T.info miTabla)))
   modify $ alterSimT T.eliminaPrimero --aqui podria agregar un comando para quitar la tabla de la tabla general
   if (T.pertenece (tipo $2) miTabla) then do
     printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++
@@ -156,14 +158,16 @@ Struct : struct StructVar Block2 VarDeclarations Block3 ';' {% do
 
 UnionVar : var {% do
   modify $ addus (TUnion $ (\(s,_,_)->s) $1) T.empty
+  modify $ changeOff SUVar ((\(s,_,_)->s) $1)
   return $ sReturnEmpty {tipo=(TUnion $ (\(s,_,_)->s) $1)}
   }
 Union : union UnionVar Block2 VarDeclarations Block3 ';' {% do
   s <- get
   let miTabla = querrySimT (T.enterN 0) s
   let (_,l,c) = $1
+  modify $ restoreOff
   modify $ addus (tipo $2) miTabla
-  modify $ addTam (tipo $2) (mimod (foldl1 max (fmap ((flip tam) (tamTable s)) (T.info miTabla))))
+  modify $ addTam (tipo $2) (mimod (foldl1 max (fmap ((flip (tam.fst)) (tamTable s)) (T.info miTabla))))
   modify $ alterSimT T.eliminaPrimero--aqui podria agregar un comando para quitar la tabla de la tabla general
   if (T.pertenece (tipo $2) miTabla) then do
     printError $ "Error en la linea "++(show l)++" columna "++(show (c+1))++
@@ -172,23 +176,34 @@ Union : union UnionVar Block2 VarDeclarations Block3 ';' {% do
   else return $ sReturnEmpty {tipo=if ((tipo $4) == TError) then TError else TVoid}
 }
 
-Funcion : FuncionConArgs Block FuncionP3   {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),ins=InstrucFun (name $1) (ins $2)} }
-    | FuncionNoArgs Block  {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),ins=InstrucFun (name $1) (ins $2)} }
+Funcion : FuncionConArgs Block FuncionP3 {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),ins=InstrucFun (name $1) (ins $2)} }
+    | FuncionNoArgs Block FuncionP4 {% return $ sReturnEmpty {tipo=(if (tipo $1)==TVoid && (tipo $2)==TVoid then TVoid else TError),ins=InstrucFun (name $1) (ins $2)} }
 
 FuncionNoArgs : Types var '(' ')' {% do 
   modifTabla $2 (FunGlob (tipo $1) [])
+  modify $ changeOff Local ((\(s,_,_)->s) $2)
   return $ sReturnEmpty {tipo=if ((tipo $1) == TError) then TError else TVoid,name=(\(s,_,_)->s) $2}
  }
 
-FuncionConArgs : Types var FuncionP2 Parametros ')'  {% do
+FuncionConArgs : Types Avar Parametros ')'  {% do
   modify $ alterSimT T.exitScope
-  modifTabla $2 (FunGlob (tipo $1) $4)
+  modifTabla $2 (FunGlob (tipo $1) $3)
   modify $ alterSimT $ T.enterN 0
-  return $ sReturnEmpty {tipo=if ((tipo $1) == TError || (elem TError $4)) then TError else TVoid,name=(\(s,_,_)->s) $2}
+  modify $ changeOff Local ((\(s,_,_)->s) $2)
+  return $ sReturnEmpty {tipo=if ((tipo $1) == TError || (elem TError $3)) then TError else TVoid,name=(\(s,_,_)->s) $2}
 }
- 
-FuncionP2 : '(' {% modify $ alterSimT T.enterScope}
-FuncionP3 : {% modify $ alterSimT T.exitScope}
+
+FuncionP3 : {% do 
+  modify $ restoreOff
+  modify $ alterSimT T.exitScope}
+FuncionP4 : {% modify $ restoreOff}
+
+Avar : var '(' {% do
+  modify $ alterSimT T.enterScope
+  modify $ changeOff Param ((\(s,_,_)->s) $1)
+  --return $ sReturnEmpty {name=(\(s,_,_)->s) $1}
+  return $1
+  } 
 
 Block : Block2 Instrucciones Block3 {% return ($2 {ins=InstrucBlock (reverse $ insList $2),insList=[]}) }
 Block2 : '{' {% modify $ alterSimT T.enterScope}
@@ -386,7 +401,7 @@ arrCheck expIn tok@(s,l,c) = do
     querry <- checkExist tok
     if (isNothing querry) then return $ sReturnEmpty {tipo=TError}
     else do
-      let resultype=(ayudaArreglo (number expIn)) $ fromJust querry
+      let resultype=(ayudaArreglo (number expIn)) $ fst.fromJust $ querry
       if (resultype == TError) then do
         printError $ "Error en la linea "++(show l)++" columna "++(show c)++
           ". Mala dimencion para la variable "++s++"."
@@ -418,7 +433,7 @@ campos expIn (_,l,c) (s,_,_)  = do
         printError $ "Error en la linea "++(show l)++" columna "++(show c)++
           ". El tipo "++(show (tipo expIn))++" no posee el campo "++s++"."
         return $ sReturnEmpty {tipo=TError}
-      else return $ sReturnEmpty {tipo=maybe TError id maybeField,expre=ExpreField s (expre expIn) l c}
+      else return $ sReturnEmpty {tipo=maybe TError fst maybeField,expre=ExpreField s (expre expIn) l c}
 
 oneOperators :: (String,Int,Int) -> SReturn -> StateT ParseState IO SReturn
 oneOperators (o,l,c) r1 = do
@@ -445,22 +460,25 @@ evalLlamada inTok@(s,l,c) param expreL = do
       else
         return $ sReturnEmpty {tipo=resultype querry,expre=ExpreLLamada s expreL l c}
   where
-    resultype = help.fromJust
+    resultype = help.fst.fromJust
     help (FunGlob returnT tl) = if tl==param then returnT else TError
 
 modifTabla (s,l,c) tipo = do
   estado <- get
-  if ((querrySimT (T.localLookup s) estado) == Nothing)
-  then
+  let f = offsetFun estado
+  if isNothing (querrySimT (T.localLookup s) estado)
+  then do
     --if ((querrySimT (T.lookup s) estado) /= Just FunGlob)
       --then
-        modify $ alterSimT (T.insert s tipo)
+        modify $ (alterSimT (T.insert s (tipo,if (isglobal estado) then (f $ globalOff estado) 
+                                                                  else f $ currentOff estado)))
+        modify $ plusOffset tipo
       --else
         --addError estado ("Existe una funcion global de nombre "++s++", no se puede declarar de nuevo. Linea: "++(show l)++" Columna: "++(show c))
   else 
     printError ("Ya se encuentra declarada la variable "++s++" en este Alcance. Linea: "++(show l)++" Columna: "++(show c))
 
-checkExist :: (String,Int,Int) -> StateT ParseState IO (Maybe TypeData)
+checkExist :: (String,Int,Int) -> StateT ParseState IO (Maybe (TypeData,Offset))
 checkExist (s,l,c) = do
   estado <- get
   let resul = querrySimT (T.lookup s) estado

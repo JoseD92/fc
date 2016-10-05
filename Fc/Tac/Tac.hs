@@ -81,7 +81,7 @@ data Tac = IntBiOp Etiqueta BiOperators Value Value Value
   | Goto Etiqueta Etiqueta
   | Gotoz Etiqueta Etiqueta Value --goto if zero
   | Gotonz Etiqueta Etiqueta Value --goto if not zero
-  | Param Etiqueta Value
+  | Parametro Etiqueta Value
   | Call Etiqueta String Int -- llama a una funcion con n parametros
   | Copy1 Etiqueta Value Value [Value] -- x:=y[i,j,...]   el segundo value debe ser VarGlobal o VarLoc
   | Copy2 Etiqueta Value Value [Value] -- y[i,j,...]:=x   el segundo value debe ser VarGlobal o VarLoc
@@ -100,7 +100,7 @@ instance Show Tac where
   show (Goto eti1 eti2) = show eti1 ++ ":\tGoto " ++ show eti2
   show (Gotoz eti1 eti2 r) = show eti1 ++":\tif "++ show r ++" Goto "++show eti2
   show (Gotonz eti1 eti2 r) = show eti1 ++":\tifnot "++ show r ++" Goto "++show eti2
-  show (Param eti val) = show eti ++ ":\tParam " ++ show val
+  show (Parametro eti val) = show eti ++ ":\tParam " ++ show val
   show (Call eti s n) = show eti ++ ":\tCall " ++ s ++" "++ show n
   show (Copy1 eti r1 r2 l) = show eti ++":\t"++ show r1 ++" := "++ show r2 ++ help l
   show (Copy2 eti r1 r2 l) = show eti ++":\t" ++ show r2 ++ help l ++" := " ++ show r1

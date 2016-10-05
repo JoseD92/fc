@@ -15,7 +15,7 @@ import Fc.Tac.Tac
 filfun (Error _ _) = False
 filfun _ = True
 
-inicializaStado = (\s-> T.enterScope $ T.insert "write" (FunGlob TVoid [TAny]) $ T.insert "read" (FunGlob TAny []) s)
+inicializaStado = (\s-> T.enterScope $ T.insert "write" (FunGlob TVoid [TAny], Global 0) $ T.insert "read" (FunGlob TAny [], Global 0) s)
 
 run t = do
   r <- parsefc t

@@ -1,10 +1,15 @@
 {-# LANGUAGE DeriveGeneric #-}
-module Fc.Datas (TypeData(..),operAcc,operAccMono,tam,Expre(..),Instruc(..),insToStr)
+module Fc.Datas (TypeData(..),operAcc,operAccMono,tam,Expre(..),Instruc(..),insToStr,Offset(..))
 where
 
 import qualified Fc.Tabla as T(Tabla(info,hijos))
 import qualified Data.Map.Strict as Map
 import Data.Maybe
+import           Data.Serialize (Serialize)
+import           GHC.Generics
+
+data Offset = Param String Int | Local String Int | Global Int | SUVar String Int deriving (Show,Generic)
+instance Serialize Offset
 
 data TypeData = FunGlob TypeData [TypeData] | TInt | TFloat| TBool | TAny | TError |
   TVoid | TChar | TArray Int TypeData | TUnion String | TStruct String | TUnsigned TypeData | TRef TypeData deriving (Eq,Ord)
