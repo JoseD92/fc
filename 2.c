@@ -14,18 +14,21 @@ struct Books {
    bool btbt;
 }; 
 
-int masuno(int x,bool b){
-  float p;
-  char c;
-  int kk;
-  return x+1;
-}
+//int masuno(int x,bool b){
+//  float p;
+//  char c;
+//  int kk;
+//  return x+1;
+//}
 
 int main(int m){
-   int x,**y;
+   int x,**y, z[5];
    int a[6][5],c[5];
    struct Books b;
    x = 1;2;
+   x = 2 + 3 *19584 -84;
+   x = - 2;
+   z[3] = 5;
    if (True) {1;} else {2;}
    while (True) {
       x=a[4][1];
@@ -35,8 +38,9 @@ int main(int m){
       *y=*y;
       **y=a[2][2];
       x=x;
-      x=b.book_id;
-      x=masuno( b.unhola.algo+**y+(*(b.next)).book_id , True);
+      //x=b.book_id;
+      //x=masuno( b.unhola.algo+**y+(*(b.next)).book_id , True);
+      //b=b;
       b=b;
    };
 }

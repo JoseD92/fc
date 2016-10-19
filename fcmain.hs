@@ -15,7 +15,7 @@ import Fc.Tac.Tac
 filfun (Error _ _) = False
 filfun _ = True
 
-inicializaStado = (\s-> T.enterScope $ T.insert "write" (FunGlob TVoid [TAny], Global 0) $ T.insert "read" (FunGlob TAny [], Global 0) s)
+inicializaStado = (\s-> T.enterScope $ T.insert "write" (FunGlob TVoid [TRef TChar], Global 0) $ T.insert "read" (FunGlob TAny [], Global 0) s)
 
 run t = do
   r <- parsefc t
@@ -45,4 +45,8 @@ main = do
     mapM_ (putStrLn.(insToStr 0)) $ reverse.insList $ out
   else return ()
 
-  print $ toTac (insList out)
+  print (T.goToRoot (simT estado))
+  print ""
+  print (insList out)
+  print ""
+  print $ toTac (insList out) (T.goToRoot (simT estado)) (susymt estado) (tamTable estado)

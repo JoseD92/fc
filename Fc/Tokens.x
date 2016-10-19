@@ -19,7 +19,7 @@ $graphic = [\.\;\,\$\|\*\+\?\#\~\-\{\}\(\)\[\]\^\/\\\ 0-9a-zA-Z]
 
 @reservedid = 
 	if|while|for|else|union|struct|unsigned|continue|break|return|
-    function|int|float|bool|void|char|read|write|True|False|ref
+    function|int|float|bool|void|char|True|False|ref
 
 @operators =
     "=="|">="|"<="|"!="|"||"|"&&"|">>"|"<<"|"="|"+"|"-"|"*"|"/"|
@@ -50,8 +50,6 @@ $white+ ; --espacios
   "bool" ->  Type (s,l,c)
   "void" ->  Type (s,l,c)
   "char" ->  Type (s,l,c)
-  "read" ->  Read (s,l,c)
-  "write" ->  Write (s,l,c)
   "True" ->  Bool (s,l,c)
   "False" ->  Bool (s,l,c)
 }
@@ -140,8 +138,6 @@ data Token = Sym Lc |
     Continue Lc |
     Break Lc |
     Return Lc |
-    Read Lc |
-    Write Lc |
     Str Lc |
     Igual Lc |
     MayorIgual Lc |
@@ -193,8 +189,6 @@ lineCol (Unsigned lc) =  giveLC lc
 lineCol (Continue lc) =  giveLC lc
 lineCol (Break lc) =  giveLC lc
 lineCol (Return lc) =  giveLC lc
-lineCol (Read lc) =  giveLC lc
-lineCol (Write lc) =  giveLC lc
 lineCol (Str lc) =  giveLC lc
 lineCol (Igual lc) =  giveLC lc
 lineCol (MayorIgual lc) =  giveLC lc
@@ -248,8 +242,6 @@ instance Show Token where
   show (Continue (s,l,c)) = "Token: Continue"++"\n"++"Lugar: linea "++(show l)++", columna "++(show c)
   show (Break (s,l,c)) = "Token: Break"++"\n"++"Lugar: linea "++(show l)++", columna "++(show c)
   show (Return (s,l,c)) = "Token: Return"++"\n"++"Lugar: linea "++(show l)++", columna "++(show c)
-  show (Read (s,l,c)) = "Token: Read"++"\n"++"Lugar: linea "++(show l)++", columna "++(show c)
-  show (Write (s,l,c)) = "Token: Write"++"\n"++"Lugar: linea "++(show l)++", columna "++(show c)
   show (Igual (s,l,c)) = "Token: Igual"++"\n"++"Lugar: linea "++(show l)++", columna "++(show c)
   show (MayorIgual (s,l,c)) = "Token: MayorIgual"++"\n"++"Lugar: linea "++(show l)++", columna "++(show c)
   show (MenorIgual (s,l,c)) = "Token: MenorIgual"++"\n"++"Lugar: linea "++(show l)++", columna "++(show c)

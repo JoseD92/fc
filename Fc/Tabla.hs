@@ -26,7 +26,10 @@ data Tabla k a = Tabla {
     info :: Map.Map k a,
     padre :: Tabla k a,
     hijos :: Seq.Seq (Tabla k a)
-  } | Null deriving (Show)
+  } | Null
+
+instance (Show a,Show k) => Show (Tabla k a) where
+  show t = show (info t) ++ show (hijos t)
 
 isNull :: Tabla k a -> Bool
 isNull Null = True

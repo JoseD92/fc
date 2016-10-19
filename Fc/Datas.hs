@@ -19,6 +19,39 @@ operAcc TError _ _ = TError
 operAcc _ _ TError = TError
 operAcc TAny _ x = x
 operAcc x _ TAny = x
+operAcc (TArray _ x) _ (TArray _ y) = if (x==y) then (TArray 0 x) else TError
+operAcc TInt "||" TInt = TBool
+operAcc TInt "&&" TInt = TBool
+operAcc TInt ">" TInt = TBool
+operAcc TInt "<" TInt = TBool
+operAcc TInt ">=" TInt = TBool
+operAcc TInt "<=" TInt = TBool
+operAcc TInt "==" TInt = TBool
+operAcc TInt "!=" TInt = TBool
+operAcc (TUnsigned r) "||" (TUnsigned r2) = if r==r2 then TBool else TError
+operAcc (TUnsigned r) "&&" (TUnsigned r2) = if r==r2 then TBool else TError
+operAcc (TUnsigned r) ">" (TUnsigned r2) = if r==r2 then TBool else TError
+operAcc (TUnsigned r) "<" (TUnsigned r2) = if r==r2 then TBool else TError
+operAcc (TUnsigned r) ">=" (TUnsigned r2) = if r==r2 then TBool else TError
+operAcc (TUnsigned r) "<=" (TUnsigned r2) = if r==r2 then TBool else TError
+operAcc (TUnsigned r) "==" (TUnsigned r2) = if r==r2 then TBool else TError
+operAcc (TUnsigned r) "!=" (TUnsigned r2) = if r==r2 then TBool else TError
+operAcc TFloat "||" TFloat = TBool
+operAcc TFloat "&&" TFloat = TBool
+operAcc TFloat ">" TFloat = TBool
+operAcc TFloat "<" TFloat = TBool
+operAcc TFloat ">=" TFloat = TBool
+operAcc TFloat "<=" TFloat = TBool
+operAcc TFloat "==" TFloat = TBool
+operAcc TFloat "!=" TFloat = TBool
+operAcc TChar "||" TChar = TBool
+operAcc TChar "&&" TChar = TBool
+operAcc TChar ">" TChar = TBool
+operAcc TChar "<" TChar = TBool
+operAcc TChar ">=" TChar = TBool
+operAcc TChar "<=" TChar = TBool
+operAcc TChar "==" TChar = TBool
+operAcc TChar "!=" TChar = TBool
 operAcc x _ y = if (x==y) then x else TError
 operAcc _ _ _ = TError
 
@@ -58,27 +91,28 @@ instance Show TypeData where
 
 ----------------------tipos del ast
 
-data Expre = ExpreBin String Expre Expre Int Int
-  | ExpreMono String Expre Int Int
+data Expre = ExpreBin String Expre Expre Int Int TypeData
+  | ExpreMono String Expre Int Int TypeData
   | ExpreDeRef Expre Int Int
   | ExpreField String Expre Int Int
-  | ExpreArr String [Expre] Int Int
+  | ExpreArr String [Expre] Int Int TypeData
   | ExpreLLamada String [Expre] Int Int
   | ExpreBasicInt Int Int Int
   | ExpreBasicFloat Float Int Int
   | ExpreBasicBool Bool Int Int
   | ExpreBasicStr String Int Int
   | ExpreNull --falta basicchar para representar las instrucciones que son un caracter
+  deriving (Show)
 
-expreToStr i (ExpreBin s e1 e2 _ _) = init.unlines $ ((replicate i ' ')++s):k
+expreToStr i (ExpreBin s e1 e2 _ _ _) = init.unlines $ ((replicate i ' ')++s):k
   where k = ((expreToStr (i+2)) e1):((expreToStr (i+2)) e2):[]
-expreToStr i (ExpreMono s e1 _ _) = init.unlines $ ((replicate i ' ')++s):k
+expreToStr i (ExpreMono s e1 _ _ _) = init.unlines $ ((replicate i ' ')++s):k
   where k = ((expreToStr (i+2)) e1):[]
 expreToStr i (ExpreField s e1 _ _) = init.unlines $ ((replicate i ' ')++"Field: "++s):k
   where k = ((expreToStr (i+2)) e1):[]
 expreToStr i (ExpreDeRef e1 _ _) = init.unlines $ ((replicate i ' ')++"Deref"):k
   where k = ((expreToStr (i+2)) e1):[]
-expreToStr i (ExpreArr s e1 _ _) = init.unlines $ ((replicate i ' ')++"Var: "++s):k
+expreToStr i (ExpreArr s e1 _ _ _) = init.unlines $ ((replicate i ' ')++"Var: "++s):k
   where k = map (expreToStr (i+2)) e1
 expreToStr i (ExpreLLamada s e1 _ _) = init.unlines $ ((replicate i ' ')++"Llamada: "++s):k
   where k = map (expreToStr (i+2)) e1
@@ -86,6 +120,7 @@ expreToStr i (ExpreBasicInt i1 _ _) = init.unlines $ ((replicate i ' ')++"Int: "
 expreToStr i (ExpreBasicFloat i1 _ _) = init.unlines $ ((replicate i ' ')++"Float: "++(show i1)):[]
 expreToStr i (ExpreBasicBool i1 _ _) = init.unlines $ ((replicate i ' ')++"Bool: "++(show i1)):[]
 expreToStr i (ExpreBasicStr s _ _) = init.unlines $ ((replicate i ' ')++"String: "++s):[]
+expreToStr i (ExpreNull) = init.unlines $ ((replicate i ' ')++"ExpreNull"):[]
 
 data Instruc = InstrucBlock [Instruc]
   | InstrucFor Instruc Expre Instruc Instruc Int Int
@@ -100,6 +135,21 @@ data Instruc = InstrucBlock [Instruc]
   | InstrucRetW Expre Int Int
   | InstrucFun String Instruc
   | InstrucNull
+
+instance Show Instruc where
+  show (InstrucBlock _) = "InstrucBlock"
+  show (InstrucFor _ _ _ _ _ _) = "InstrucFor"
+  show (InstrucWhile _ _ _ _) = "InstrucWhile"
+  show (InstrucIf _ _ _ _) = "InstrucIf"
+  show (InstrucIfElse _ _ _ _ _) = "InstrucIfElse"
+  show (InstrucAsing _ _ _ _) = "InstrucAsing"
+  show (InstrucExpre _ _ _) = "InstrucExpre"
+  show (InstrucBreak _ _) = "InstrucBreak"
+  show (InstrucCon _ _) = "InstrucCon"
+  show (InstrucRet _ _) = "InstrucRet"
+  show (InstrucRetW _ _ _) = "InstrucRetW"
+  show (InstrucFun s _) = "InstrucFun " ++ s
+  show InstrucNull = "InstrucNull"
 
 insToStr i (InstrucBlock l) = init.unlines $ ((replicate i ' ')++"Bloque"):k
   where k = map (insToStr (i+2)) l

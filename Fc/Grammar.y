@@ -37,8 +37,6 @@ import qualified Data.Map.Strict as Map
     continue { Continue $$ }
     break { Break $$ }
     return { Return $$ }
-    read { Read $$ }
-    write { Write $$ }
     str { Str $$ }
     '<<' { ShiftL $$ }
     '>>' { ShiftR $$ }
@@ -219,11 +217,6 @@ Instruccion : Block  {% return $1 }
     | continue ';'   {% return $ sReturnEmpty {tipo=TVoid,ins=(\(_,l,c)->InstrucCon l c) $1} }
     | return ';'     {% return $ sReturnEmpty {tipo=TVoid,ins=(\(_,l,c)->InstrucRet l c) $1} }
     | return Exp ';' {% return $ sReturnEmpty {tipo=(if (tipo $2)==TError then TError else TVoid),ins=(\(_,l,c)->InstrucRetW (expre $2) l c) $1} }
-    | read var ';'   {% do 
-                          querry <- checkExist $2
-                          return $ sReturnEmpty {tipo=(maybe TError (const TVoid) querry)}
-                     }
-    | write Exp ';'  {% return $ sReturnEmpty {tipo=(if (tipo $2)==TError then TError else TVoid)} }
     | ';'            {% return $ sReturnEmpty {tipo=TVoid} }
 
 For : for '(' Instruccion BoolE2 Instruccion ')' Instruccion 
@@ -325,7 +318,7 @@ Atom : LLamada {% return $1 }
     | str {% do
   let s = (\(x,_,_)->x) $1
   modify $ addString s 
-  return $ sReturnEmpty {tipo=(TArray (length s) TChar),expre=(\(i,l,c)->ExpreBasicStr i l c ) $1 }
+  return $ sReturnEmpty {tipo=(TRef TChar),expre=(\(i,l,c)->ExpreBasicStr i l c ) $1 }
           }
 
 Atom2 : var arr {% arrCheck $2 $1 }
@@ -401,12 +394,13 @@ arrCheck expIn tok@(s,l,c) = do
     querry <- checkExist tok
     if (isNothing querry) then return $ sReturnEmpty {tipo=TError}
     else do
-      let resultype=(ayudaArreglo (number expIn)) $ fst.fromJust $ querry
+      let pretype = fst.fromJust $ querry
+      let resultype=(ayudaArreglo (number expIn)) pretype 
       if (resultype == TError) then do
         printError $ "Error en la linea "++(show l)++" columna "++(show c)++
           ". Mala dimencion para la variable "++s++"."
         return $ sReturnEmpty {tipo=TError}
-      else return $ sReturnEmpty {tipo=resultype,expre=ExpreArr s (expreList expIn) l c}
+      else return $ sReturnEmpty {tipo=resultype,expre=ExpreArr s (expreList expIn) l c pretype}
 
 twoOperators :: (String,Int,Int) -> SReturn -> SReturn -> StateT ParseState IO SReturn
 twoOperators (o,l,c) r1 r2 = do
@@ -417,7 +411,7 @@ twoOperators (o,l,c) r1 r2 = do
         ". El operador \""++o++"\" recibio argumentos de tipo: "++(show (tipo r1))++" y "++(show (tipo r2))++"."
       return $ sReturnEmpty {tipo=TError}
     else
-      return $ sReturnEmpty {tipo=resultype,expre=ExpreBin o (expre r1) (expre r2) l c}
+      return $ sReturnEmpty {tipo=resultype,expre=ExpreBin o (expre r1) (expre r2) l c resultype}
   where resultype = (operAcc (tipo r1) o (tipo r2))
   
 campos expIn (_,l,c) (s,_,_)  = do
@@ -444,15 +438,20 @@ oneOperators (o,l,c) r1 = do
         ". El operador \""++o++"\" recibio un argumento de tipo: "++(show (tipo r1))++"."
       return $ sReturnEmpty {tipo=TError}
     else
-      return $ sReturnEmpty {tipo=resultype,expre=ExpreMono o (expre r1) l c}
+      return $ sReturnEmpty {tipo=resultype,expre=ExpreMono o (expre r1) l c resultype}
   where  resultype = (operAccMono o (tipo r1))
 
 evalLlamada :: (String,Int,Int) -> [TypeData] -> [Expre] -> StateT ParseState IO SReturn
 evalLlamada inTok@(s,l,c) param expreL = do 
-  if (elem TError param) then return $ sReturnEmpty {tipo=TError}
+  printError s
+  if (elem TError param) then do
+    printError $ "Error in params"
+    return $ sReturnEmpty {tipo=TError}
   else do
     querry <- checkExist inTok
-    if (isNothing querry) then return $ sReturnEmpty {tipo=TError}
+    if (isNothing querry) then do
+      printError $ s++": does not exist."
+      return $ sReturnEmpty {tipo=TError}
     else do
       if(resultype querry == TError) then do
         printError $ "Error en la linea "++(show l)++" columna "++(show c)++". Argumentos no son validos para la funcion "++s++"."
