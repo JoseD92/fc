@@ -29,7 +29,7 @@ data Tabla k a = Tabla {
   } | Null
 
 instance (Show a,Show k) => Show (Tabla k a) where
-  show t = show (info t) ++ show (hijos t)
+  show t = "{info:" ++ show (info t) ++ "\nHijos:" ++ show (hijos t) ++ "}\n"
 
 isNull :: Tabla k a -> Bool
 isNull Null = True

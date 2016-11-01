@@ -33,7 +33,8 @@ main = do
     errStrPut $ (unlines $ map show $ errores) ++ "\n"
   else return ()
 
-  (out,estado) <- runStateT (run tokens) $ (alterSimT inicializaStado $ parseStateEmpty)
+  --(out,estado) <- runStateT (run tokens) $ (alterSimT inicializaStado $ parseStateEmpty)
+  (out,estado) <- runStateT (run tokens) parseStateEmpty
 
   --let arbol = parsefc tokens
   if (elem "--parser" args) then do

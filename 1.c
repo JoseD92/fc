@@ -43,10 +43,10 @@ int main(int m){
    x = masuno(x,True);
    masuno(x,True);
    swap(*y,*y);
-   write("hola");
-   //x = - 2;
+   //write("hola");
+   x = - 2;
    //z[4][3][2] = 5;
-   //o = True || False && (5 > 6);
+   o = True || False && (5 > 6);
    //o = o;
    //**y=6;
    //if (x > **y) { x = x + 1; }

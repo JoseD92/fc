@@ -216,7 +216,8 @@ instance Show TacState where
   show s = "TacState "++(show.head.registros $ s) ++ " " ++ (show.head.etiquetas $ s)
 
 stateInit :: T.Tabla String (TypeData,Offset) -> Map.Map TypeData (T.Tabla String (TypeData,Offset)) -> Map.Map TypeData Int -> TacState
-stateInit t su tamt = TacState su regGen etiGen [] (index (T.hijos t) 0) 0 ((flip tam) tamt) EtiErr EtiErr Map.empty
+--stateInit t su tamt = TacState su regGen etiGen [] (index (T.hijos t) 0) 0 ((flip tam) tamt) EtiErr EtiErr Map.empty
+stateInit t su tamt = TacState su regGen etiGen [] t 0 ((flip tam) tamt) EtiErr EtiErr Map.empty
 
 enCliclo :: Etiqueta -> Etiqueta -> State TacState TacIns -> State TacState TacIns
 enCliclo conEti bEti action = do
