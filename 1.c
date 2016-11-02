@@ -45,23 +45,23 @@ int main(int m){
    swap(*y,*y);
    //write("hola");
    x = - 2;
-   //z[4][3][2] = 5;
+   z[4][3][2] = 5;
    o = True || False && (5 > 6);
-   //o = o;
-   //**y=6;
-   //if (x > **y) { x = x + 1; }
-   //if (x == 0) {x = x + 1;} else {x = x - 1;}
-   //while (True && False) {
-   //   break;
-   //   continue;
-   //   x=a[4][1];
-   //   x=1;
-   //}
-   //for(x=1;;x<100;x=x+1;){
-   //   break;
-   //   continue;
-   //   a[x][0] = x;
-   //}
-   //break;
-   //break;
+   o = o;
+   **y=6;
+   if (x > **y) { x = x + 1; }
+   if (x == 0) {x = x + 1;} else {x = x - 1;}
+   while (True && False) {
+      break;
+      continue;
+      x=a[4][1];
+      x=1;
+   }
+   for(x=1;;x<100;x=x+1;){
+      break;
+      continue;
+      a[x][0] = x;
+   }
+   break;
+   break;
 }

@@ -1,6 +1,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 module Fc.Tac.Tac (
-compaq2file,decodeFromFile,Value(..),TacIns(..),Tac(..),Registro(..),Etiqueta(..),regGen,etiGen,BiOperators(..),toTac
+compaq2file,decodeFromFile,getEti,Value(..),TacIns(..),Tac(..),Registro(..),Etiqueta(..),regGen,etiGen,BiOperators(..),toTac
 ) where
 
 import qualified Data.ByteString.Lazy as B
@@ -36,7 +36,7 @@ regGen :: [Registro]
 regGen = map Reg [0 ..]
 
 --      Etiquetas
-data Etiqueta = Eti DataSize | EtiErr deriving (Generic)
+data Etiqueta = Eti DataSize | EtiErr deriving (Eq,Ord,Generic)
 instance Serialize Etiqueta
 instance Show Etiqueta where
   show (Eti x) = show x
@@ -118,6 +118,7 @@ data Tac = IntBiOp Etiqueta BiOperators Value Value Value
   | ReturnW Etiqueta Value
   | TacParam Etiqueta Value
   | Clean Etiqueta Int
+  | Special Etiqueta String
   deriving (Generic)
 instance Serialize Tac
 instance Show Tac where
@@ -145,6 +146,7 @@ instance Show Tac where
   show (ReturnW eti v) = show eti ++":\tReturn "++show v
   show (TacParam eti v) = show eti ++":\tParam "++show v
   show (Clean eti v) = show eti ++":\tClean "++show v
+  show (Special eti s) = show eti ++":\tSpecial "++show s
 
 help l = concatMap (\x->"["++ show x ++"]") l
 
@@ -173,6 +175,7 @@ getEti (Return eti) = eti
 getEti (ReturnW eti _) = eti
 getEti (TacParam eti _) = eti
 getEti (Clean eti _) = eti
+getEti (Special eti _) = eti
 
 -- conjunto de Tac
 
@@ -216,7 +219,6 @@ instance Show TacState where
   show s = "TacState "++(show.head.registros $ s) ++ " " ++ (show.head.etiquetas $ s)
 
 stateInit :: T.Tabla String (TypeData,Offset) -> Map.Map TypeData (T.Tabla String (TypeData,Offset)) -> Map.Map TypeData Int -> TacState
---stateInit t su tamt = TacState su regGen etiGen [] (index (T.hijos t) 0) 0 ((flip tam) tamt) EtiErr EtiErr Map.empty
 stateInit t su tamt = TacState su regGen etiGen [] t 0 ((flip tam) tamt) EtiErr EtiErr Map.empty
 
 enCliclo :: Etiqueta -> Etiqueta -> State TacState TacIns -> State TacState TacIns
@@ -236,10 +238,7 @@ nextEti :: State TacState Etiqueta
 nextEti = state (\s -> (head.etiquetas $ s,s {etiquetas=tail.etiquetas $ s}))
 
 godown :: State TacState ()
-godown = do
-  s <- get
-  trace ((show $ actual s)++" "++(show $ length $ T.hijos $ simT s)) (return ())
-  modify $ (\s-> let h = index (T.hijos $ simT s) (actual s) in s{padre= (simT s,actual s) : padre s,simT= h,actual= 0})
+godown = modify $ (\s-> let h = index (T.hijos $ simT s) (actual s) in s{padre= (simT s,actual s) : padre s,simT= h,actual= 0})
 
 goup :: State TacState ()
 goup = modify $ (\s-> let h = head.padre $ s in s{padre=tail.padre $ s,actual=(snd h) + 1, simT=fst h})
@@ -263,9 +262,45 @@ fctac i = do
 
 gg s = return $ tiso (|>) tacInsEmpty (Comentario s)
 
+readFun t v s = do
+  r <- nextReg
+  dirOfVar <- buscaLugar r (ExpreArr v [] 0 0 t)
+  eti <- nextEti
+  let push = tiso (|>) tacInsEmpty $ TacParam eti (Val r)
+  eti <- nextEti
+  let llamada = tiso (|>) tacInsEmpty $ Special eti s
+  eti <- nextEti
+  let clean = tiso (|>) tacInsEmpty $ Clean eti 1
+  return $ insJoin dirOfVar $ insJoin push $ insJoin llamada clean
+
+writeFun t v s = do
+  r <- nextReg
+  dirOfVar <- buscaLugar r (ExpreArr v [] 0 0 t)
+  eti <- nextEti
+  let push = tiso (|>) tacInsEmpty $ TacParam eti (Val r)
+  eti <- nextEti
+  let llamada = tiso (|>) tacInsEmpty $ Special eti s
+  eti <- nextEti
+  let clean = tiso (|>) tacInsEmpty $ Clean eti 1
+  return $ insJoin dirOfVar $ insJoin push $ insJoin llamada clean
+
 fcIns2Tac :: Instruc -> State TacState TacIns
+fcIns2Tac InstrucNull = return tacInsEmpty
+fcIns2Tac (InstrucRead TInt v) = readFun TInt v "fcLlamadaIntRead"
+fcIns2Tac (InstrucRead TFloat v) = readFun TFloat v "fcLlamadaFloatRead"
+fcIns2Tac (InstrucRead TBool v) = readFun TBool v "fcLlamadaBoolRead"
+fcIns2Tac (InstrucRead TChar v) = readFun TChar v "fcLlamadaCharRead"
+fcIns2Tac (InstrucRead (TRef TChar) v) = readFun (TRef TChar) v "fcLlamadaStrRead"
+fcIns2Tac (InstrucRead t v) = gg $ "Un read con tipo: " ++ show t++" var: "++v
+
+fcIns2Tac (InstrucWrite TInt v) = writeFun TInt v "fcLlamadaIntWrite"
+fcIns2Tac (InstrucWrite TFloat v) = writeFun TFloat v "fcLlamadaFloatWrite"
+fcIns2Tac (InstrucWrite TBool v) = writeFun TBool v "fcLlamadaBoolWrite"
+fcIns2Tac (InstrucWrite TChar v) = writeFun TChar v "fcLlamadaCharWrite"
+fcIns2Tac (InstrucWrite (TRef TChar) v) = writeFun (TRef TChar) v "fcLlamadaStrWrite"
+fcIns2Tac (InstrucWrite t v) = gg $ "Un write con tipo: " ++ show t++" var: "++v
+
 fcIns2Tac (InstrucFun s i) = do
-  trace (s) (return ())
   eti1 <- nextEti
   eti2 <- nextEti
   let pro = tiso (|>) tacInsEmpty $ Prologo eti1 s
@@ -275,7 +310,6 @@ fcIns2Tac (InstrucFun s i) = do
   goup
   return $ insJoin pro $ insJoin r epi
 fcIns2Tac (InstrucBlock i) = do
-  trace ("Block") (return ())
   godown
   r <- fctac i
   goup

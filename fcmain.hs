@@ -10,30 +10,28 @@ import qualified Fc.Tabla as T
 import Fc.MyState
 import Fc.Datas
 import Fc.Tac.Tac
+import Fc.Tac.TacOp
 --getopt -- buscar
 
 filfun (Error _ _) = False
 filfun _ = True
-
-inicializaStado = (\s-> T.enterScope $ T.insert "write" (FunGlob TVoid [TRef TChar], Global 0) $ T.insert "read" (FunGlob TAny [], Global 0) s)
 
 run t = do
   r <- parsefc t
   modify (alterSimT T.goToRoot)
   return r
 
+main :: IO ()
 main = do
   args <- getArgs
   s <- if (or $ map (\s->"--"/=(take 2 s)) args) then readFile (head $ filter (\s->"--"/=(take 2 s)) args)
   else getContents
 
   let (tokens,errores) = partition filfun (alexScanTokens s)
-  if (elem "--lexer" args) then do
+  when (elem "--lexer" args) $ do
     putStr $ (unlines $ map show $ tokens) ++ "\n"
     errStrPut $ (unlines $ map show $ errores) ++ "\n"
-  else return ()
 
-  --(out,estado) <- runStateT (run tokens) $ (alterSimT inicializaStado $ parseStateEmpty)
   (out,estado) <- runStateT (run tokens) parseStateEmpty
 
   --let arbol = parsefc tokens
@@ -46,8 +44,5 @@ main = do
     mapM_ (putStrLn.(insToStr 0)) $ reverse.insList $ out
   else return ()
 
-  print (T.goToRoot (simT estado))
-  print ""
-  print (insList out)
-  print ""
-  print $ toTac (insList out) (T.goToRoot (simT estado)) (susymt estado) (tamTable estado)
+  let tac = toTac (reverse.insList $ out) (T.tablaReverse $ T.goToRoot (simT estado)) (susymt estado) (tamTable estado)
+  print $ quitaFalls tac

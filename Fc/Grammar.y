@@ -37,6 +37,8 @@ import qualified Data.Map.Strict as Map
     continue { Continue $$ }
     break { Break $$ }
     return { Return $$ }
+    read { Read $$ }
+    write { Write $$ }
     str { Str $$ }
     '<<' { ShiftL $$ }
     '>>' { ShiftR $$ }
@@ -101,7 +103,8 @@ basicType : type {% return $ sReturnEmpty {tipo=case ((\(s,_,_)->s) $1) of
   "float" ->  TFloat
   "bool" ->  TBool
   "void" ->  TVoid
-  "char" ->  TChar}
+  "char" ->  TChar
+  "string" ->  TRef TChar}
   }
 
 Types : basicType                                      {% return $1 }
@@ -218,6 +221,34 @@ Instruccion : Block  {% return $1 }
     | return ';'     {% return $ sReturnEmpty {tipo=TVoid,ins=(\(_,l,c)->InstrucRet l c) $1} }
     | return Exp ';' {% return $ sReturnEmpty {tipo=(if (tipo $2)==TError then TError else TVoid),ins=(\(_,l,c)->InstrucRetW (expre $2) l c) $1} }
     | ';'            {% return $ sReturnEmpty {tipo=TVoid} }
+    | read var ';'   {% do 
+                          let s = (\(s,_,_)->s) $2
+                          querry <- checkExist $2
+                          case querry of
+                            Just (TInt,_) -> return $ sReturnEmpty {tipo=TVoid,ins=InstrucRead TInt s}
+                            Just (TFloat,_) -> return $ sReturnEmpty {tipo=TVoid,ins=InstrucRead TFloat s}
+                            Just (TBool,_) -> return $ sReturnEmpty {tipo=TVoid,ins=InstrucRead TBool s}
+                            Just (TChar,_) -> return $ sReturnEmpty {tipo=TVoid,ins=InstrucRead TChar s}
+                            Just ((TRef TChar),_) -> return $ sReturnEmpty {tipo=TVoid,ins=InstrucRead (TRef TChar) s}
+                            Nothing -> return $ sReturnEmpty {tipo=TError}
+                            Just (t,_) -> do
+                              printError $ "Tipo "++show t++" no esta soportado para lectura nativa."
+                              return $ sReturnEmpty {tipo=TError}
+                     }
+    | write var ';'  {% do 
+                          let s = (\(s,_,_)->s) $2
+                          querry <- checkExist $2
+                          case querry of
+                            Just (TInt,_) -> return $ sReturnEmpty {tipo=TVoid,ins=InstrucWrite TInt s}
+                            Just (TFloat,_) -> return $ sReturnEmpty {tipo=TVoid,ins=InstrucWrite TFloat s}
+                            Just (TBool,_) -> return $ sReturnEmpty {tipo=TVoid,ins=InstrucWrite TBool s}
+                            Just (TChar,_) -> return $ sReturnEmpty {tipo=TVoid,ins=InstrucWrite TChar s}
+                            Just ((TRef TChar),_) -> return $ sReturnEmpty {tipo=TVoid,ins=InstrucWrite (TRef TChar) s}
+                            Nothing -> return $ sReturnEmpty {tipo=TError}
+                            Just (t,_) -> do
+                              printError $ "Tipo "++show t++" no esta soportado para escritura nativa."
+                              return $ sReturnEmpty {tipo=TError}
+                     }
 
 For : for '(' Instruccion BoolE2 Instruccion ')' Instruccion 
   {% return $ sReturnEmpty {tipo=(if (tipo $5)==TBool && (tipo $3)==TVoid && (tipo $5)==TVoid && (tipo $7)==TVoid then TVoid else TError),
@@ -443,7 +474,6 @@ oneOperators (o,l,c) r1 = do
 
 evalLlamada :: (String,Int,Int) -> [TypeData] -> [Expre] -> StateT ParseState IO SReturn
 evalLlamada inTok@(s,l,c) param expreL = do 
-  printError s
   if (elem TError param) then do
     printError $ "Error in params"
     return $ sReturnEmpty {tipo=TError}

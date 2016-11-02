@@ -134,6 +134,8 @@ data Instruc = InstrucBlock [Instruc]
   | InstrucRet Int Int
   | InstrucRetW Expre Int Int
   | InstrucFun String Instruc
+  | InstrucRead TypeData String
+  | InstrucWrite TypeData String
   | InstrucNull
 
 instance Show Instruc where
@@ -149,6 +151,8 @@ instance Show Instruc where
   show (InstrucRet _ _) = "InstrucRet"
   show (InstrucRetW _ _ _) = "InstrucRetW"
   show (InstrucFun s _) = "InstrucFun " ++ s
+  show (InstrucRead t _) = "InstrucRead " ++ show t
+  show (InstrucWrite t _) = "InstrucWrite " ++ show t
   show InstrucNull = "InstrucNull"
 
 insToStr i (InstrucBlock l) = init.unlines $ ((replicate i ' ')++"Bloque"):k
@@ -172,4 +176,6 @@ insToStr i (InstrucRetW e _ _) = init.unlines $ ((replicate i ' ')++"Return"):k
   where k = ((expreToStr (i+2)) e):[]
 insToStr i (InstrucFun s i1) = init.unlines $ ((replicate i ' ')++"Funcion --"++s++"--"):k
   where k = ((insToStr (i+2)) i1):[]
-insToStr i InstrucNull = ""
+insToStr i (InstrucRead t _) = (replicate i ' ')++"Read --"++show t++"--\n"
+insToStr i (InstrucWrite t _) = (replicate i ' ')++"Write --"++show t++"--\n"
+insToStr _ InstrucNull = ""

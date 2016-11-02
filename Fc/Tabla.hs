@@ -13,7 +13,8 @@ module Fc.Tabla (
   goToRoot,
   localLookup,
   pertenece,
-  eliminaPrimero
+  eliminaPrimero,
+  tablaReverse
 ) where
 
 import qualified Data.Map.Strict as Map
@@ -29,11 +30,16 @@ data Tabla k a = Tabla {
   } | Null
 
 instance (Show a,Show k) => Show (Tabla k a) where
-  show t = "{info:" ++ show (info t) ++ "\nHijos:" ++ show (hijos t) ++ "}\n"
+  show t = help "" t
+    where
+      help s t = s ++ "Info: " ++ show (info t) ++ "\n" ++s++"Hijos:\n" ++ (concatMap (help (s++"\t")) (hijos t)) ++"\n"
 
 isNull :: Tabla k a -> Bool
 isNull Null = True
 isNull _ = False
+
+--jala burda de memoria, no me acuerdo como actualizar los padres
+tablaReverse t =  t {hijos = Seq.reverse $ fmap tablaReverse $ hijos t}
 
 empty = Tabla (Map.empty) Null Seq.empty
 
