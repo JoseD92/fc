@@ -72,9 +72,9 @@ instance Show BiOperators where
 
 data Value = Val Registro |
   VarGlobal String | -- si es glogal solo nesecito el string para buscar en la tabla de simbolos y saber el offset
-  VarLoc String DataSize | --si es local, solo necesito saber el offset con el frame pointer, se debe crear usando la tabla de simbolos, el string es para debug e imprimir
+--  VarLoc String DataSize | --si es local, solo necesito saber el offset con el frame pointer, se debe crear usando la tabla de simbolos, el string es para debug e imprimir
   Cons DataSize |
-  BasePtr Int |
+--  BasePtr Int |
   FramePtr Int |
   BasicInt Int |
   BasicFloat Float |
@@ -85,9 +85,9 @@ instance Serialize Value
 instance Show Value where
   show (Val x) = show x
   show (VarGlobal s) = s
-  show (VarLoc s _) = s
+--  show (VarLoc s _) = s
   show (Cons x) = show x
-  show (BasePtr x) = "BasePtr " ++ show x
+--  show (BasePtr x) = "BasePtr " ++ show x
   show (FramePtr x) = "FramePtr " ++ show x
   show (BasicInt x) = show x
   show (BasicFloat x) = show x
