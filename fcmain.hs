@@ -48,6 +48,7 @@ main = do
   let (pretac,strings) = toTac (reverse.insList $ out) (T.tablaReverse $ T.goToRoot (simT estado)) (susymt estado) (tamTable estado)
   let tac = quitaFalls $ pretac
   --print tac
+
   let textLast = basics tac strings
   let datazone = ".data\n"++strings2code strings
   textHeader <- readFile "mipsTextHeader.asm"
