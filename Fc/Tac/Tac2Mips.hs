@@ -10,6 +10,8 @@ import Data.Maybe (maybe)
 import qualified Fc.Tabla as T
 import qualified Fc.Tac.Tac as T (BiOperators(GT))
 import Debug.Trace
+import Data.Int (Int32)
+import Unsafe.Coerce (unsafeCoerce)
 
 data MyData = MyData {
 regmap :: Map.Map Registro Int,
@@ -99,7 +101,7 @@ codeforv reg (Val r) m = "addiu "++reg++",$a3,"++place++"\nlw "++reg++",("++reg+
 --codeforv reg (FramePtr i) m = "addiu "++reg++",$fp,"++show i++"\nlw "++reg++",("++reg++")\n"
 codeforv reg (FramePtr i) m = "addiu "++reg++",$fp,"++show i++"\n"
 codeforv reg (BasicInt i) m = "li "++reg++","++show i++"\n"
---codeforv reg (BasicFloat f) m =
+codeforv reg (BasicFloat f) m = "li "++reg++","++ show (unsafeCoerce f::Int32) ++" #float\n"
 codeforv reg (BasicBool b) m = "li "++reg++","++if b then "1\n" else "0\n"
 codeforv reg (DirOf eti) m = "la "++reg++", fc"++show eti ++"\n"
 codeforv _ _ _ = "error\n"
@@ -123,6 +125,23 @@ toCode m (IntBiOp eti oper v1 v2 (Val resul)) = "fc"++show eti ++":\t"++codeforv
     instruc NEq = "sne $t0,$t0,$t1\n"
     instruc _ = "error\n"
     place = maybe "error" show $ Map.lookup resul (regmap m)
+toCode m (FloatBiOp eti oper v1 v2 (Val resul)) = "fc"++show eti ++":\t"++codeforv "$t0" v1 (regmap m)++
+    codeforv "$t1" v2 (regmap m)++instruc oper++"addiu $t1,$a3,"++place++"\nsw $t0,($t1)\n"
+  where
+    instruc Mas = prefloat++"add.s $f0,$f0,$f1\n"++postfloat
+    instruc Menos = prefloat++"sub.s $f0,$f0,$f1\n"++postfloat
+    instruc Por = prefloat++"mul.s $f0,$f0,$f1\n"++postfloat
+    instruc Entre = prefloat++"div.s $f0,$f0,$f1\n"++postfloat
+    instruc T.GT = prefloat++"c.le.s $f0,$f1\nli $t1, 0\nli $t0, 1\nmovt $t0, $t1\n"
+    instruc Lt = prefloat++"c.lt.s $f0,$f1\nli $t1, 1\nli $t0, 0\nmovt $t0, $t1\n"
+    instruc Eq = prefloat++"c.eq.s $f0,$f1\nli $t1, 1\nli $t0, 0\nmovt $t0, $t1\n"
+    instruc EGT = prefloat++"c.lt.s $f0,$f1\nli $t1, 0\nli $t0, 1\nmovt $t0, $t1\n"
+    instruc ELT = prefloat++"c.le.s $f0,$f1\nli $t1, 1\nli $t0, 0\nmovt $t0, $t1\n"
+    instruc NEq = prefloat++"c.eq.s $f0,$f1\nli $t1, 0\nli $t0, 1\nmovt $t0, $t1\n"
+    instruc _ = "error\n"
+    place = maybe "error" show $ Map.lookup resul (regmap m)
+    prefloat = "mtc1 $t0, $f0\nmtc1 $t1, $f1\n"
+    postfloat= "mfc1 $t0, $f0\n"
 toCode m (BoolBiOp eti oper v1 v2 (Val resul)) = "fc"++show eti ++":\t"++codeforv "$t0" v1 (regmap m)++
     codeforv "$t1" v2 (regmap m)++instruc oper++"addiu $t1,$a3,"++place++"\nsw $t0,($t1)\n"
   where
@@ -182,6 +201,12 @@ toCode m (Special eti "fcLlamadaIntWrite") = "fc"++show eti ++":\taddiu $sp,$sp,
 
 toCode m (Special eti "fcLlamadaIntRead") = "fc"++show eti ++":\tli $v0, 5\n"++
   "syscall\naddiu $sp,$sp,4\nlw $t0,($sp)\nsw $v0,($t0)\n"
+
+toCode m (Special eti "fcLlamadaFloatWrite") = "fc"++show eti ++":\taddiu $sp,$sp,4\n"++
+  "l.s $f12,($sp)\nli $v0, 2\nsyscall\n"
+
+toCode m (Special eti "fcLlamadaFloatRead") = "fc"++show eti ++":\tli $v0, 6\n"++
+  "syscall\naddiu $sp,$sp,4\nlw $t0,($sp)\ns.s $f0,($t0)\n"
 
 toCode m (Special eti "fcLlamadaStrWrite") = "fc"++show eti ++":\taddiu $sp,$sp,4\n"++
   "lw $a0,($sp)\nli $v0, 4\nsyscall\n"

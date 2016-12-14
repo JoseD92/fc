@@ -1,7 +1,6 @@
 .data
-fc70: .asciiz "\nFactorial a calcular: "
-fc62: .asciiz "\nQuiere continuar? (si=1,no=not 1) "
-fc66: .asciiz "\nSeleccione modo (recursivo=1,iterativo=not 1): "
+fc79: .asciiz "\nIndique numero a calcular raiz: "
+fc64: .asciiz "\nQuiere Continuar (si=1): "
 .align 4
 .text
 
@@ -109,514 +108,460 @@ subiu $sp, $sp, 4
 subu $sp, $sp, $k0
 jr $ra
 fc0:
-fac:
+raiz:
 sw $0, ($sp)
 sw $ra, -4($sp)
 sw $fp, -8($sp)
 subiu $fp, $sp, 8
-subiu $sp, $sp, 96
+subiu $sp, $sp, 204
 addiu $a3,$sp,4
-fc5:	addiu $t0,$fp,12
+fc2:	addiu $t0,$fp,-16
 addiu $t1,$a3,0
 sw $t0,($t1)
-fc6:	addiu $t0,$a3,0
-lw $t0,($t0)
-lw $t0,($t0)
+fc3:	addiu $t0,$fp,12
 addiu $t1,$a3,4
 sw $t0,($t1)
-fc7:	li $t0,1
-addiu $t1,$a3,8
-sw $t0,($t1)
-fc8:	addiu $t0,$a3,4
+fc4:	addiu $t0,$a3,4
+lw $t0,($t0)
 lw $t0,($t0)
 addiu $t1,$a3,8
+sw $t0,($t1)
+fc5:	addiu $t0,$a3,8
+lw $t0,($t0)
+addiu $t1,$a3,0
 lw $t1,($t1)
-seq $t0,$t0,$t1
+sw $t0,($t1)
+fc6:	addiu $t0,$fp,-12
 addiu $t1,$a3,12
 sw $t0,($t1)
-fc9:	addiu $t0,$a3,12
-lw $t0,($t0)
-bnez $t0, fc2
-fc10:	j fc11
-fc2:	li $t0,1
+fc7:	addiu $t0,$fp,12
 addiu $t1,$a3,16
 sw $t0,($t1)
-fc3:	addiu $t0,$a3,16
+fc8:	addiu $t0,$a3,16
 lw $t0,($t0)
-sw $t0,8($fp)
-j __fac
-fc11:	addiu $t0,$fp,-8
+lw $t0,($t0)
 addiu $t1,$a3,20
 sw $t0,($t1)
-fc12:	addiu $t0,$fp,12
+fc9:	li $t0,1077936128 #float
 addiu $t1,$a3,24
 sw $t0,($t1)
-fc13:	addiu $t0,$a3,24
+fc10:	addiu $t0,$a3,20
 lw $t0,($t0)
-lw $t0,($t0)
+addiu $t1,$a3,24
+lw $t1,($t1)
+mtc1 $t0, $f0
+mtc1 $t1, $f1
+div.s $f0,$f0,$f1
+mfc1 $t0, $f0
 addiu $t1,$a3,28
 sw $t0,($t1)
-fc14:	li $t0,1
-addiu $t1,$a3,32
-sw $t0,($t1)
-fc15:	addiu $t0,$a3,28
-lw $t0,($t0)
-addiu $t1,$a3,32
-lw $t1,($t1)
-sub $t0,$t0,$t1
-addiu $t1,$a3,36
-sw $t0,($t1)
-fc16:	addiu $t0,$a3,36
-lw $t0,($t0)
-sw $t0, ($sp)
-subiu $sp, $sp, 4
-fc17:	sw $a3, -4($fp)
-jal fac
-addiu $sp, $fp, 12
-lw $t0, 8($fp)
-lw $fp, ($fp)
-lw $a3, -4($fp)
-addiu $t1,$a3,40
-sw $t0,($t1)
-fc19:	addiu $t0,$a3,40
-lw $t0,($t0)
-addiu $t1,$a3,20
-lw $t1,($t1)
-sw $t0,($t1)
-fc20:	addiu $t0,$fp,-8
-addiu $t1,$a3,44
-sw $t0,($t1)
-fc21:	addiu $t0,$fp,-8
-addiu $t1,$a3,48
-sw $t0,($t1)
-fc22:	addiu $t0,$a3,48
-lw $t0,($t0)
-lw $t0,($t0)
-addiu $t1,$a3,52
-sw $t0,($t1)
-fc23:	addiu $t0,$fp,12
-addiu $t1,$a3,56
-sw $t0,($t1)
-fc24:	addiu $t0,$a3,56
-lw $t0,($t0)
-lw $t0,($t0)
-addiu $t1,$a3,60
-sw $t0,($t1)
-fc25:	addiu $t0,$a3,52
-lw $t0,($t0)
-addiu $t1,$a3,60
-lw $t1,($t1)
-mul $t0,$t0,$t1
-addiu $t1,$a3,64
-sw $t0,($t1)
-fc26:	addiu $t0,$a3,64
-lw $t0,($t0)
-addiu $t1,$a3,44
-lw $t1,($t1)
-sw $t0,($t1)
-fc27:	addiu $t0,$fp,-8
-addiu $t1,$a3,68
-sw $t0,($t1)
-fc28:	addiu $t0,$a3,68
-lw $t0,($t0)
-lw $t0,($t0)
-addiu $t1,$a3,72
-sw $t0,($t1)
-fc29:	addiu $t0,$a3,72
-lw $t0,($t0)
-sw $t0,8($fp)
-j __fac
-fc1:
-__fac:
-lw $ra, 4($fp)
-jr $ra
-fc30:
-fac2:
-sw $0, ($sp)
-sw $ra, -4($sp)
-sw $fp, -8($sp)
-subiu $fp, $sp, 8
-subiu $sp, $sp, 96
-addiu $a3,$sp,4
-fc32:	addiu $t0,$fp,-8
-addiu $t1,$a3,0
-sw $t0,($t1)
-fc33:	li $t0,1
-addiu $t1,$a3,4
-sw $t0,($t1)
-fc34:	addiu $t0,$a3,4
-lw $t0,($t0)
-addiu $t1,$a3,0
-lw $t1,($t1)
-sw $t0,($t1)
-fc50:	addiu $t0,$fp,12
-addiu $t1,$a3,8
-sw $t0,($t1)
-fc51:	addiu $t0,$a3,8
-lw $t0,($t0)
+fc11:	addiu $t0,$a3,28
 lw $t0,($t0)
 addiu $t1,$a3,12
+lw $t1,($t1)
 sw $t0,($t1)
-fc52:	li $t0,1
-addiu $t1,$a3,16
+fc12:	addiu $t0,$fp,-8
+addiu $t1,$a3,32
 sw $t0,($t1)
-fc53:	addiu $t0,$a3,12
+fc13:	li $t0,100000
+addiu $t1,$a3,36
+sw $t0,($t1)
+fc14:	addiu $t0,$a3,36
 lw $t0,($t0)
-addiu $t1,$a3,16
+addiu $t1,$a3,32
+lw $t1,($t1)
+sw $t0,($t1)
+fc52:	addiu $t0,$fp,-8
+addiu $t1,$a3,40
+sw $t0,($t1)
+fc53:	addiu $t0,$a3,40
+lw $t0,($t0)
+lw $t0,($t0)
+addiu $t1,$a3,44
+sw $t0,($t1)
+fc54:	li $t0,0
+addiu $t1,$a3,48
+sw $t0,($t1)
+fc55:	addiu $t0,$a3,44
+lw $t0,($t0)
+addiu $t1,$a3,48
 lw $t1,($t1)
 sgt $t0,$t0,$t1
-addiu $t1,$a3,20
-sw $t0,($t1)
-fc54:	addiu $t0,$a3,20
-lw $t0,($t0)
-bnez $t0, fc37
-fc55:	j fc56
-fc37:	addiu $t0,$fp,-8
-addiu $t1,$a3,24
-sw $t0,($t1)
-fc38:	addiu $t0,$fp,-8
-addiu $t1,$a3,28
-sw $t0,($t1)
-fc39:	addiu $t0,$a3,28
-lw $t0,($t0)
-lw $t0,($t0)
-addiu $t1,$a3,32
-sw $t0,($t1)
-fc40:	addiu $t0,$fp,12
-addiu $t1,$a3,36
-sw $t0,($t1)
-fc41:	addiu $t0,$a3,36
-lw $t0,($t0)
-lw $t0,($t0)
-addiu $t1,$a3,40
-sw $t0,($t1)
-fc42:	addiu $t0,$a3,32
-lw $t0,($t0)
-addiu $t1,$a3,40
-lw $t1,($t1)
-mul $t0,$t0,$t1
-addiu $t1,$a3,44
-sw $t0,($t1)
-fc43:	addiu $t0,$a3,44
-lw $t0,($t0)
-addiu $t1,$a3,24
-lw $t1,($t1)
-sw $t0,($t1)
-fc44:	addiu $t0,$fp,12
-addiu $t1,$a3,48
-sw $t0,($t1)
-fc45:	addiu $t0,$fp,12
 addiu $t1,$a3,52
 sw $t0,($t1)
-fc46:	addiu $t0,$a3,52
+fc56:	addiu $t0,$a3,52
 lw $t0,($t0)
-lw $t0,($t0)
+bnez $t0, fc17
+fc57:	j fc58
+fc17:	addiu $t0,$fp,-12
 addiu $t1,$a3,56
 sw $t0,($t1)
-fc47:	li $t0,1
+fc18:	addiu $t0,$fp,-12
 addiu $t1,$a3,60
 sw $t0,($t1)
-fc48:	addiu $t0,$a3,56
+fc19:	addiu $t0,$a3,60
 lw $t0,($t0)
-addiu $t1,$a3,60
-lw $t1,($t1)
-sub $t0,$t0,$t1
+lw $t0,($t0)
 addiu $t1,$a3,64
 sw $t0,($t1)
-fc49:	addiu $t0,$a3,64
-lw $t0,($t0)
-addiu $t1,$a3,48
-lw $t1,($t1)
-sw $t0,($t1)
-fc36:	j fc50
-fc56:	addiu $t0,$fp,-8
+fc20:	addiu $t0,$fp,12
 addiu $t1,$a3,68
 sw $t0,($t1)
-fc57:	addiu $t0,$a3,68
+fc21:	addiu $t0,$a3,68
 lw $t0,($t0)
 lw $t0,($t0)
 addiu $t1,$a3,72
 sw $t0,($t1)
-fc58:	addiu $t0,$a3,72
+fc22:	addiu $t0,$fp,-12
+addiu $t1,$a3,76
+sw $t0,($t1)
+fc23:	addiu $t0,$a3,76
+lw $t0,($t0)
+lw $t0,($t0)
+addiu $t1,$a3,80
+sw $t0,($t1)
+fc24:	addiu $t0,$a3,72
+lw $t0,($t0)
+addiu $t1,$a3,80
+lw $t1,($t1)
+mtc1 $t0, $f0
+mtc1 $t1, $f1
+div.s $f0,$f0,$f1
+mfc1 $t0, $f0
+addiu $t1,$a3,84
+sw $t0,($t1)
+fc25:	addiu $t0,$a3,64
+lw $t0,($t0)
+addiu $t1,$a3,84
+lw $t1,($t1)
+mtc1 $t0, $f0
+mtc1 $t1, $f1
+add.s $f0,$f0,$f1
+mfc1 $t0, $f0
+addiu $t1,$a3,88
+sw $t0,($t1)
+fc26:	li $t0,1073741824 #float
+addiu $t1,$a3,92
+sw $t0,($t1)
+fc27:	addiu $t0,$a3,88
+lw $t0,($t0)
+addiu $t1,$a3,92
+lw $t1,($t1)
+mtc1 $t0, $f0
+mtc1 $t1, $f1
+div.s $f0,$f0,$f1
+mfc1 $t0, $f0
+addiu $t1,$a3,96
+sw $t0,($t1)
+fc28:	addiu $t0,$a3,96
+lw $t0,($t0)
+addiu $t1,$a3,56
+lw $t1,($t1)
+sw $t0,($t1)
+fc29:	addiu $t0,$fp,-8
+addiu $t1,$a3,100
+sw $t0,($t1)
+fc30:	addiu $t0,$fp,-8
+addiu $t1,$a3,104
+sw $t0,($t1)
+fc31:	addiu $t0,$a3,104
+lw $t0,($t0)
+lw $t0,($t0)
+addiu $t1,$a3,108
+sw $t0,($t1)
+fc32:	li $t0,1
+addiu $t1,$a3,112
+sw $t0,($t1)
+fc33:	addiu $t0,$a3,108
+lw $t0,($t0)
+addiu $t1,$a3,112
+lw $t1,($t1)
+sub $t0,$t0,$t1
+addiu $t1,$a3,116
+sw $t0,($t1)
+fc34:	addiu $t0,$a3,116
+lw $t0,($t0)
+addiu $t1,$a3,100
+lw $t1,($t1)
+sw $t0,($t1)
+fc39:	addiu $t0,$fp,-16
+addiu $t1,$a3,120
+sw $t0,($t1)
+fc40:	addiu $t0,$a3,120
+lw $t0,($t0)
+lw $t0,($t0)
+addiu $t1,$a3,124
+sw $t0,($t1)
+fc41:	addiu $t0,$fp,-12
+addiu $t1,$a3,128
+sw $t0,($t1)
+fc42:	addiu $t0,$a3,128
+lw $t0,($t0)
+lw $t0,($t0)
+addiu $t1,$a3,132
+sw $t0,($t1)
+fc43:	addiu $t0,$a3,124
+lw $t0,($t0)
+addiu $t1,$a3,132
+lw $t1,($t1)
+mtc1 $t0, $f0
+mtc1 $t1, $f1
+sub.s $f0,$f0,$f1
+mfc1 $t0, $f0
+addiu $t1,$a3,136
+sw $t0,($t1)
+fc44:	li $t0,897988541 #float
+addiu $t1,$a3,140
+sw $t0,($t1)
+fc45:	addiu $t0,$a3,136
+lw $t0,($t0)
+addiu $t1,$a3,140
+lw $t1,($t1)
+slt $t0,$t0,$t1
+addiu $t1,$a3,144
+sw $t0,($t1)
+fc46:	addiu $t0,$a3,144
+lw $t0,($t0)
+bnez $t0, fc35
+fc47:	j fc48
+fc35:	addiu $t0,$fp,-12
+addiu $t1,$a3,148
+sw $t0,($t1)
+fc36:	addiu $t0,$a3,148
+lw $t0,($t0)
+lw $t0,($t0)
+addiu $t1,$a3,152
+sw $t0,($t1)
+fc37:	addiu $t0,$a3,152
 lw $t0,($t0)
 sw $t0,8($fp)
-j __fac2
-fc31:
-__fac2:
+j __raiz
+fc48:	addiu $t0,$fp,-16
+addiu $t1,$a3,156
+sw $t0,($t1)
+fc49:	addiu $t0,$fp,-12
+addiu $t1,$a3,160
+sw $t0,($t1)
+fc50:	addiu $t0,$a3,160
+lw $t0,($t0)
+lw $t0,($t0)
+addiu $t1,$a3,164
+sw $t0,($t1)
+fc51:	addiu $t0,$a3,164
+lw $t0,($t0)
+addiu $t1,$a3,156
+lw $t1,($t1)
+sw $t0,($t1)
+fc16:	j fc52
+fc58:	addiu $t0,$fp,-12
+addiu $t1,$a3,168
+sw $t0,($t1)
+fc59:	addiu $t0,$a3,168
+lw $t0,($t0)
+lw $t0,($t0)
+addiu $t1,$a3,172
+sw $t0,($t1)
+fc60:	addiu $t0,$a3,172
+lw $t0,($t0)
+sw $t0,8($fp)
+j __raiz
+fc1:
+__raiz:
 lw $ra, 4($fp)
 jr $ra
-fc59:
+fc61:
 main:
 sw $0, ($sp)
 sw $ra, -4($sp)
 sw $fp, -8($sp)
 subiu $fp, $sp, 8
-subiu $sp, $sp, 180
+subiu $sp, $sp, 124
 addiu $a3,$sp,4
-fc61:	addiu $t0,$fp,-16
+fc63:	addiu $t0,$fp,-8
 addiu $t1,$a3,0
 sw $t0,($t1)
-fc63:	la $t0, fc62
+fc65:	la $t0, fc64
 addiu $t1,$a3,4
 sw $t0,($t1)
-fc64:	addiu $t0,$a3,4
+fc66:	addiu $t0,$a3,4
 lw $t0,($t0)
 addiu $t1,$a3,0
 lw $t1,($t1)
 sw $t0,($t1)
-fc65:	addiu $t0,$fp,-20
+fc67:	addiu $t0,$fp,-8
 addiu $t1,$a3,8
 sw $t0,($t1)
-fc67:	la $t0, fc66
+fc68:	addiu $t0,$a3,8
+lw $t0,($t0)
+lw $t0,($t0)
 addiu $t1,$a3,12
 sw $t0,($t1)
-fc68:	addiu $t0,$a3,12
+fc69:	addiu $t0,$a3,12
 lw $t0,($t0)
-addiu $t1,$a3,8
-lw $t1,($t1)
-sw $t0,($t1)
-fc69:	addiu $t0,$fp,-24
+sw $t0, ($sp)
+subiu $sp, $sp, 4
+fc70:	addiu $sp,$sp,4
+lw $a0,($sp)
+li $v0, 4
+syscall
+fc72:	addiu $t0,$fp,12
 addiu $t1,$a3,16
 sw $t0,($t1)
-fc71:	la $t0, fc70
+fc73:	addiu $t0,$a3,16
+lw $t0,($t0)
+sw $t0, ($sp)
+subiu $sp, $sp, 4
+fc74:	li $v0, 5
+syscall
+addiu $sp,$sp,4
+lw $t0,($sp)
+sw $v0,($t0)
+fc115:	addiu $t0,$fp,12
 addiu $t1,$a3,20
 sw $t0,($t1)
-fc72:	addiu $t0,$a3,20
+fc116:	addiu $t0,$a3,20
 lw $t0,($t0)
-addiu $t1,$a3,16
-lw $t1,($t1)
-sw $t0,($t1)
-fc73:	addiu $t0,$fp,-16
+lw $t0,($t0)
 addiu $t1,$a3,24
 sw $t0,($t1)
-fc74:	addiu $t0,$a3,24
-lw $t0,($t0)
-lw $t0,($t0)
+fc117:	li $t0,1
 addiu $t1,$a3,28
 sw $t0,($t1)
-fc75:	addiu $t0,$a3,28
+fc118:	addiu $t0,$a3,24
 lw $t0,($t0)
-sw $t0, ($sp)
-subiu $sp, $sp, 4
-fc76:	addiu $sp,$sp,4
-lw $a0,($sp)
-li $v0, 4
-syscall
-fc78:	addiu $t0,$fp,-12
-addiu $t1,$a3,32
-sw $t0,($t1)
-fc79:	addiu $t0,$a3,32
-lw $t0,($t0)
-sw $t0, ($sp)
-subiu $sp, $sp, 4
-fc80:	li $v0, 5
-syscall
-addiu $sp,$sp,4
-lw $t0,($sp)
-sw $v0,($t0)
-fc138:	addiu $t0,$fp,-12
-addiu $t1,$a3,36
-sw $t0,($t1)
-fc139:	addiu $t0,$a3,36
-lw $t0,($t0)
-lw $t0,($t0)
-addiu $t1,$a3,40
-sw $t0,($t1)
-fc140:	li $t0,1
-addiu $t1,$a3,44
-sw $t0,($t1)
-fc141:	addiu $t0,$a3,40
-lw $t0,($t0)
-addiu $t1,$a3,44
+addiu $t1,$a3,28
 lw $t1,($t1)
 seq $t0,$t0,$t1
+addiu $t1,$a3,32
+sw $t0,($t1)
+fc119:	addiu $t0,$a3,32
+lw $t0,($t0)
+bnez $t0, fc78
+fc120:	j fc62
+fc78:	addiu $t0,$fp,-8
+addiu $t1,$a3,36
+sw $t0,($t1)
+fc80:	la $t0, fc79
+addiu $t1,$a3,40
+sw $t0,($t1)
+fc81:	addiu $t0,$a3,40
+lw $t0,($t0)
+addiu $t1,$a3,36
+lw $t1,($t1)
+sw $t0,($t1)
+fc82:	addiu $t0,$fp,-8
+addiu $t1,$a3,44
+sw $t0,($t1)
+fc83:	addiu $t0,$a3,44
+lw $t0,($t0)
+lw $t0,($t0)
 addiu $t1,$a3,48
 sw $t0,($t1)
-fc142:	addiu $t0,$a3,48
-lw $t0,($t0)
-bnez $t0, fc84
-fc143:	j fc60
-fc84:	addiu $t0,$fp,-20
-addiu $t1,$a3,52
-sw $t0,($t1)
-fc85:	addiu $t0,$a3,52
-lw $t0,($t0)
-lw $t0,($t0)
-addiu $t1,$a3,56
-sw $t0,($t1)
-fc86:	addiu $t0,$a3,56
+fc84:	addiu $t0,$a3,48
 lw $t0,($t0)
 sw $t0, ($sp)
 subiu $sp, $sp, 4
-fc87:	addiu $sp,$sp,4
+fc85:	addiu $sp,$sp,4
 lw $a0,($sp)
 li $v0, 4
 syscall
-fc89:	addiu $t0,$fp,-12
-addiu $t1,$a3,60
+fc87:	addiu $t0,$fp,-12
+addiu $t1,$a3,52
 sw $t0,($t1)
-fc90:	addiu $t0,$a3,60
+fc88:	addiu $t0,$a3,52
 lw $t0,($t0)
 sw $t0, ($sp)
 subiu $sp, $sp, 4
-fc91:	li $v0, 5
+fc89:	li $v0, 6
 syscall
 addiu $sp,$sp,4
 lw $t0,($sp)
-sw $v0,($t0)
-fc93:	addiu $t0,$fp,-24
+s.s $f0,($t0)
+fc91:	addiu $t0,$fp,-12
+addiu $t1,$a3,56
+sw $t0,($t1)
+fc92:	addiu $t0,$fp,-12
+addiu $t1,$a3,60
+sw $t0,($t1)
+fc93:	addiu $t0,$a3,60
+lw $t0,($t0)
+lw $t0,($t0)
 addiu $t1,$a3,64
 sw $t0,($t1)
 fc94:	addiu $t0,$a3,64
 lw $t0,($t0)
-lw $t0,($t0)
-addiu $t1,$a3,68
-sw $t0,($t1)
-fc95:	addiu $t0,$a3,68
-lw $t0,($t0)
 sw $t0, ($sp)
 subiu $sp, $sp, 4
-fc96:	addiu $sp,$sp,4
-lw $a0,($sp)
-li $v0, 4
-syscall
-fc98:	addiu $t0,$fp,-8
+fc95:	sw $a3, -4($fp)
+jal raiz
+addiu $sp, $fp, 12
+lw $t0, 8($fp)
+lw $fp, ($fp)
+lw $a3, -4($fp)
+addiu $t1,$a3,68
+sw $t0,($t1)
+fc97:	addiu $t0,$a3,68
+lw $t0,($t0)
+addiu $t1,$a3,56
+lw $t1,($t1)
+sw $t0,($t1)
+fc98:	addiu $t0,$fp,-12
 addiu $t1,$a3,72
 sw $t0,($t1)
 fc99:	addiu $t0,$a3,72
 lw $t0,($t0)
-sw $t0, ($sp)
-subiu $sp, $sp, 4
-fc100:	li $v0, 5
-syscall
-addiu $sp,$sp,4
-lw $t0,($sp)
-sw $v0,($t0)
-fc118:	addiu $t0,$fp,-12
+lw $t0,($t0)
 addiu $t1,$a3,76
 sw $t0,($t1)
-fc119:	addiu $t0,$a3,76
+fc100:	addiu $t0,$a3,76
 lw $t0,($t0)
-lw $t0,($t0)
+sw $t0, ($sp)
+subiu $sp, $sp, 4
+fc101:	addiu $sp,$sp,4
+l.s $f12,($sp)
+li $v0, 2
+syscall
+fc103:	addiu $t0,$fp,-8
 addiu $t1,$a3,80
 sw $t0,($t1)
-fc120:	li $t0,1
+fc104:	la $t0, fc64
 addiu $t1,$a3,84
 sw $t0,($t1)
-fc121:	addiu $t0,$a3,80
+fc105:	addiu $t0,$a3,84
 lw $t0,($t0)
-addiu $t1,$a3,84
+addiu $t1,$a3,80
 lw $t1,($t1)
-seq $t0,$t0,$t1
+sw $t0,($t1)
+fc106:	addiu $t0,$fp,-8
 addiu $t1,$a3,88
 sw $t0,($t1)
-fc122:	addiu $t0,$a3,88
+fc107:	addiu $t0,$a3,88
 lw $t0,($t0)
-bnez $t0, fc102
-fc123:	j fc109
-fc102:	addiu $t0,$fp,12
+lw $t0,($t0)
 addiu $t1,$a3,92
 sw $t0,($t1)
-fc103:	addiu $t0,$fp,-8
-addiu $t1,$a3,96
-sw $t0,($t1)
-fc104:	addiu $t0,$a3,96
-lw $t0,($t0)
-lw $t0,($t0)
-addiu $t1,$a3,100
-sw $t0,($t1)
-fc105:	addiu $t0,$a3,100
+fc108:	addiu $t0,$a3,92
 lw $t0,($t0)
 sw $t0, ($sp)
 subiu $sp, $sp, 4
-fc106:	sw $a3, -4($fp)
-jal fac
-addiu $sp, $fp, 12
-lw $t0, 8($fp)
-lw $fp, ($fp)
-lw $a3, -4($fp)
-addiu $t1,$a3,104
-sw $t0,($t1)
-fc108:	addiu $t0,$a3,104
-lw $t0,($t0)
-addiu $t1,$a3,92
-lw $t1,($t1)
-sw $t0,($t1)
-fc117:	j fc124
-fc109:	addiu $t0,$fp,12
-addiu $t1,$a3,108
-sw $t0,($t1)
-fc110:	addiu $t0,$fp,-8
-addiu $t1,$a3,112
-sw $t0,($t1)
-fc111:	addiu $t0,$a3,112
-lw $t0,($t0)
-lw $t0,($t0)
-addiu $t1,$a3,116
-sw $t0,($t1)
-fc112:	addiu $t0,$a3,116
-lw $t0,($t0)
-sw $t0, ($sp)
-subiu $sp, $sp, 4
-fc113:	sw $a3, -4($fp)
-jal fac2
-addiu $sp, $fp, 12
-lw $t0, 8($fp)
-lw $fp, ($fp)
-lw $a3, -4($fp)
-addiu $t1,$a3,120
-sw $t0,($t1)
-fc115:	addiu $t0,$a3,120
-lw $t0,($t0)
-addiu $t1,$a3,108
-lw $t1,($t1)
-sw $t0,($t1)
-fc124:	addiu $t0,$fp,12
-addiu $t1,$a3,124
-sw $t0,($t1)
-fc125:	addiu $t0,$a3,124
-lw $t0,($t0)
-lw $t0,($t0)
-addiu $t1,$a3,128
-sw $t0,($t1)
-fc126:	addiu $t0,$a3,128
-lw $t0,($t0)
-sw $t0, ($sp)
-subiu $sp, $sp, 4
-fc127:	addiu $sp,$sp,4
-lw $a0,($sp)
-li $v0, 1
-syscall
-fc129:	addiu $t0,$fp,-16
-addiu $t1,$a3,132
-sw $t0,($t1)
-fc130:	addiu $t0,$a3,132
-lw $t0,($t0)
-lw $t0,($t0)
-addiu $t1,$a3,136
-sw $t0,($t1)
-fc131:	addiu $t0,$a3,136
-lw $t0,($t0)
-sw $t0, ($sp)
-subiu $sp, $sp, 4
-fc132:	addiu $sp,$sp,4
+fc109:	addiu $sp,$sp,4
 lw $a0,($sp)
 li $v0, 4
 syscall
-fc134:	addiu $t0,$fp,-12
-addiu $t1,$a3,140
+fc111:	addiu $t0,$fp,12
+addiu $t1,$a3,96
 sw $t0,($t1)
-fc135:	addiu $t0,$a3,140
+fc112:	addiu $t0,$a3,96
 lw $t0,($t0)
 sw $t0, ($sp)
 subiu $sp, $sp, 4
-fc136:	li $v0, 5
+fc113:	li $v0, 5
 syscall
 addiu $sp,$sp,4
 lw $t0,($sp)
 sw $v0,($t0)
-fc83:	j fc138
-fc60:
+fc77:	j fc115
+fc62:
 __main:
 lw $ra, 4($fp)
 jr $ra
