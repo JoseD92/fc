@@ -38,6 +38,11 @@ _Fc_push: sw $k0, ($sp)
 subiu $sp, $sp, 4
 jr $ra
 
+# pop: saca un valor a la pila, valor estara en $k0
+_Fc_pop: addiu $sp, $sp, 4
+lw $k0, ($sp)
+jr $ra
+
 # crea block2 y block3 de las funciones, en k0 debe estar el tam de las variables de la funcion alineadas a 4
 # el valor de retorno siempre valdra 4 aunque sea void
 # en k1 pasar la return adress actual

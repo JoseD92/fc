@@ -11,6 +11,7 @@ import Fc.MyState
 import Fc.Datas
 import Fc.Tac.Tac
 import Fc.Tac.TacOp
+import Fc.Tac.Tac2Mips
 --getopt -- buscar
 
 filfun (Error _ _) = False
@@ -44,5 +45,8 @@ main = do
     mapM_ (putStrLn.(insToStr 0)) $ reverse.insList $ out
   else return ()
 
-  let tac = toTac (reverse.insList $ out) (T.tablaReverse $ T.goToRoot (simT estado)) (susymt estado) (tamTable estado)
-  print $ quitaFalls tac
+  let tac = quitaFalls $ toTac (reverse.insList $ out) (T.tablaReverse $ T.goToRoot (simT estado)) (susymt estado) (tamTable estado)
+  print tac
+  let textLast = basics tac
+  textHeader <- readFile "mipsTextHeader.asm"
+  writeFile "a.s" $ textHeader++"\n"++textLast

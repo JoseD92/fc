@@ -27,7 +27,7 @@ type DataSize = Word32 --tipo para los registros y etiquetas
 -- si se sabe correra en 32bits se puede cambiar a word32
 
 --      Registros o temporales
-newtype Registro = Reg DataSize deriving (Generic)
+newtype Registro = Reg DataSize deriving (Generic,Eq,Ord)
 instance Serialize Registro
 instance Show Registro where
   show (Reg x) = "t"++ show x
@@ -74,7 +74,7 @@ data Value = Val Registro |
   VarGlobal String | -- si es glogal solo nesecito el string para buscar en la tabla de simbolos y saber el offset
 --  VarLoc String DataSize | --si es local, solo necesito saber el offset con el frame pointer, se debe crear usando la tabla de simbolos, el string es para debug e imprimir
   Cons DataSize |
---  BasePtr Int |
+  BasePtr Int |
   FramePtr Int |
   BasicInt Int |
   BasicFloat Float |
@@ -87,7 +87,7 @@ instance Show Value where
   show (VarGlobal s) = s
 --  show (VarLoc s _) = s
   show (Cons x) = show x
---  show (BasePtr x) = "BasePtr " ++ show x
+  show (BasePtr x) = "BasePtr " ++ show x
   show (FramePtr x) = "FramePtr " ++ show x
   show (BasicInt x) = show x
   show (BasicFloat x) = show x
@@ -119,7 +119,7 @@ data Tac = IntBiOp Etiqueta BiOperators Value Value Value
   | TacParam Etiqueta Value
   | Clean Etiqueta Int
   | Special Etiqueta String
-  deriving (Generic)
+  deriving (Generic)--,Show)
 instance Serialize Tac
 instance Show Tac where
   show (IntBiOp eti oper r1 r2 resul) = show eti ++":\t"++ show resul ++" := "++ show r1 ++" "++ show oper ++" "++ show r2
@@ -275,14 +275,17 @@ readFun t v s = do
 
 writeFun t v s = do
   r <- nextReg
+  r2 <- nextReg
   dirOfVar <- buscaLugar r (ExpreArr v [] 0 0 t)
   eti <- nextEti
-  let push = tiso (|>) tacInsEmpty $ TacParam eti (Val r)
+  let cop = tiso (|>) tacInsEmpty $ Copy4 eti (Val r2) (Val r)
+  eti <- nextEti
+  let push = tiso (|>) tacInsEmpty $ TacParam eti (Val r2)
   eti <- nextEti
   let llamada = tiso (|>) tacInsEmpty $ Special eti s
   eti <- nextEti
   let clean = tiso (|>) tacInsEmpty $ Clean eti 1
-  return $ insJoin dirOfVar $ insJoin push $ insJoin llamada clean
+  return $ insJoin dirOfVar $ insJoin cop $ insJoin push $ insJoin llamada clean
 
 fcIns2Tac :: Instruc -> State TacState TacIns
 fcIns2Tac InstrucNull = return tacInsEmpty
@@ -420,8 +423,8 @@ buscaLugar r (ExpreArr s [] _ _ _) = do
   (tipo,offs) <- querryST s >>= return.fromJust
   f<-tamf
   re <- case offs of
-    Param _ i -> return $ FramePtr (i - (f tipo))
-    Local _ i -> return $ FramePtr i
+    Param _ i -> return $ FramePtr (i + 12)
+    Local _ i -> return $ FramePtr ((-i) - f tipo -4)
     Global i -> return $ BasePtr i
   eti <- nextEti
   return $ tiso (|>) tacInsEmpty $ Copy eti (Val r) re
