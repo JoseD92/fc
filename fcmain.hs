@@ -45,8 +45,10 @@ main = do
     mapM_ (putStrLn.(insToStr 0)) $ reverse.insList $ out
   else return ()
 
-  let tac = quitaFalls $ toTac (reverse.insList $ out) (T.tablaReverse $ T.goToRoot (simT estado)) (susymt estado) (tamTable estado)
+  let (pretac,strings) = toTac (reverse.insList $ out) (T.tablaReverse $ T.goToRoot (simT estado)) (susymt estado) (tamTable estado)
+  let tac = quitaFalls $ pretac
   --print tac
-  let textLast = basics tac
+  let textLast = basics tac strings
+  let datazone = ".data\n"++strings2code strings
   textHeader <- readFile "mipsTextHeader.asm"
-  writeFile "a.s" $ textHeader++"\n"++textLast
+  writeFile "a.s" $ datazone++textHeader++"\n"++textLast

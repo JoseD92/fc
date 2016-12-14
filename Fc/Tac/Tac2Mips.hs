@@ -1,5 +1,5 @@
 module Fc.Tac.Tac2Mips (
-basics
+basics,strings2code
 ) where
 
 import      qualified     Data.Sequence as Seq
@@ -15,16 +15,17 @@ data MyData = MyData {
 regmap :: Map.Map Registro Int,
 funName :: String,
 maxframe :: Int,
-regtam :: Int
+regtam :: Int,
+stringsmap :: Map.Map String Etiqueta
 --tabla :: T.Tabla String (TypeData,Offset)
 }
 
-basics :: TacIns -> String
-basics (TacIns s) = concat $ map concat resul
+basics :: TacIns -> Map.Map String Etiqueta -> String
+basics (TacIns s) strings = concatMap concat resul
   where
     l = toList s
     chunked = funChunks l
-    help (l,m) = map (toCode m) l
+    help (l,m) = map (toCode m{stringsmap=strings}) l
     resul = map help chunked
 
 funChunks :: [Tac] -> [([Tac],MyData)]
@@ -38,7 +39,7 @@ funChunks l = (l2,midata{maxframe=frame2,regtam=reg}):funChunks resto
     reg = (maximum $ Map.elems $ regmap midata)+4
 
 nextBlock :: [Tac] -> Map.Map Registro Int -> [Tac] -> Int -> (([Tac],MyData),[Tac])
-nextBlock (e@(Epilogo _ s):l) m l2 _ = (((reverse $ e:l2),MyData m s 0 0),l)
+nextBlock (e@(Epilogo _ s):l) m l2 _ = (((reverse $ e:l2),MyData m s 0 0 Map.empty),l)
 nextBlock (ins:l) m l2 i = nextBlock l m2 (ins:l2) i2
   where
     regs = getRegs ins
@@ -100,6 +101,7 @@ codeforv reg (FramePtr i) m = "addiu "++reg++",$fp,"++show i++"\n"
 codeforv reg (BasicInt i) m = "li "++reg++","++show i++"\n"
 --codeforv reg (BasicFloat f) m =
 codeforv reg (BasicBool b) m = "li "++reg++","++if b then "1\n" else "0\n"
+codeforv reg (DirOf eti) m = "la "++reg++", fc"++show eti ++"\n"
 codeforv _ _ _ = "error\n"
 
 
@@ -169,8 +171,8 @@ toCode m (Call eti s tam (Val resul)) = "fc"++show eti ++":\t"++
     place = maybe "error" show $ Map.lookup resul (regmap m)
 
 toCode m (Prologo eti s) = "fc"++show eti ++":\n"++ s ++":\n"++
-  "sw $0, ($sp)\nsw $ra, -4($sp)\nsw $fp, -8($sp)\nsubiu $fp, $sp, 8\nsubiu $sp, $sp, 12\n"
-  ++"subiu $sp, $sp, "++show ((maxframe m)+(regtam m))++"\naddiu $a3,$sp,4\n"
+  "sw $0, ($sp)\nsw $ra, -4($sp)\nsw $fp, -8($sp)\nsubiu $fp, $sp, 8\n"
+  ++"subiu $sp, $sp, "++show ((maxframe m)+(regtam m)+12)++"\naddiu $a3,$sp,4\n"
 
 toCode m (Epilogo eti s) = "fc"++show eti ++":\n__"++ s ++
   ":\nlw $ra, 4($fp)\njr $ra\n"
@@ -181,10 +183,16 @@ toCode m (Special eti "fcLlamadaIntWrite") = "fc"++show eti ++":\taddiu $sp,$sp,
 toCode m (Special eti "fcLlamadaIntRead") = "fc"++show eti ++":\tli $v0, 5\n"++
   "syscall\naddiu $sp,$sp,4\nlw $t0,($sp)\nsw $v0,($t0)\n"
 
+toCode m (Special eti "fcLlamadaStrWrite") = "fc"++show eti ++":\taddiu $sp,$sp,4\n"++
+  "lw $a0,($sp)\nli $v0, 4\nsyscall\n"
+
 toCode _ _ = ""
 --toCode t = "=============\n" ++ show t ++ "\n=============\n"
 
-
+strings2code :: Map.Map String Etiqueta -> String
+strings2code m = if Map.null m then "" else (Map.foldrWithKey' help "" m)++".align 4\n"
+  where
+    help s eti acc = "fc"++show eti ++": .asciiz "++s++"\n"++acc
 
 
 

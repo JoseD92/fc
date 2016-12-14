@@ -252,8 +252,10 @@ querrySU strUni s = get >>= return.(maybe (Nothing) (T.lookup s)).(Map.lookup st
 tamf :: State TacState (TypeData -> Int)
 tamf = get >>= return.tamF
 
-toTac :: [Instruc] -> T.Tabla String (TypeData,Offset) -> Map.Map TypeData (T.Tabla String (TypeData,Offset)) -> Map.Map TypeData Int -> TacIns
-toTac i t su tamt = evalState (fctac i) (stateInit t su tamt)
+toTac :: [Instruc] -> T.Tabla String (TypeData,Offset) -> Map.Map TypeData (T.Tabla String (TypeData,Offset)) -> Map.Map TypeData Int -> (TacIns,Map.Map String Etiqueta)
+toTac i t su tamt = (tac, strings state)
+  where
+    (tac,state) = runState (fctac i) (stateInit t su tamt)
 
 fctac :: [Instruc] -> State TacState TacIns
 fctac i = do
