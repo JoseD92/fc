@@ -105,13 +105,13 @@ subu $sp, $sp, $k0
 jr $ra
 fc0:
 fac:
-li $k0,12
-move $a2,$ra
-jal _Fc_func
-li $v0,76
-jal _Fc_malloc
-move $a3,$v0
-move $ra,$a2
+sw $0, ($sp)
+sw $ra, -4($sp)
+sw $fp, -8($sp)
+subiu $fp, $sp, 8
+subiu $sp, $sp, 12
+subiu $sp, $sp, 84
+addiu $a3,$sp,4
 fc5:	addiu $t0,$fp,12
 addiu $t1,$a3,0
 sw $t0,($t1)
@@ -166,12 +166,10 @@ fc16:	addiu $t0,$a3,36
 lw $t0,($t0)
 sw $t0, ($sp)
 subiu $sp, $sp, 4
-fc17:	move $k1, $ra
-sw $a3, -4($fp)
+fc17:	sw $a3, -4($fp)
 jal fac
 addiu $sp, $fp, 12
 lw $t0, 8($fp)
-lw $ra, 4($fp)
 lw $fp, ($fp)
 lw $a3, -4($fp)
 addiu $t1,$a3,40
@@ -226,19 +224,17 @@ sw $t0,8($fp)
 j __fac
 fc1:
 __fac:
-move $a2,$ra
-move $v0,$a3
-jal _Fc_free
-jr $a2
+lw $ra, 4($fp)
+jr $ra
 fc30:
 fac2:
-li $k0,12
-move $a2,$ra
-jal _Fc_func
-li $v0,76
-jal _Fc_malloc
-move $a3,$v0
-move $ra,$a2
+sw $0, ($sp)
+sw $ra, -4($sp)
+sw $fp, -8($sp)
+subiu $fp, $sp, 8
+subiu $sp, $sp, 12
+subiu $sp, $sp, 84
+addiu $a3,$sp,4
 fc32:	addiu $t0,$fp,-8
 addiu $t1,$a3,0
 sw $t0,($t1)
@@ -344,19 +340,17 @@ sw $t0,8($fp)
 j __fac2
 fc31:
 __fac2:
-move $a2,$ra
-move $v0,$a3
-jal _Fc_free
-jr $a2
+lw $ra, 4($fp)
+jr $ra
 fc59:
 main:
-li $k0,16
-move $a2,$ra
-jal _Fc_func
-li $v0,88
-jal _Fc_malloc
-move $a3,$v0
-move $ra,$a2
+sw $0, ($sp)
+sw $ra, -4($sp)
+sw $fp, -8($sp)
+subiu $fp, $sp, 8
+subiu $sp, $sp, 12
+subiu $sp, $sp, 100
+addiu $a3,$sp,4
 fc61:	addiu $t0,$fp,-12
 addiu $t1,$a3,0
 sw $t0,($t1)
@@ -452,12 +446,10 @@ fc78:	addiu $t0,$a3,52
 lw $t0,($t0)
 sw $t0, ($sp)
 subiu $sp, $sp, 4
-fc79:	move $k1, $ra
-sw $a3, -4($fp)
+fc79:	sw $a3, -4($fp)
 jal fac
 addiu $sp, $fp, 12
 lw $t0, 8($fp)
-lw $ra, 4($fp)
 lw $fp, ($fp)
 lw $a3, -4($fp)
 addiu $t1,$a3,56
@@ -483,12 +475,10 @@ fc85:	addiu $t0,$a3,68
 lw $t0,($t0)
 sw $t0, ($sp)
 subiu $sp, $sp, 4
-fc86:	move $k1, $ra
-sw $a3, -4($fp)
+fc86:	sw $a3, -4($fp)
 jal fac2
 addiu $sp, $fp, 12
 lw $t0, 8($fp)
-lw $ra, 4($fp)
 lw $fp, ($fp)
 lw $a3, -4($fp)
 addiu $t1,$a3,72
@@ -529,7 +519,5 @@ sw $v0,($t0)
 fc66:	j fc106
 fc60:
 __main:
-move $a2,$ra
-move $v0,$a3
-jal _Fc_free
-jr $a2
+lw $ra, 4($fp)
+jr $ra

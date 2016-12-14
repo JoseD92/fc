@@ -9,6 +9,7 @@ import Data.Foldable (toList)
 import Data.Maybe (maybe)
 import qualified Fc.Tabla as T
 import qualified Fc.Tac.Tac as T (BiOperators(GT))
+import Debug.Trace
 
 data MyData = MyData {
 regmap :: Map.Map Registro Int,
@@ -31,7 +32,8 @@ funChunks [] = []
 funChunks l = (l2,midata{maxframe=frame2,regtam=reg}):funChunks resto
   where
     ((l2,midata),resto) = nextBlock l Map.empty [] 0
-    frame = abs $ ( (minimum $ concatMap getFrame l2)-4)
+    tam = minimum $ concatMap getFrame l2
+    frame = abs $ ( if tam >0 then 0 else tam )
     frame2 = if frame==0 then 4 else frame
     reg = (maximum $ Map.elems $ regmap midata)+4
 
@@ -159,19 +161,19 @@ toCode m (ReturnW eti v1) = "fc"++show eti ++":\t"++codeforv "$t0" v1 (regmap m)
 toCode m (TacParam eti v1) = "fc"++show eti ++":\t"++codeforv "$t0" v1 (regmap m)++
   "sw $t0, ($sp)\nsubiu $sp, $sp, 4\n"
 
-toCode m (Call eti s tam (Val resul)) = "fc"++show eti ++":\tmove $k1, $ra\n"++
+toCode m (Call eti s tam (Val resul)) = "fc"++show eti ++":\t"++
   "sw $a3, -4($fp)\njal "++s++"\naddiu $sp, $fp, "++show (8+(tam*4))++
-  "\nlw $t0, 8($fp)\nlw $ra, 4($fp)\nlw $fp, ($fp)\nlw $a3, -4($fp)"++
+  "\nlw $t0, 8($fp)\nlw $fp, ($fp)\nlw $a3, -4($fp)"++
   "\naddiu $t1,$a3,"++place++"\nsw $t0,($t1)\n"
   where
     place = maybe "error" show $ Map.lookup resul (regmap m)
 
-toCode m (Prologo eti s) = "fc"++show eti ++":\n"++ s ++":\nli $k0,"++show (maxframe m)++
-  "\nmove $a2,$ra\njal _Fc_func\nli $v0,"++show (regtam m)++"\njal _Fc_malloc\n"++
-  "move $a3,$v0\nmove $ra,$a2\n"
+toCode m (Prologo eti s) = "fc"++show eti ++":\n"++ s ++":\n"++
+  "sw $0, ($sp)\nsw $ra, -4($sp)\nsw $fp, -8($sp)\nsubiu $fp, $sp, 8\nsubiu $sp, $sp, 12\n"
+  ++"subiu $sp, $sp, "++show ((maxframe m)+(regtam m))++"\naddiu $a3,$sp,4\n"
 
 toCode m (Epilogo eti s) = "fc"++show eti ++":\n__"++ s ++
-  ":\nmove $a2,$ra\nmove $v0,$a3\njal _Fc_free\njr $a2\n"
+  ":\nlw $ra, 4($fp)\njr $ra\n"
 
 toCode m (Special eti "fcLlamadaIntWrite") = "fc"++show eti ++":\taddiu $sp,$sp,4\n"++
   "lw $a0,($sp)\nli $v0, 1\nsyscall\n"

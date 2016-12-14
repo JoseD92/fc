@@ -46,7 +46,7 @@ main = do
   else return ()
 
   let tac = quitaFalls $ toTac (reverse.insList $ out) (T.tablaReverse $ T.goToRoot (simT estado)) (susymt estado) (tamTable estado)
-  print tac
+  --print tac
   let textLast = basics tac
   textHeader <- readFile "mipsTextHeader.asm"
   writeFile "a.s" $ textHeader++"\n"++textLast
